@@ -24,8 +24,10 @@ body {
   padding: 0 1.2rem;
 }
 main { max-width: 44rem; margin: 0 auto; padding: 3rem 0 5rem; }
-header { margin-bottom: 2.5rem; }
-.triad { display: block; margin-bottom: 1.1rem; color: var(--ink); }
+header {
+  margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1.2rem;
+}
+.triad { flex: none; height: 4.6rem; width: auto; color: var(--ink); }
 h1 {
   font-family: 'Courier New', monospace; font-size: 2.4rem;
   letter-spacing: 0.04em; margin-bottom: 0.3rem;
@@ -58,7 +60,7 @@ footer {
 <body>
 <main>
 <header>
-  <svg class="triad" xmlns="http://www.w3.org/2000/svg" viewBox="0 12 276 258" width="120" height="112" role="img" aria-label="Star, mountains, waves">
+  <svg class="triad" xmlns="http://www.w3.org/2000/svg" viewBox="0 12 276 258" role="img" aria-label="Star, mountains, waves">
     <g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
       <line x1="138" y1="24" x2="138" y2="116"></line>
       <line x1="92" y1="70" x2="184" y2="70"></line>
@@ -72,8 +74,10 @@ footer {
       <path d="M152 245 Q180 228 208 245 T264 245"></path>
     </g>
   </svg>
-  <h1>XPRS</h1>
-  <div class="tagline">eXtended Packet Radio System</div>
+  <div>
+    <h1>XPRS</h1>
+    <div class="tagline">eXtended Packet Radio System</div>
+  </div>
 </header>
 
 <p>XPRS is APRS carried forward: the same idea -- a small text packet, heard
