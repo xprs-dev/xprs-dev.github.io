@@ -82,91 +82,90 @@ footer {
   <div class="tagline">eXtended Packet Radio System</div>
 </header>
 
-<p>XPRS is APRS carried forward: the same idea -- a small text packet, heard
-by everyone and repeated by volunteers, building a live map of who is where,
-doing what, needing what -- rebuilt with what three decades of running the
-original taught.</p>
+<p>XPRS extends and modernizes APRS. The core idea stays the same: small
+text packets that anyone can hear and volunteers repeat across the network.
+Everything else was rebuilt with the lessons of three decades in the
+field.</p>
 
 <p>A packet is at most 250 bytes of <code>key:value</code> text, readable
 without a decoder:</p>
 
 <pre>t:message f:X1QZ3N d:LISBOA ts:2026-08-08_14:26:40 m:net starts in ten minutes</pre>
 
-<p>78 bytes. A person reads it, and so does a five-line parser. The same
+<p>78 bytes. A person can read it and so can a five-line parser. The same
 packet travels LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and the
 internet.</p>
 
 <h2>What the decades taught</h2>
 <ul>
-<li><strong>Identity is proven, not asserted.</strong> Packets are signed
-with a key the station holds; a licensed callsign can be bound to a key and
-proven live on air.</li>
-<li><strong>Delivery is custody, not hope.</strong> Stations carry mail for
-the absent and hand it over with signed receipts; a station away for four
-days asks for the days it missed.</li>
-<li><strong>No central system.</strong> Where APRS has one internet backbone
-that sees every packet, XPRS has indexers each station chooses, federated by
-directories rather than by copying each other's traffic.</li>
-<li><strong>Files of any size.</strong> Content-addressed by SHA-256:
-described, found by asking who holds them, fetched in verified pieces, or
-carried inline when tiny.</li>
-<li><strong>One syntax with room to grow.</strong> Every value carries its
-unit, unknown keys are skipped without error, and adding a field never
-breaks a reader.</li>
+<li><strong>Identity is proven.</strong> Packets are signed with a key the
+station holds. A licensed callsign can be bound to a key and proven live on
+air.</li>
+<li><strong>Delivery is tracked.</strong> Stations carry mail for absent
+peers and hand it over against signed receipts. A station that was away can
+ask for the traffic it missed.</li>
+<li><strong>No central server.</strong> APRS routes everything through one
+internet backbone. XPRS uses indexers that each station chooses, and
+indexers exchange directories instead of copying each other's traffic.</li>
+<li><strong>Files of any size.</strong> Content is addressed by SHA-256.
+A file can be described, located by asking who holds it, fetched in
+verified pieces, or sent inline when small.</li>
+<li><strong>Room to grow.</strong> Every value carries its unit. Unknown
+keys are skipped without error. New fields never break old readers.</li>
 </ul>
 
 <h2>Who runs what</h2>
-<p>Every role is somebody's ordinary device, usually several roles at once:
-a <em>station</em> speaks under a callsign, a <em>relay</em> repeats what it
-hears, a <em>carrier</em> holds mail for the absent, a <em>gateway</em>
-bridges radio and internet and publishes who it hears, an <em>indexer</em>
-archives the publications of the stations that chose it. Nothing is
-appointed; everything is volunteered and bounded by its operator's
-budgets.</p>
+<p>Every role runs on ordinary devices, and one device usually plays
+several. A <em>station</em> speaks under a callsign. A <em>relay</em>
+repeats what it hears. A <em>carrier</em> holds mail for absent stations.
+A <em>gateway</em> bridges radio and internet and publishes who it hears.
+An <em>indexer</em> archives the publications of the stations that chose
+it. Nothing is appointed. Every role is volunteered and bounded by its
+operator's budgets.</p>
 
 <h2>Licensing</h2>
-<p>No licence is needed on licence-free spectrum (LoRa and Bluetooth in the
-ISM bands, WiFi, the internet), with identity from a keypair generated on
-the device. On amateur bands XPRS operates under amateur rules: plain text,
-a government-issued callsign, no ciphertext.</p>
+<p>No licence is needed on licence-free spectrum: LoRa and Bluetooth in
+the ISM bands, WiFi and the internet. Identity comes from a keypair
+generated on the device. On amateur bands XPRS operates under amateur
+rules: plain text, a government-issued callsign, no ciphertext.</p>
 
 <h2>Specification</h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a>
-<span>-- the full specification, current edition XPRS-2026</span></li>
+<span>the full specification, current edition XPRS-2026</span></li>
 <li><a href="https://github.com/xprs-dev/spec/blob/main/xprs_corpus.json">xprs_corpus.json</a>
-<span>-- the conformance corpus: every worked example as a wire with its
-byte count and derived identifier; an implementation that replays all of
-them byte-exact reads the format</span></li>
+<span>the conformance corpus. Every worked example from the document as a
+wire with its byte count and identifier. An implementation that replays all
+of them byte-exact reads the format.</span></li>
 <li><a href="https://github.com/xprs-dev/spec">github.com/xprs-dev/spec</a>
-<span>-- the specification repository</span></li>
+<span>the specification repository</span></li>
 </ul>
 
 <h2>Reference implementations</h2>
 <ul class="links">
 <li><a href="https://github.com/geograms/aurora">geograms/aurora</a>
-<span>-- Dart/Flutter host for Android, Linux and Windows: codec, signing,
+<span>Dart/Flutter host for Android, Linux and Windows. Codec, signing,
 store-and-forward, the heard-traffic archive and history server, and the
-transports (BLE5, LoRa slots, Reticulum, TCP port 4242)</span></li>
+transports.</span></li>
 <li><a href="https://github.com/geograms/reticulum-dart">geograms/reticulum-dart</a>
-<span>-- the shared Dart networking library: mesh transport, DHT,
-content-addressed file swarm, short-Schnorr signatures</span></li>
+<span>the shared Dart networking library. Mesh transport, DHT,
+content-addressed file swarm and the signature scheme.</span></li>
 <li><a href="https://github.com/geograms/aurora/tree/main/esp32">aurora/esp32</a>
-<span>-- ESP32 C implementation: a T-Dongle as an XPRS station, digipeater
-and store-and-forward mailbox, replaying the same corpus as the Dart
-codec</span></li>
+<span>ESP32 implementation in C. A dongle becomes an XPRS station,
+digipeater and store-and-forward mailbox. Replays the same corpus as the
+Dart codec.</span></li>
 </ul>
 
 <h2>Editions</h2>
-<p>The specification is edited continuously and released by year. XPRS-2026
-is the document as it stands at any point during 2026; the first change made
-in a later year opens the next edition and freezes this one. A year with no
-changes produces no edition.</p>
+<p>The specification is edited continuously and released by year.
+XPRS-2026 is the document as it stands at any point during 2026. The first
+change made in a later year opens the next edition and freezes this one. A
+year with no changes produces no edition.</p>
 
 <footer>
-<p>XPRS operates alongside APRS with respect for its rules: traffic from
-self-generated callsigns is never originated onto amateur infrastructure,
-and ciphertext never touches the amateur bands.</p>
+<p>XPRS operates alongside APRS and respects its rules. Traffic from
+self-generated callsigns is never originated onto amateur infrastructure.
+Ciphertext never touches the amateur bands.</p>
 </footer>
 </main>
 </body>
