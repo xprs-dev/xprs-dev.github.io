@@ -42,6 +42,7 @@ h2 {
   border-top: 1px solid var(--line);
 }
 p { margin-bottom: 0.9rem; }
+.exlabel { margin: 1.1rem 0 0; color: var(--dim); font-size: 0.95rem; }
 a { color: var(--accent); }
 pre {
   background: var(--code-bg); border: 1px solid var(--line);
@@ -89,13 +90,26 @@ Everything else was rebuilt with the lessons of three decades in the
 field.</p>
 
 <p>A packet is at most 250 bytes of <code>key:value</code> text, readable
-without a decoder:</p>
+without a decoder. Five examples from different parts of the format:</p>
 
-<pre>t:message f:X1QZ3N d:LISBOA ts:2026-08-08_14:26:40 m:net starts in ten minutes</pre>
+<p class="exlabel">A message to a friend:</p>
+<pre>t:message f:X1QZ3N d:X1RD89 ts:2026-08-18_09:15:00 m:arrived at the marina, see you at the cafe</pre>
 
-<p>78 bytes. A person can read it and so can a five-line parser. The same
-packet travels LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and the
-internet.</p>
+<p class="exlabel">A weather station reporting:</p>
+<pre>t:observation f:X3WX01 pos:38.7223,-9.1393 temp:14.2C hum:78% wind:3.4m/s ts:2026-08-18_09:00:00</pre>
+
+<p class="exlabel">A call for help, relayed further than anything else:</p>
+<pre>t:sos f:X1QZ3N pos:38.7223,-9.1393 kind:medical ts:2026-08-18_09:20:00 m:broken leg, cannot walk</pre>
+
+<p class="exlabel">Sharing a photo by its content hash:</p>
+<pre>t:file f:X1QZ3N ts:2026-08-18_09:30:00 file:nYxKzGm4vT2pQ8dW5jR7cL0aFbNs9hUe3oXiC6EkM1w.jpg size:240kB m:sunset from the east ridge</pre>
+
+<p class="exlabel">Back from four days at sea, asking a station for the days missed:</p>
+<pre>t:command f:X1BOA3 d:X3RLY7 ts:2026-08-18_09:45:00 cmd:history since:2026-08-14_00:00:00</pre>
+
+<p>A person can read every one of them and so can a five-line parser. The
+same packets travel LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and
+the internet.</p>
 
 <h2>What changed from APRS</h2>
 <ul>
