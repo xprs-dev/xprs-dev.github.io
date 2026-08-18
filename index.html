@@ -24,10 +24,12 @@ body {
   padding: 0 1.2rem;
 }
 main { max-width: 44rem; margin: 0 auto; padding: 3rem 0 5rem; }
-header {
-  margin-bottom: 2.5rem; display: flex; align-items: center; gap: 1.2rem;
+header { margin-bottom: 2.5rem; text-align: center; }
+.mast {
+  display: flex; align-items: center; justify-content: center; gap: 1rem;
 }
-.triad { flex: none; height: 4.6rem; width: auto; color: var(--ink); }
+.triad { flex: none; height: 3.4rem; width: auto; color: var(--ink); }
+h1 { margin-bottom: 0; }
 h1 {
   font-family: 'Courier New', monospace; font-size: 2.4rem;
   letter-spacing: 0.04em; margin-bottom: 0.3rem;
@@ -60,6 +62,7 @@ footer {
 <body>
 <main>
 <header>
+  <div class="mast">
   <svg class="triad" xmlns="http://www.w3.org/2000/svg" viewBox="0 12 276 258" role="img" aria-label="Star, mountains, waves">
     <g fill="none" stroke="currentColor" stroke-width="9" stroke-linecap="round" stroke-linejoin="round">
       <line x1="138" y1="24" x2="138" y2="116"></line>
@@ -74,10 +77,9 @@ footer {
       <path d="M152 245 Q180 228 208 245 T264 245"></path>
     </g>
   </svg>
-  <div>
-    <h1>XPRS</h1>
-    <div class="tagline">eXtended Packet Radio System</div>
+  <h1>XPRS</h1>
   </div>
+  <div class="tagline">eXtended Packet Radio System</div>
 </header>
 
 <p>XPRS is APRS carried forward: the same idea -- a small text packet, heard
