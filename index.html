@@ -24,10 +24,10 @@ body {
   padding: 0 1.2rem;
 }
 main { max-width: 44rem; margin: 0 auto; padding: 3rem 0 5rem; }
-header { margin-bottom: 2.5rem; text-align: center; }
-.mast {
-  display: flex; align-items: center; justify-content: center; gap: 1rem;
+header {
+  margin-bottom: 2.5rem; display: inline-block; text-align: center;
 }
+.mast { display: flex; align-items: center; gap: 1rem; }
 .triad { flex: none; height: 3.4rem; width: auto; color: var(--ink); }
 h1 { margin-bottom: 0; }
 h1 {
@@ -96,7 +96,7 @@ without a decoder:</p>
 packet travels LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and the
 internet.</p>
 
-<h2>What the decades taught</h2>
+<h2>What changed from APRS</h2>
 <ul>
 <li><strong>Identity is proven.</strong> Packets are signed with a key the
 station holds. A licensed callsign can be bound to a key and proven live on
@@ -114,14 +114,14 @@ verified pieces, or sent inline when small.</li>
 keys are skipped without error. New fields never break old readers.</li>
 </ul>
 
-<h2>Who runs what</h2>
+<h2>Roles in the network</h2>
 <p>Every role runs on ordinary devices, and one device usually plays
 several. A <em>station</em> speaks under a callsign. A <em>relay</em>
 repeats what it hears. A <em>carrier</em> holds mail for absent stations.
 A <em>gateway</em> bridges radio and internet and publishes who it hears.
 An <em>indexer</em> archives the publications of the stations that chose
-it. Nothing is appointed. Every role is volunteered and bounded by its
-operator's budgets.</p>
+it. No role is assigned by a central authority. Operators choose what
+their devices do and set their own limits.</p>
 
 <h2>Licensing</h2>
 <p>No licence is needed on licence-free spectrum: LoRa and Bluetooth in
@@ -164,8 +164,8 @@ year with no changes produces no edition.</p>
 
 <footer>
 <p>XPRS operates alongside APRS and respects its rules. Traffic from
-self-generated callsigns is never originated onto amateur infrastructure.
-Ciphertext never touches the amateur bands.</p>
+self-generated callsigns is never sent onto amateur infrastructure.
+Encrypted traffic is never sent on amateur bands.</p>
 </footer>
 </main>
 </body>
