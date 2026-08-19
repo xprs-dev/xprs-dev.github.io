@@ -40,7 +40,19 @@ h2 {
   font-family: 'Courier New', monospace; font-size: 1.15rem;
   margin: 2.4rem 0 0.8rem; padding-top: 1.2rem;
   border-top: 1px solid var(--line);
+  scroll-margin-top: 0.8rem;
 }
+/* Section titles are their own permalinks. The marker stays faintly visible
+   rather than appearing on hover: on a touch screen there is no hover, and an
+   affordance nobody can discover is not one. */
+h2 a { color: inherit; text-decoration: none; }
+h2 a::after {
+  content: ' #'; color: var(--dim); opacity: 0.35;
+  font-weight: normal; transition: opacity 0.15s;
+}
+h2 a:hover { color: var(--accent); }
+h2 a:hover::after { opacity: 1; }
+h2 a:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 p { margin-bottom: 0.9rem; }
 .exlabel { margin: 1.1rem 0 0; color: var(--dim); font-size: 0.95rem; }
 a { color: var(--accent); }
@@ -111,7 +123,7 @@ without a decoder. Five examples from different parts of the format:</p>
 same packets travel LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and
 the internet.</p>
 
-<h2>What changed from APRS</h2>
+<h2 id="changes"><a href="#changes">What changed from APRS</a></h2>
 <ul>
 <li><strong>Identity is proven.</strong> Packets are signed with a key the
 station holds. A licensed callsign can be bound to a key and proven live on
@@ -129,7 +141,7 @@ verified pieces, or sent inline when small.</li>
 keys are skipped without error. New fields never break old readers.</li>
 </ul>
 
-<h2>Roles in the network</h2>
+<h2 id="roles"><a href="#roles">Roles in the network</a></h2>
 <p>Every role runs on ordinary devices, and one device usually plays
 several. A <em>station</em> speaks under a callsign. A <em>relay</em>
 repeats what it hears. A <em>carrier</em> holds mail for absent stations.
@@ -138,13 +150,13 @@ An <em>indexer</em> archives the publications of the stations that chose
 it. No role is assigned by a central authority. Operators choose what
 their devices do and set their own limits.</p>
 
-<h2>Radio frequencies usage</h2>
+<h2 id="spectrum"><a href="#spectrum">Radio frequencies usage</a></h2>
 <p>No licence is needed on licence-free spectrum: LoRa and Bluetooth in
 the ISM bands, WiFi and the internet. Identity comes from a keypair
 generated on the device. On amateur bands XPRS operates under amateur
 rules: plain text, a government-issued callsign, no ciphertext.</p>
 
-<h2>Specification</h2>
+<h2 id="spec"><a href="#spec">Specification</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a>
 <span>the full specification, current edition XPRS-2026</span></li>
@@ -156,7 +168,7 @@ of them byte-exact reads the format.</span></li>
 <span>the specification repository</span></li>
 </ul>
 
-<h2>Reference implementations</h2>
+<h2 id="implementations"><a href="#implementations">Reference implementations</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/xprs-flutter">xprs-dev/xprs-flutter</a>
 <span>the application for phones and desktops, in Dart and Flutter. Codec,
@@ -176,7 +188,7 @@ Source for the built-in ones and the catalog the launcher installs
 from.</span></li>
 </ul>
 
-<h2>Community</h2>
+<h2 id="community"><a href="#community">Community</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev">github.com/xprs-dev</a>
 <span>the XPRS organization on GitHub</span></li>
@@ -184,13 +196,13 @@ from.</span></li>
 <span>questions, feedback and proposals about the format go here</span></li>
 </ul>
 
-<h2>Editions</h2>
+<h2 id="editions"><a href="#editions">Editions</a></h2>
 <p>The specification is edited continuously and released by year.
 XPRS-2026 is the document as it stands at any point during 2026. The first
 change made in a later year opens the next edition and freezes this one. A
 year with no changes produces no edition.</p>
 
-<h2>Credits</h2>
+<h2 id="credits"><a href="#credits">Credits</a></h2>
 <p>XPRS is built on work that came before it, and most of what makes it
 possible was designed by other people.</p>
 <ul class="links">
@@ -215,7 +227,7 @@ including javAPRSSrvr by Pete Loveall, AE5PL.</span></li>
 and the applications that speak it.</span></li>
 </ul>
 
-<h2>Citing XPRS</h2>
+<h2 id="citing"><a href="#citing">Citing XPRS</a></h2>
 <p>The specification is a living document. It has no DOI and no publisher, and
 it is edited continuously, so a citation should name the edition, the draft it
 stood at when you read it, and the date you read it. Replace the access date
@@ -237,7 +249,7 @@ give the section number as well - they are stable within an edition - and link
 <a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a> at the
 commit you read, so the sentence you quote is the sentence a reader finds.</p>
 
-<h2>Licence</h2>
+<h2 id="licence"><a href="#licence">Licence</a></h2>
 <p>The specification is copyright 2026 Max Brito and licensed under
 <a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
 Attribution 4.0 International</a> (CC BY 4.0). Share it and adapt it for any
