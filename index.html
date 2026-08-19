@@ -158,17 +158,22 @@ of them byte-exact reads the format.</span></li>
 
 <h2>Reference implementations</h2>
 <ul class="links">
-<li><a href="https://github.com/geograms/aurora">geograms/aurora</a>
-<span>Dart/Flutter host for Android, Linux and Windows. Codec, signing,
-store-and-forward, the heard-traffic archive and history server, and the
-transports.</span></li>
-<li><a href="https://github.com/geograms/reticulum-dart">geograms/reticulum-dart</a>
-<span>the shared Dart networking library. Mesh transport, DHT,
-content-addressed file swarm and the signature scheme.</span></li>
-<li><a href="https://github.com/geograms/aurora/tree/main/esp32">aurora/esp32</a>
-<span>ESP32 implementation in C. A dongle becomes an XPRS station,
-digipeater and store-and-forward mailbox. Replays the same corpus as the
-Dart codec.</span></li>
+<li><a href="https://github.com/xprs-dev/xprs-flutter">xprs-dev/xprs-flutter</a>
+<span>the application for phones and desktops, in Dart and Flutter. Codec,
+signing, store-and-forward, the heard-traffic archive and history server,
+and the transports. Released for Android, Linux and Windows.</span></li>
+<li><a href="https://github.com/xprs-dev/xprs-esp32">xprs-dev/xprs-esp32</a>
+<span>firmware in C. A board becomes an XPRS station, digipeater and
+store-and-forward mailbox: T-Dongle-S3, M5Stack Core, Heltec LoRa, kv4p and
+others, over BLE5, ESP-NOW, WiFi and LoRa. Checked against the same
+conformance corpus as the Dart codec.</span></li>
+<li><a href="https://github.com/xprs-dev/reticulum-dart">xprs-dev/reticulum-dart</a>
+<span>the shared Dart networking library. Reticulum mesh transport, a DHT,
+content-addressed file sharing and the signature scheme.</span></li>
+<li><a href="https://github.com/xprs-dev/wapps">xprs-dev/wapps</a>
+<span>the applications that run inside the host, compiled to WebAssembly.
+Source for the built-in ones and the catalog the launcher installs
+from.</span></li>
 </ul>
 
 <h2>Community</h2>
