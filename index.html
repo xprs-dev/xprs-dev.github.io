@@ -123,6 +123,21 @@ without a decoder. Five examples from different parts of the format:</p>
 same packets travel LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and
 the internet.</p>
 
+<p>A packet is a flat list of key and value, so it <strong>is a JSON object
+already</strong>. Splitting on the first colon of each field is the whole
+conversion - no schema, no table, and nothing to know about the packet
+type:</p>
+
+<pre>{"t":"message","f":"X1QZ3N","d":"X1RD89",
+ "ts":"2026-08-18_09:15:00","m":"arrived at the marina"}</pre>
+
+<p>Every value stays a string, because the unit is part of it:
+<code>temp:14.2C</code> is <code>"14.2C"</code> and not <code>14.2</code>.
+<a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md#410-json">Section
+4.10</a> gives the rules in both directions, and the one thing to watch: a
+JSON object is unordered, and the packet identifier is a hash of the wire
+bytes.</p>
+
 <h2 id="changes"><a href="#changes">What changed from APRS</a></h2>
 <ul>
 <li><strong>Identity is proven.</strong> Packets are signed with a key the
