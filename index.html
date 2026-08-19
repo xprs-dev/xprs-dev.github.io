@@ -102,68 +102,57 @@ Everything else was rebuilt with the lessons of three decades in the
 field.</p>
 
 <p>A packet is at most 250 bytes of <code>key:value</code> text, readable
-without a decoder. Five examples from different parts of the format:</p>
+without a decoder:</p>
 
 <p class="exlabel">A message to a friend:</p>
 <pre>t:message f:X1QZ3N d:X1RD89 ts:2026-08-18_09:15:00 m:arrived at the marina, see you at the cafe</pre>
 
-<p class="exlabel">A weather station reporting:</p>
-<pre>t:observation f:X3WX01 pos:38.7223,-9.1393 temp:14.2C hum:78% wind:3.4m/s ts:2026-08-18_09:00:00</pre>
-
 <p class="exlabel">A call for help, relayed further than anything else:</p>
 <pre>t:sos f:X1QZ3N pos:38.7223,-9.1393 kind:medical ts:2026-08-18_09:20:00 m:broken leg, cannot walk</pre>
 
-<p class="exlabel">Sharing a photo by its content hash:</p>
-<pre>t:file f:X1QZ3N ts:2026-08-18_09:30:00 file:nYxKzGm4vT2pQ8dW5jR7cL0aFbNs9hUe3oXiC6EkM1w.jpg size:240kB m:sunset from the east ridge</pre>
-
-<p class="exlabel">Back from four days at sea, asking a station for the days missed:</p>
+<p class="exlabel">Back from four days at sea, asking a station for what was missed:</p>
 <pre>t:command f:X1BOA3 d:X3RLY7 ts:2026-08-18_09:45:00 cmd:history since:2026-08-14_00:00:00</pre>
 
 <p>A person can read every one of them and so can a five-line parser. The
 same packets travel LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and
 the internet.</p>
 
-<p>A packet is a flat list of key and value, so it <strong>is a JSON object
-already</strong>. Splitting on the first colon of each field is the whole
-conversion - no schema, no table, and nothing to know about the packet
-type:</p>
+<p>A flat list of key and value <strong>is a JSON object already</strong>.
+Split each field on its first colon and you are done - no schema, nothing to
+know about the packet type:</p>
 
 <pre>{"t":"message","f":"X1QZ3N","d":"X1RD89",
  "ts":"2026-08-18_09:15:00","m":"arrived at the marina"}</pre>
 
-<p>Every value stays a string, because the unit is part of it:
-<code>temp:14.2C</code> is <code>"14.2C"</code> and not <code>14.2</code>.
+<p>Values stay strings, because the unit is part of the value:
+<code>temp:14.2C</code> is <code>"14.2C"</code>, never <code>14.2</code>.
 <a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md#410-json">Section
-4.10</a> gives the rules in both directions, and the one thing to watch: a
-JSON object is unordered, and the packet identifier is a hash of the wire
-bytes.</p>
+4.10</a> has both directions.</p>
 
 <h2 id="changes"><a href="#changes">What changed from APRS</a></h2>
 <ul>
 <li><strong>Identity is proven.</strong> Packets are signed with a key the
-station holds. A licensed callsign can be bound to a key and proven live on
-air.</li>
+station holds, and a licensed callsign can be bound to that key.</li>
 <li><strong>Delivery is tracked.</strong> Stations carry mail for absent
-peers and hand it over against signed receipts. A station that was away can
-ask for the traffic it missed.</li>
-<li><strong>No central server.</strong> APRS routes everything through one
-internet backbone. XPRS uses indexers that each station chooses, and
-indexers exchange directories instead of copying each other's traffic.</li>
-<li><strong>Files of any size.</strong> Content is addressed by SHA-256.
-A file can be described, located by asking who holds it, fetched in
-verified pieces, or sent inline when small.</li>
-<li><strong>Room to grow.</strong> Every value carries its unit. Unknown
-keys are skipped without error. New fields never break old readers.</li>
+peers against signed receipts, and a station that was away can ask for what
+it missed.</li>
+<li><strong>No central server.</strong> Where APRS routes through one
+internet backbone, XPRS uses indexers each station chooses, exchanging
+directories instead of copying each other's traffic.</li>
+<li><strong>Files of any size.</strong> Content is addressed by SHA-256:
+located by asking who holds it, then fetched in verified pieces.</li>
+<li><strong>Room to grow.</strong> Every value carries its unit, unknown
+keys are skipped without error, and new fields never break old readers.</li>
 </ul>
 
 <h2 id="roles"><a href="#roles">Roles in the network</a></h2>
-<p>Every role runs on ordinary devices, and one device usually plays
-several. A <em>station</em> speaks under a callsign. A <em>relay</em>
-repeats what it hears. A <em>carrier</em> holds mail for absent stations.
-A <em>gateway</em> bridges radio and internet and publishes who it hears.
-An <em>indexer</em> archives the publications of the stations that chose
-it. No role is assigned by a central authority. Operators choose what
-their devices do and set their own limits.</p>
+<p>All of them run on ordinary devices, and one device usually plays
+several. A <em>station</em> speaks under a callsign; a <em>relay</em> repeats
+what it hears; a <em>carrier</em> holds mail for absent stations; a
+<em>gateway</em> bridges radio and internet; an <em>indexer</em> archives the
+publications of the stations that chose it. No role is assigned by an
+authority - operators choose what their devices do, and set their own
+limits.</p>
 
 <h2 id="spectrum"><a href="#spectrum">Radio frequencies usage</a></h2>
 <p>No licence is needed on licence-free spectrum: LoRa and Bluetooth in
@@ -174,15 +163,11 @@ rules: plain text, a government-issued callsign, no ciphertext.</p>
 <h2 id="spec"><a href="#spec">Specification</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a>
-<span>the full specification, current edition XPRS-2026. Every section is
-linkable on its own: <a
-href="https://github.com/xprs-dev/spec/blob/main/XPRS.md#contents">the
-contents</a> lists all 37, and a section is reached directly as
-<code>XPRS.md#3-callsigns</code>.</span></li>
+<span>the full specification, edition XPRS-2026. Every section is linkable
+on its own, as <code>XPRS.md#3-callsigns</code>.</span></li>
 <li><a href="https://github.com/xprs-dev/spec/blob/main/xprs_corpus.json">xprs_corpus.json</a>
-<span>the conformance corpus. Every worked example from the document as a
-wire with its byte count and identifier. An implementation that replays all
-of them byte-exact reads the format.</span></li>
+<span>the conformance corpus: every worked example as a wire with its byte
+count and identifier. Replay them byte-exact and you read the format.</span></li>
 <li><a href="https://github.com/xprs-dev/spec">github.com/xprs-dev/spec</a>
 <span>the specification repository</span></li>
 </ul>
@@ -190,21 +175,19 @@ of them byte-exact reads the format.</span></li>
 <h2 id="implementations"><a href="#implementations">Reference implementations</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/xprs-flutter">xprs-dev/xprs-flutter</a>
-<span>the application for phones and desktops, in Dart and Flutter. Codec,
-signing, store-and-forward, the heard-traffic archive and history server,
-and the transports. Released for Android, Linux and Windows.</span></li>
+<span>phones and desktops, in Dart and Flutter: codec, signing,
+store-and-forward, the heard-traffic archive and the transports. Released for
+Android, Linux and Windows.</span></li>
 <li><a href="https://github.com/xprs-dev/xprs-esp32">xprs-dev/xprs-esp32</a>
-<span>firmware in C. A board becomes an XPRS station, digipeater and
-store-and-forward mailbox: T-Dongle-S3, M5Stack Core, Heltec LoRa, kv4p and
-others, over BLE5, ESP-NOW, WiFi and LoRa. Checked against the same
-conformance corpus as the Dart codec.</span></li>
+<span>firmware in C: a board becomes a station, digipeater and mailbox.
+T-Dongle-S3, M5Stack Core, Heltec LoRa, kv4p and others, over BLE5, ESP-NOW,
+WiFi and LoRa.</span></li>
 <li><a href="https://github.com/xprs-dev/reticulum-dart">xprs-dev/reticulum-dart</a>
 <span>the shared Dart networking library. Reticulum mesh transport, a DHT,
 content-addressed file sharing and the signature scheme.</span></li>
 <li><a href="https://github.com/xprs-dev/wapps">xprs-dev/wapps</a>
-<span>the applications that run inside the host, compiled to WebAssembly.
-Source for the built-in ones and the catalog the launcher installs
-from.</span></li>
+<span>the applications that run inside the host, compiled to WebAssembly,
+and the catalog the launcher installs from.</span></li>
 </ul>
 
 <h2 id="community"><a href="#community">Community</a></h2>
@@ -214,12 +197,6 @@ from.</span></li>
 <li><a href="https://github.com/xprs-dev/spec/discussions">Discussions</a>
 <span>questions, feedback and proposals about the format go here</span></li>
 </ul>
-
-<h2 id="editions"><a href="#editions">Editions</a></h2>
-<p>The specification is edited continuously and released by year.
-XPRS-2026 is the document as it stands at any point during 2026. The first
-change made in a later year opens the next edition and freezes this one. A
-year with no changes produces no edition.</p>
 
 <h2 id="credits"><a href="#credits">Credits</a></h2>
 <p>XPRS is built on work that came before it, and most of what makes it
@@ -246,42 +223,13 @@ including javAPRSSrvr by Pete Loveall, AE5PL.</span></li>
 and the applications that speak it.</span></li>
 </ul>
 
-<h2 id="citing"><a href="#citing">Citing XPRS</a></h2>
-<p>The specification is a living document. It has no DOI and no publisher, and
-it is edited continuously, so a citation should name the edition, the draft it
-stood at when you read it, and the date you read it. Replace the access date
-with your own.</p>
-<pre>Brito, M. (2026). XPRS: eXtended Packet Radio System.
-    Protocol specification, edition XPRS-2026, Draft 10.
-    https://xprs.dev/ [accessed YYYY-MM-DD]</pre>
-<p class="exlabel">BibTeX:</p>
-<pre>@misc{xprs,
-  author       = {Max Brito},
-  title        = {{XPRS}: {eXtended} {Packet} {Radio} {System}},
-  howpublished = {Protocol specification, edition XPRS-2026, Draft 10},
-  year         = {2026},
-  url          = {https://xprs.dev/},
-  note         = {Accessed: YYYY-MM-DD}
-}</pre>
-<p>To cite the wording of a particular rule rather than the format as a whole,
-give the section number as well - they are stable within an edition - and link
-<a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a> at the
-commit you read, so the sentence you quote is the sentence a reader finds.</p>
-
-<h2 id="licence"><a href="#licence">Licence</a></h2>
-<p>The specification is copyright 2026 Max Brito and licensed under
-<a href="https://creativecommons.org/licenses/by/4.0/">Creative Commons
-Attribution 4.0 International</a> (CC BY 4.0). Share it and adapt it for any
-purpose, including commercially. The one condition is credit: name the author,
-link the licence, and say what you changed.</p>
-<p>Implementations are separate works under their own licences. Writing one
-needs no permission and is not a derivative of the document - which is the
-point of publishing a format rather than a product.</p>
-
 <footer>
 <p>XPRS operates alongside APRS and respects its rules. Traffic from
-self-generated callsigns is never sent onto amateur infrastructure.
-Encrypted traffic is never sent on amateur bands.</p>
+self-generated callsigns is never sent onto amateur infrastructure. Encrypted
+traffic is never sent on amateur bands.</p>
+<p>Editions, how to cite, and the CC BY 4.0 licence are in the
+<a href="https://github.com/xprs-dev/spec#readme">specification README</a>.
+Copyright 2026 Max Brito.</p>
 </footer>
 </main>
 </body>
