@@ -108,7 +108,7 @@ middle.</p>
 <h2 id="why"><a href="#why">Why you would use it</a></h2>
 <ul>
 <li><strong>It works when the rest does not.</strong> A power cut, a storm, a
-jammed network, a boat, a valley with no coverage. If someone is in range, you
+jammed network, a boat, a valley with no coverage. If someone is in range you
 can reach them.</li>
 <li><strong>Nobody can switch it off.</strong> There is no server to seize, no
 account to suspend and no bill. The network is the people running it.</li>
@@ -155,18 +155,17 @@ collect it from whoever is nearby and has part of it.</p>
 <pre>t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:full size:240kB
 t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:412/900 size:58MB</pre>
 <p>Nobody has to finish a download before being useful to the next person. The
-long name is the file's fingerprint, so every piece is checked as it arrives and
-a file assembled from six strangers is exactly the file that was
-published.</p>
+long name is the file's fingerprint, so every piece is checked as it arrives -
+a file assembled from six strangers is exactly the file that was published.</p>
 
 <h2 id="privacy"><a href="#privacy">Private messages</a></h2>
 <p>You can send a message that only the person it is addressed to can read.
 Everyone else sees that a message went from someone to someone, and when - but
 not a word of what it says:</p>
 <pre>t:message f:X1QZ3N d:X1RD89 ts:2026-08-08_14:26:40 x:pQ4m9xT2vB8kR sig:&lt;60 characters&gt;</pre>
-<p>The sender, the recipient and the time stay in the open on purpose. A relay
-in between has to see those to pass the message along, or to hold it until the
-recipient comes back in range. It never needs to see the content.</p>
+<p>Sender, recipient and time stay in the open on purpose: a relay needs them
+to pass the message along, or to hold it until the recipient is back in range.
+It never needs the content.</p>
 <p>Or hide only <em>parts</em> of one, the way a released document has
 passages blacked out:</p>
 <pre>meet ((Max)) at ((pier2))   is sent as   meet &#9608;&#9608;&#9608; at &#9608;&#9608;&#9608;&#9608;&#9608;</pre>
@@ -175,22 +174,27 @@ message. The same trick blurs a position instead of hiding it - public to about
 ten kilometres, exact with the passphrase.</p>
 
 <h2 id="roles"><a href="#roles">What a device can be</a></h2>
-<p>There are five jobs on the network, and one device can do any of them.
+<p>There are six jobs on the network, and one device can do any of them.
 Yours probably does two or three without you thinking about it:</p>
 <ul>
 <li>a <strong>station</strong> is you - sending and receiving your own
 messages</li>
 <li>a <strong>relay</strong> repeats what it hears, so a message travels
 further than one radio reaches</li>
-<li>a <strong>carrier</strong> holds messages for someone out of range and
-hands them over when they come back</li>
-<li>a <strong>gateway</strong> passes traffic between radio and the
-internet</li>
-<li>an <strong>indexer</strong> keeps an archive for the stations that asked
-it to</li>
+<li>a <strong>carrier</strong> holds a message for someone out of range and
+hands it over when they come back, against a signed receipt</li>
+<li>a <strong>gateway</strong> passes traffic between radio and something that
+is not XPRS - the internet, or APRS</li>
+<li>a <strong>file server</strong> keeps files and hands out any piece of one
+to whoever asks for it</li>
+<li>an <strong>archiver</strong> keeps what it heard and answers for it later:
+the traffic, the posts of people who chose it, and mail waiting for someone who
+is away</li>
 </ul>
 <p>Nobody assigns these. You pick which ones your device takes on, how much of
-your battery and storage they get, and you can stop at any time.</p>
+your battery and storage they get, and you can stop at any time. Every station
+is already a small archiver of its own record; saying so out loud is what
+offers it to everyone else.</p>
 
 <h2 id="changes"><a href="#changes">If you already use APRS</a></h2>
 <p>XPRS is APRS carried forward. The idea is unchanged - small text packets,
