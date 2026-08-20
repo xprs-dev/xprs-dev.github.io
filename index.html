@@ -139,11 +139,35 @@ it missed.</li>
 <li><strong>No central server.</strong> Where APRS routes through one
 internet backbone, XPRS uses indexers each station chooses, exchanging
 directories instead of copying each other's traffic.</li>
-<li><strong>Files of any size.</strong> Content is addressed by SHA-256:
-located by asking who holds it, then fetched in verified pieces.</li>
 <li><strong>Room to grow.</strong> Every value carries its unit, unknown
 keys are skipped without error, and new fields never break old readers.</li>
 </ul>
+
+<h2 id="files"><a href="#files">Files, in a swarm</a></h2>
+<p>A file is named by the SHA-256 of its bytes and cut into pieces, so
+several stations can serve one file at once. Ask the street who has it:</p>
+<pre>t:request f:X1QZ3N ts:2026-08-08_14:26:40 q:have file:nYxKzGm4vT2pQ8dW5jR7cL0aFbNs9hUe3oXiC6EkM1w.jpg</pre>
+<p>Holders answer, and a station that has only part of it is still useful:</p>
+<pre>t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:full size:240kB
+t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:412/900 size:58MB</pre>
+<p>Every piece is verified on arrival, and a station holding 412 of 900 may
+serve those 412 - nobody has to finish before being useful. A folder is the
+same idea again: a listing of hashes, itself a file, so a receiver fetches only
+the lines that changed.</p>
+
+<h2 id="privacy"><a href="#privacy">Protected content</a></h2>
+<p><code>x:</code> replaces <code>m:</code> with a sealed body. Type, sender,
+recipient and time stay readable, so a station in the middle can still route it
+and release a carried copy, without reading a word of it:</p>
+<pre>t:message f:X1QZ3N d:X1RD89 ts:2026-08-08_14:26:40 x:pQ4m9xT2vB8kR sig:&lt;60 characters&gt;</pre>
+<p>Or hide only parts, the way a released document is redacted - secrets are
+marked in double parentheses and travel as bars:</p>
+<pre>m:meet ((Max)) at ((pier2))   ->   m:meet &#9608;&#9608;&#9608; at &#9608;&#9608;&#9608;&#9608;&#9608;
+pos:38.7((223)),-9.1((393))   ->   pos:38.7&#9608;&#9608;&#9608;,-9.1&#9608;&#9608;&#9608;</pre>
+<p>Everyone reads the rest and sees where the gaps are. Bars are stripped
+before a value is interpreted, so that position still parses for everyone -
+good to about ten kilometres - while the passphrase recovers the metre scale.
+None of this goes on amateur bands: plain text only there.</p>
 
 <h2 id="roles"><a href="#roles">Roles in the network</a></h2>
 <p>All of them run on ordinary devices, and one device usually plays
