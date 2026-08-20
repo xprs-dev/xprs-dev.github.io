@@ -96,13 +96,36 @@ footer {
   <div class="tagline">eXtended Packet Radio System</div>
 </header>
 
-<p>XPRS extends and modernizes APRS. The core idea stays the same: small
-text packets that anyone can hear and volunteers repeat across the network.
-Everything else was rebuilt with the lessons of three decades in the
-field.</p>
+<p>Every message you send today goes through somebody's tower, somebody's
+server and somebody's account. When any of them is down, busy or switched off,
+you are not talking to anyone.</p>
 
-<p>A packet is at most 250 bytes of <code>key:value</code> text, readable
-without a decoder:</p>
+<p><strong>XPRS is a way for devices to talk without any of that.</strong>
+Small text messages, carried by whatever radio is at hand and passed along by
+whoever hears them. No towers, no accounts, no phone number, no company in the
+middle.</p>
+
+<h2 id="why"><a href="#why">Why you would use it</a></h2>
+<ul>
+<li><strong>It works when the rest does not.</strong> A power cut, a storm, a
+jammed network, a boat, a valley with no coverage. If someone is in range, you
+can reach them.</li>
+<li><strong>Nobody can switch it off.</strong> There is no server to seize, no
+account to suspend and no bill. The network is the people running it.</li>
+<li><strong>Your identity is yours.</strong> A key made on your device that
+nobody issues and nobody can revoke. Messages are signed with it, so a name on
+the air can be checked rather than trusted.</li>
+<li><strong>It runs on what you already have.</strong> Bluetooth in your
+phone, a twenty-euro LoRa board, an old handheld, the WiFi in the room, or the
+internet when there is one.</li>
+<li><strong>You can read it yourself.</strong> Plain text you can print and
+understand - no binary format, nothing to reverse engineer.</li>
+<li><strong>It does not rot.</strong> Fields nobody knows are skipped instead
+of rejected, so an old device keeps working with a new one for years.</li>
+</ul>
+
+<h2 id="packets"><a href="#packets">What a message looks like</a></h2>
+<p>At most 250 bytes, so it fits one cheap radio transmission:</p>
 
 <p class="exlabel">A message to a friend:</p>
 <pre>t:message f:X1QZ3N d:X1RD89 ts:2026-08-18_09:15:00 m:arrived at the marina, see you at the cafe</pre>
@@ -110,38 +133,16 @@ without a decoder:</p>
 <p class="exlabel">A call for help, relayed further than anything else:</p>
 <pre>t:sos f:X1QZ3N pos:38.7223,-9.1393 kind:medical ts:2026-08-18_09:20:00 m:broken leg, cannot walk</pre>
 
-<p class="exlabel">Back from four days at sea, asking a station for what was missed:</p>
-<pre>t:command f:X1BOA3 d:X3RLY7 ts:2026-08-18_09:45:00 cmd:history since:2026-08-14_00:00:00</pre>
-
-<p>A person can read every one of them and so can a five-line parser. The
-same packets travel LoRa, Bluetooth, WiFi, HF/VHF/UHF, wired networks and
-the internet.</p>
-
-<p>A flat list of key and value <strong>is a JSON object already</strong>.
-Split each field on its first colon and you are done - no schema, nothing to
-know about the packet type:</p>
+<p>The same messages travel LoRa, Bluetooth, WiFi, ham radio bands, wired
+networks and the internet, unchanged. And because it is a flat list of names
+and values, it is already JSON if your program prefers that:</p>
 
 <pre>{"t":"message","f":"X1QZ3N","d":"X1RD89",
  "ts":"2026-08-18_09:15:00","m":"arrived at the marina"}</pre>
-
-<p>Values stay strings, because the unit is part of the value:
+<p>Values stay text, because the unit is part of the value -
 <code>temp:14.2C</code> is <code>"14.2C"</code>, never <code>14.2</code>.
 <a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md#410-json">Section
-4.10</a> has both directions.</p>
-
-<h2 id="changes"><a href="#changes">What changed from APRS</a></h2>
-<ul>
-<li><strong>Identity is proven.</strong> Packets are signed with a key the
-station holds, and a licensed callsign can be bound to that key.</li>
-<li><strong>Delivery is tracked.</strong> Stations carry mail for absent
-peers against signed receipts, and a station that was away can ask for what
-it missed.</li>
-<li><strong>No central server.</strong> Where APRS routes through one
-internet backbone, XPRS uses indexers each station chooses, exchanging
-directories instead of copying each other's traffic.</li>
-<li><strong>Room to grow.</strong> Every value carries its unit, unknown
-keys are skipped without error, and new fields never break old readers.</li>
-</ul>
+4.10</a> has the conversion both ways.</p>
 
 <h2 id="files"><a href="#files">Sharing files, BitTorrent style</a></h2>
 <p>A file is shared the way BitTorrent shares one: broken into pieces, and
@@ -154,10 +155,9 @@ collect it from whoever is nearby and has part of it.</p>
 <pre>t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:full size:240kB
 t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:412/900 size:58MB</pre>
 <p>Nobody has to finish a download before being useful to the next person. The
-long name in the request is the file's fingerprint, so every piece is checked
-as it arrives and a file assembled from six strangers is exactly the file that
-was published. Whole folders work the same way, and re-sharing a changed folder
-only moves what actually changed.</p>
+long name is the file's fingerprint, so every piece is checked as it arrives and
+a file assembled from six strangers is exactly the file that was
+published.</p>
 
 <h2 id="privacy"><a href="#privacy">Private messages</a></h2>
 <p>You can send a message that only the person it is addressed to can read.
@@ -167,63 +167,79 @@ not a word of what it says:</p>
 <p>The sender, the recipient and the time stay in the open on purpose. A relay
 in between has to see those to pass the message along, or to hold it until the
 recipient comes back in range. It never needs to see the content.</p>
-<p>You can also hide only <em>parts</em> of a message, the way a released
-document has passages blacked out. The author marks the secrets, and everyone
-sees where the gaps are and how long they are:</p>
+<p>Or hide only <em>parts</em> of one, the way a released document has
+passages blacked out:</p>
 <pre>meet ((Max)) at ((pier2))   is sent as   meet &#9608;&#9608;&#9608; at &#9608;&#9608;&#9608;&#9608;&#9608;</pre>
-<p>Anyone with the passphrase reads the whole thing. Everyone else still gets a
-useful message. The same trick blurs a position rather than hiding it: the
-public version stays accurate to about ten kilometres, and the passphrase
-recovers the exact spot.</p>
-<p>None of this is used on amateur radio bands, where the rules require plain
-text.</p>
+<p>Anyone with the passphrase reads it whole; everyone else still gets a useful
+message. The same trick blurs a position instead of hiding it - public to about
+ten kilometres, exact with the passphrase.</p>
 
-<h2 id="roles"><a href="#roles">Roles in the network</a></h2>
-<p>All of them run on ordinary devices, and one device usually plays
-several. A <em>station</em> speaks under a callsign; a <em>relay</em> repeats
-what it hears; a <em>carrier</em> holds mail for absent stations; a
-<em>gateway</em> bridges radio and internet; an <em>indexer</em> archives the
-publications of the stations that chose it. No role is assigned by an
-authority - operators choose what their devices do, and set their own
-limits.</p>
+<h2 id="roles"><a href="#roles">What a device can be</a></h2>
+<p>One device usually does several at once, and you decide which. A
+<em>station</em> is you, sending and receiving. A <em>relay</em> repeats what it
+hears so it travels further. A <em>carrier</em> holds messages for people out of
+range until they return. A <em>gateway</em> bridges radio and internet. An
+<em>indexer</em> keeps an archive for the stations that asked it to. Nobody
+assigns these - you choose.</p>
 
-<h2 id="spectrum"><a href="#spectrum">Radio frequencies usage</a></h2>
-<p>No licence is needed on licence-free spectrum: LoRa and Bluetooth in
-the ISM bands, WiFi and the internet. Identity comes from a keypair
-generated on the device. On amateur bands XPRS operates under amateur
-rules: plain text, a government-issued callsign, no ciphertext.</p>
+<h2 id="changes"><a href="#changes">If you already use APRS</a></h2>
+<p>XPRS is APRS carried forward. The idea is unchanged - small text packets,
+heard by anyone, repeated by volunteers - with three decades of lessons
+applied.</p>
+<ul>
+<li><strong>Identity is proven.</strong> Packets are signed with a key the
+station holds, and a licensed callsign can be bound to that key.</li>
+<li><strong>Delivery is tracked.</strong> Stations hold mail for operators who
+are away, and hand it over against a signed receipt - so you can ask for what
+you missed instead of losing it.</li>
+<li><strong>No central server.</strong> APRS routes through one internet
+backbone. In XPRS each station picks its own archives, and they exchange
+directories instead of copying each other's traffic.</li>
+<li><strong>Files and privacy.</strong> Neither existed before: whole files
+move over the air, and messages can be sealed off it.</li>
+</ul>
 
-<h2 id="spec"><a href="#spec">Specification</a></h2>
+<h2 id="spectrum"><a href="#spectrum">Do you need a licence?</a></h2>
+<p>Not for most of it. LoRa and Bluetooth in the ISM bands, WiFi and the
+internet are licence-free, and your identity is a key your device makes -
+nothing to register, nobody to ask.</p>
+<p>On amateur bands the amateur rules apply as always: plain text, your
+government-issued callsign, no encryption. XPRS respects that line rather than
+blurring it - sealed messages and self-made callsigns never go onto amateur
+spectrum.</p>
+
+<h2 id="implementations"><a href="#implementations">Running it</a></h2>
+<ul class="links">
+<li><a href="https://github.com/xprs-dev/xprs-flutter">xprs-dev/xprs-flutter</a>
+<span>the app for phones and desktops. Released for Android, Linux and
+Windows.</span></li>
+<li><a href="https://github.com/xprs-dev/xprs-esp32">xprs-dev/xprs-esp32</a>
+<span>firmware in C that turns a cheap board into a station, repeater and
+mailbox: T-Dongle-S3, M5Stack Core, Heltec LoRa, kv4p and others.</span></li>
+<li><a href="https://github.com/xprs-dev/reticulum-dart">xprs-dev/reticulum-dart</a>
+<span>the shared networking library: mesh transport, a DHT, file sharing and
+the signature scheme.</span></li>
+<li><a href="https://github.com/xprs-dev/wapps">xprs-dev/wapps</a>
+<span>the small applications that run inside the app, and the catalog it
+installs them from.</span></li>
+</ul>
+
+<h2 id="spec"><a href="#spec">Writing your own</a></h2>
+<p>The format is small enough to implement in an afternoon, and fully
+specified.</p>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a>
-<span>the full specification, edition XPRS-2026. Every section is linkable
-on its own, as <code>XPRS.md#3-callsigns</code>.</span></li>
+<span>the specification, edition XPRS-2026. Every section links on its own, as
+<code>XPRS.md#3-callsigns</code>.</span></li>
 <li><a href="https://github.com/xprs-dev/spec/blob/main/xprs_corpus.json">xprs_corpus.json</a>
-<span>the conformance corpus: every worked example as a wire with its byte
-count and identifier. Replay them byte-exact and you read the format.</span></li>
+<span>the conformance corpus: every example in the document with its byte
+count and identifier. Replay them exactly and you have read the format
+right.</span></li>
 <li><a href="https://github.com/xprs-dev/spec">github.com/xprs-dev/spec</a>
 <span>the specification repository</span></li>
 </ul>
 
-<h2 id="implementations"><a href="#implementations">Reference implementations</a></h2>
-<ul class="links">
-<li><a href="https://github.com/xprs-dev/xprs-flutter">xprs-dev/xprs-flutter</a>
-<span>phones and desktops, in Dart and Flutter: codec, signing,
-store-and-forward, the heard-traffic archive and the transports. Released for
-Android, Linux and Windows.</span></li>
-<li><a href="https://github.com/xprs-dev/xprs-esp32">xprs-dev/xprs-esp32</a>
-<span>firmware in C: a board becomes a station, digipeater and mailbox.
-T-Dongle-S3, M5Stack Core, Heltec LoRa, kv4p and others, over BLE5, ESP-NOW,
-WiFi and LoRa.</span></li>
-<li><a href="https://github.com/xprs-dev/reticulum-dart">xprs-dev/reticulum-dart</a>
-<span>the shared Dart networking library. Reticulum mesh transport, a DHT,
-content-addressed file sharing and the signature scheme.</span></li>
-<li><a href="https://github.com/xprs-dev/wapps">xprs-dev/wapps</a>
-<span>the applications that run inside the host, compiled to WebAssembly,
-and the catalog the launcher installs from.</span></li>
-</ul>
-
-<h2 id="community"><a href="#community">Community</a></h2>
+<h2 id="community"><a href="#community">Taking part</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev">github.com/xprs-dev</a>
 <span>the XPRS organization on GitHub</span></li>
@@ -236,24 +252,21 @@ and the catalog the launcher installs from.</span></li>
 possible was designed by other people.</p>
 <ul class="links">
 <li><a href="https://reticulum.network/">Reticulum</a> - Mark Qvist
-<span>the cryptography-first networking stack XPRS uses to cross the mesh
-and the internet. Addresses derived from keys, no central authority, and one
-protocol over LoRa, packet radio, WiFi or TCP/IP.</span></li>
+<span>the cryptography-first networking stack XPRS uses to cross the mesh and
+the internet.</span></li>
 <li><a href="https://github.com/nostr-protocol/nips">NOSTR</a> - fiatjaf
-<span>the event and relay model, and the secp256k1 keypair a station's
-identity is built on. Signed events over simple relays, 2020.</span></li>
+<span>the event and relay model, and the keypair a station's identity is built
+on.</span></li>
 <li><a href="https://www.aprs.org/">APRS</a> - Bob Bruninga, WB4APR (SK)
 <span>the original: small text packets, heard by anyone, repeated by
-volunteers. Begun in 1982, named APRS in 1992. Everything in this format is a
-continuation of that idea.</span></li>
+volunteers. Begun in 1982. Everything here continues that idea.</span></li>
 <li><a href="http://www.aprs-is.net/">APRS-IS</a> - Steve Dimse, K4HG, and the
 team that followed
-<span>APRServe, the first APRS-IS server, in 1997, and the tier of servers and
-operators that has carried APRS traffic across the internet ever since -
-including javAPRSSrvr by Pete Loveall, AE5PL.</span></li>
+<span>APRServe, the first APRS-IS server, in 1997, and the servers and
+operators that have carried APRS across the internet ever since.</span></li>
 <li><a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS</a> - Max Brito
-<span>the founding implementation: the specification, the Dart and C codecs,
-and the applications that speak it.</span></li>
+<span>the founding implementation: the specification, the codecs, and the
+applications that speak it.</span></li>
 </ul>
 
 <footer>
