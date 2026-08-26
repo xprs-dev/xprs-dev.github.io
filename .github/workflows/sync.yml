@@ -1,0 +1,144 @@
+name: sync update feed
+
+# Publish the XPRS update feed to xprs.dev.
+#
+# The feed ANNOUNCES; it does not host. Each channel document names the newest
+# version and, for every artifact, its size, its direct download URL and its
+# sha256. Only JSON is committed here, so this repo stays a few KB however many
+# releases ship -- and Pages never has to serve a 60 MB APK.
+#
+# The sha256 is the load-bearing field: it is the content address an XPRS phone
+# fetches the artifact by over Reticulum from a super-archiver that mirrored it.
+# The URL is what that mirror downloads from once, and the fallback for a device
+# with no Reticulum path.
+
+on:
+  schedule:
+    - cron: '0 */3 * * *'
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Publish this tag specifically (default: newest)'
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-update-feed
+  cancel-in-progress: false
+
+env:
+  APP_REPO: xprs-dev/xprs-flutter
+
+jobs:
+  feed:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the site
+        uses: actions/checkout@v4
+
+      # The feed format has exactly one implementation, and it lives with the
+      # app that consumes it (tool/publish_release.dart). Generating the JSON a
+      # second time here would be two things to keep in step.
+      - name: Check out the app (for tool/publish_release.dart)
+        uses: actions/checkout@v4
+        with:
+          repository: ${{ env.APP_REPO }}
+          path: app
+      - name: Fetch reticulum-dart (path dependency of the app)
+        run: git clone --depth 1 https://github.com/xprs-dev/reticulum-dart.git reticulum-dart
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+      - run: flutter pub get
+        working-directory: app
+
+      # Newest release overall (may be a pre-release) and newest stable. A tag
+      # with a '-' is a pre-release and lands in beta.json only; a stable tag
+      # writes BOTH files, so the beta channel always tracks the newest build.
+      - name: Resolve the tags to publish
+        id: tags
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          if [ -n "${{ inputs.tag }}" ]; then
+            NEWEST="${{ inputs.tag }}"
+          else
+            NEWEST=$(gh release list -R "$APP_REPO" --limit 1 \
+              --json tagName --jq '.[0].tagName')
+          fi
+          STABLE=$(gh release list -R "$APP_REPO" --limit 30 \
+            --json tagName,isPrerelease,isDraft \
+            --jq '[.[] | select(.isPrerelease==false and .isDraft==false)][0].tagName')
+          echo "newest=$NEWEST" >> "$GITHUB_OUTPUT"
+          echo "stable=$STABLE" >> "$GITHUB_OUTPUT"
+          echo "newest=$NEWEST stable=$STABLE"
+
+      # Nothing to do if both channels already point at these versions. Keeps
+      # the cron from producing an empty commit every three hours.
+      - name: Skip when the feed is already current
+        id: check
+        run: |
+          set -euo pipefail
+          cur_beta=$(jq -r '.tagName // ""' updates/beta.json 2>/dev/null || echo "")
+          cur_stable=$(jq -r '.tagName // ""' updates/stable.json 2>/dev/null || echo "")
+          if [ "$cur_beta" = "${{ steps.tags.outputs.newest }}" ] && \
+             [ "$cur_stable" = "${{ steps.tags.outputs.stable }}" ]; then
+            echo "current=yes" >> "$GITHUB_OUTPUT"
+          else
+            echo "current=no" >> "$GITHUB_OUTPUT"
+          fi
+
+      # Publish stable first, then the newest: a pre-release newest rewrites
+      # beta.json only, leaving the stable.json the earlier step just wrote.
+      - name: Build the feed
+        if: steps.check.outputs.current != 'yes'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          set -euo pipefail
+          publish() {
+            tag="$1"
+            [ -n "$tag" ] || return 0
+            ver="${tag#v}"
+            rm -rf "$GITHUB_WORKSPACE/dl" && mkdir -p "$GITHUB_WORKSPACE/dl"
+            # The universal APK is deliberately not mirrored: the per-ABI splits
+            # are what a device installs, and it is twice the size of any of them.
+            gh release download "$tag" -R "$APP_REPO" -D "$GITHUB_WORKSPACE/dl" \
+              -p '*-android-*.apk' -p '*-linux-x64.tar.gz' -p '*-setup.exe'
+            gh release view "$tag" -R "$APP_REPO" --json body --jq .body \
+              > "$GITHUB_WORKSPACE/notes.md"
+            date=$(gh release view "$tag" -R "$APP_REPO" --json publishedAt --jq .publishedAt)
+            # Run from inside the app checkout: `dart run` resolves package:
+            # imports against the package config of the directory it runs in.
+            ( cd app && dart run tool/publish_release.dart \
+                --site "$GITHUB_WORKSPACE" \
+                --version "$ver" \
+                --base-url "https://github.com/$APP_REPO/releases/download/$tag" \
+                --name "XPRS $ver" \
+                --notes "$GITHUB_WORKSPACE/notes.md" \
+                --date "$date" \
+                "$GITHUB_WORKSPACE"/dl/* )
+          }
+          publish "${{ steps.tags.outputs.stable }}"
+          publish "${{ steps.tags.outputs.newest }}"
+          rm -rf "$GITHUB_WORKSPACE/dl" "$GITHUB_WORKSPACE/notes.md"
+          # Pages would otherwise run Jekyll over the tree.
+          touch .nojekyll
+
+      - name: Commit
+        if: steps.check.outputs.current != 'yes'
+        run: |
+          set -euo pipefail
+          git config user.name  'xprs-release-bot'
+          git config user.email 'noreply@xprs.dev'
+          git add -A updates .nojekyll
+          if git diff --cached --quiet; then
+            echo "no change"
+            exit 0
+          fi
+          git commit -m "feed: stable ${{ steps.tags.outputs.stable }}, beta ${{ steps.tags.outputs.newest }}"
+          git push
