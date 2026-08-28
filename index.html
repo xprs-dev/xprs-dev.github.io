@@ -67,6 +67,23 @@ ul { margin: 0 0 0.9rem 1.4rem; }
 li { margin-bottom: 0.45rem; }
 .links li { margin-bottom: 0.7rem; }
 .links span { color: var(--dim); }
+/* Download row. Wraps to one-per-line on a narrow screen rather than
+   shrinking the tap targets. */
+.dl { list-style: none; margin: 0 0 0.9rem; display: flex;
+      flex-wrap: wrap; gap: 0.7rem; }
+.dl li { margin: 0; }
+.dl a {
+  display: flex; align-items: center; gap: 0.6rem;
+  border: 1px solid var(--line); border-radius: 4px;
+  padding: 0.6rem 0.9rem; text-decoration: none; color: var(--ink);
+  background: var(--code-bg);
+}
+.dl a:hover { border-color: var(--accent); color: var(--accent); }
+.dl a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.dl svg { flex: none; width: 1.6rem; height: 1.6rem; }
+.dl b { font-weight: normal; display: block; }
+.dl em { font-style: normal; color: var(--dim); font-size: 0.82rem;
+         display: block; }
 footer {
   margin-top: 3rem; padding-top: 1.2rem; border-top: 1px solid var(--line);
   color: var(--dim); font-size: 0.9rem;
@@ -97,31 +114,30 @@ footer {
 </header>
 
 <p>Every message you send today goes through somebody's tower, somebody's
-server and somebody's account. When any of them is down, busy or switched off,
-you are not talking to anyone.</p>
+server and somebody's account. When one of them is down, busy or switched off,
+the message does not go.</p>
 
-<p><strong>XPRS is a way for devices to talk without any of that.</strong>
-Small text messages, carried by whatever radio is at hand and passed along by
-whoever hears them. No towers, no accounts, no phone number, no company in the
-middle.</p>
+<p><strong>XPRS carries small text messages over whatever is to hand:
+Bluetooth, LoRa, WiFi, amateur radio, or the internet when there is one.</strong>
+When none of it is there, the messages still move, passed from device to device
+by whoever hears them. Nothing to sign up for, and no service in the middle that
+can refuse.</p>
 
 <h2 id="why"><a href="#why">Why you would use it</a></h2>
 <ul>
-<li><strong>It works when the rest does not.</strong> A power cut, a storm, a
-jammed network, a boat, a valley with no coverage. If someone is in range you
-can reach them.</li>
-<li><strong>Nobody can switch it off.</strong> There is no server to seize, no
-account to suspend and no bill. The network is the people running it.</li>
-<li><strong>Your identity is yours.</strong> A key made on your device that
-nobody issues and nobody can revoke. Messages are signed with it, so a name on
-the air can be checked rather than trusted.</li>
-<li><strong>It runs on what you already have.</strong> Bluetooth in your
-phone, a twenty-euro LoRa board, an old handheld, the WiFi in the room, or the
-internet when there is one.</li>
-<li><strong>You can read it yourself.</strong> Plain text you can print and
-understand - no binary format, nothing to reverse engineer.</li>
-<li><strong>It does not rot.</strong> Fields nobody knows are skipped instead
-of rejected, so an old device keeps working with a new one for years.</li>
+<li>A power cut, a storm, a jammed network, a boat, a valley with no
+coverage: if someone is in range, you can reach them.</li>
+<li>There is no server to seize, no account to suspend and no bill. The
+network is whoever is running it.</li>
+<li>Your key is made on your device. Nobody issues it and nobody can revoke
+it, and messages are signed with it, so a name on the air can be checked
+rather than trusted.</li>
+<li>It runs on the Bluetooth in your phone, a twenty-euro LoRa board, an old
+handheld, the WiFi in the room, or the internet when there is one.</li>
+<li>The format is plain text you can print and read: no binary encoding,
+nothing to reverse engineer.</li>
+<li>Fields a device does not know are skipped rather than rejected, so an old
+device keeps working with a new one.</li>
 </ul>
 
 <h2 id="packets"><a href="#packets">What a message looks like</a></h2>
@@ -144,20 +160,6 @@ and values, it is already JSON if your program prefers that:</p>
 <a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md#410-json">Section
 4.10</a> has the conversion both ways.</p>
 
-<h2 id="files"><a href="#files">Sharing files, BitTorrent style</a></h2>
-<p>A file is shared the way BitTorrent shares one: broken into pieces, and
-anyone who has a piece can pass it on. You do not download from a server, you
-collect it from whoever is nearby and has part of it.</p>
-<p>Asking who has a photo:</p>
-<pre>t:request f:X1QZ3N ts:2026-08-08_14:26:40 q:have file:nYxKzGm4vT2pQ8dW5jR7cL0aFbNs9hUe3oXiC6EkM1w.jpg</pre>
-<p>Two stations answer. One has all of it, the other only 412 pieces out of
-900 - and it can still send you those 412:</p>
-<pre>t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:full size:240kB
-t:result f:X3RLY7 d:X1QZ3N ts:2026-08-08_14:26:41 r:17d873 s:have have:412/900 size:58MB</pre>
-<p>Nobody has to finish a download before being useful to the next person. The
-long name is the file's fingerprint, so every piece is checked as it arrives -
-a file assembled from six strangers is exactly the file that was published.</p>
-
 <h2 id="privacy"><a href="#privacy">Private messages</a></h2>
 <p>You can send a message that only the person it is addressed to can read.
 Everyone else sees that a message went from someone to someone, and when - but
@@ -166,13 +168,6 @@ not a word of what it says:</p>
 <p>Sender, recipient and time stay in the open on purpose: a relay needs them
 to pass the message along, or to hold it until the recipient is back in range.
 It never needs the content.</p>
-<p>Or hide only <em>parts</em> of one, the way a released document has
-passages blacked out:</p>
-<pre>meet ((Max)) at ((pier2))   is sent as   meet &#9608;&#9608;&#9608; at &#9608;&#9608;&#9608;&#9608;&#9608;</pre>
-<p>Anyone with the passphrase reads it whole; everyone else still gets a useful
-message. The same trick blurs a position instead of hiding it - public to about
-ten kilometres, exact with the passphrase.</p>
-
 <h2 id="roles"><a href="#roles">What a device can be</a></h2>
 <p>There are six jobs on the network, and one device can do any of them.
 Yours probably does two or three without you thinking about it:</p>
@@ -198,8 +193,7 @@ offers it to everyone else.</p>
 
 <h2 id="changes"><a href="#changes">If you already use APRS</a></h2>
 <p>XPRS is APRS carried forward. The idea is unchanged - small text packets,
-heard by anyone, repeated by volunteers - with three decades of lessons
-applied.</p>
+heard by anyone, repeated by volunteers.</p>
 <ul>
 <li><strong>Identity is proven.</strong> Packets are signed with a key the
 station holds, and a licensed callsign can be bound to that key.</li>
@@ -222,6 +216,46 @@ government-issued callsign, no encryption. XPRS respects that line rather than
 blurring it - sealed messages and self-made callsigns never go onto amateur
 spectrum.</p>
 
+<h2 id="download"><a href="#download">Download</a></h2>
+<p>The current release, straight from GitHub. These links always point at the
+newest one:</p>
+<ul class="dl">
+<li><a href="https://github.com/xprs-dev/xprs-flutter/releases/latest/download/xprs-linux-x64.tar.gz">
+  <svg viewBox="0 0 24 24" role="img" aria-label="Linux" fill="none"
+       stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+       stroke-linejoin="round">
+    <path d="M9 3.6c0-1.2.9-2.1 2-2.1h2c1.1 0 2 .9 2 2.1v3.1c0 1 .4 1.7 1.1 2.6
+             1.6 2 2.4 3.9 2.4 6.2 0 1.5-.4 2.9-1.1 4"/>
+    <path d="M6.6 19.5C5.9 18.1 5.5 16.7 5.5 15.2c0-2.3.8-4.2 2.4-6.2C8.6 8.1 9 7.4 9 6.4"/>
+    <path d="M6.6 19.5c-.6 1-.2 2 .9 2h9c1.1 0 1.5-1 .9-2"/>
+    <circle cx="10.4" cy="5.2" r=".9" fill="currentColor" stroke="none"/>
+    <circle cx="13.6" cy="5.2" r=".9" fill="currentColor" stroke="none"/>
+    <path d="M10.9 8.1c.6.5 1.6.5 2.2 0l-1.1-1.4z" fill="currentColor"/>
+  </svg>
+  <span><b>Linux</b><em>x64 &middot; tar.gz</em></span></a></li>
+<li><a href="https://github.com/xprs-dev/xprs-flutter/releases/latest/download/xprs-windows-x64-setup.exe">
+  <svg viewBox="0 0 24 24" role="img" aria-label="Windows" fill="currentColor">
+    <path d="M3 5.6l7.6-1.05v7.2H3zM11.6 4.4L21 3.1v8.65h-9.4z
+             M3 12.75h7.6v7.2L3 18.9zM11.6 12.75H21v8.65l-9.4-1.3z"/>
+  </svg>
+  <span><b>Windows</b><em>x64 &middot; installer</em></span></a></li>
+<li><a href="https://github.com/xprs-dev/xprs-flutter/releases/latest/download/xprs.apk">
+  <svg viewBox="0 0 24 24" role="img" aria-label="Android" fill="none"
+       stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
+       stroke-linejoin="round">
+    <path d="M5.5 10.5h13v7a1.5 1.5 0 0 1-1.5 1.5H7a1.5 1.5 0 0 1-1.5-1.5z"/>
+    <path d="M5.5 10.5a6.5 6.5 0 0 1 13 0"/>
+    <path d="M8 7.2 6.6 5M16 7.2 17.4 5"/>
+    <circle cx="9.6" cy="8.4" r=".9" fill="currentColor" stroke="none"/>
+    <circle cx="14.4" cy="8.4" r=".9" fill="currentColor" stroke="none"/>
+    <path d="M3.6 12v4M20.4 12v4M9.5 19v2M14.5 19v2"/>
+  </svg>
+  <span><b>Android</b><em>APK &middot; all devices</em></span></a></li>
+</ul>
+<p>Android also has smaller per-processor builds, and every version ever
+released is on the <a href="https://github.com/xprs-dev/xprs-flutter/releases">releases page</a>. Windows and Linux are
+unsigned, so both will warn you on first run.</p>
+
 <h2 id="implementations"><a href="#implementations">Running it</a></h2>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/xprs-flutter">xprs-dev/xprs-flutter</a>
@@ -239,16 +273,14 @@ installs them from.</span></li>
 </ul>
 
 <h2 id="spec"><a href="#spec">Writing your own</a></h2>
-<p>The format is small enough to implement in an afternoon, and fully
-specified.</p>
+<p>The format is small, and fully specified.</p>
 <ul class="links">
 <li><a href="https://github.com/xprs-dev/spec/blob/main/XPRS.md">XPRS.md</a>
 <span>the specification, edition XPRS-2026. Every section links on its own, as
 <code>XPRS.md#3-callsigns</code>.</span></li>
 <li><a href="https://github.com/xprs-dev/spec/blob/main/xprs_corpus.json">xprs_corpus.json</a>
 <span>the conformance corpus: every example in the document with its byte
-count and identifier. Replay them exactly and you have read the format
-right.</span></li>
+count and identifier. Replay them exactly to check an implementation.</span></li>
 <li><a href="https://github.com/xprs-dev/spec">github.com/xprs-dev/spec</a>
 <span>the specification repository</span></li>
 </ul>
@@ -273,7 +305,7 @@ the internet.</span></li>
 on.</span></li>
 <li><a href="https://www.aprs.org/">APRS</a> - Bob Bruninga, WB4APR (SK)
 <span>the original: small text packets, heard by anyone, repeated by
-volunteers. Begun in 1982. Everything here continues that idea.</span></li>
+volunteers. Begun in 1982. XPRS continues it.</span></li>
 <li><a href="http://www.aprs-is.net/">APRS-IS</a> - Steve Dimse, K4HG, and the
 team that followed
 <span>APRServe, the first APRS-IS server, in 1997, and the servers and
