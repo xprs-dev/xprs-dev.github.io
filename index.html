@@ -220,7 +220,7 @@ spectrum.</p>
 <p>The current release, straight from GitHub. These links always point at the
 newest one:</p>
 <ul class="dl">
-<li><a href="https://github.com/xprs-dev/xprs-flutter/releases/latest/download/xprs-linux-x64.tar.gz">
+<li><a data-dl="linux" href="https://github.com/xprs-dev/xprs-flutter/releases/latest">
   <svg viewBox="0 0 24 24" role="img" aria-label="Linux" fill="none"
        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
        stroke-linejoin="round">
@@ -232,14 +232,14 @@ newest one:</p>
     <circle cx="13.6" cy="5.2" r=".9" fill="currentColor" stroke="none"/>
     <path d="M10.9 8.1c.6.5 1.6.5 2.2 0l-1.1-1.4z" fill="currentColor"/>
   </svg>
-  <span><b>Linux</b><em>x64 &middot; tar.gz</em></span></a></li>
-<li><a href="https://github.com/xprs-dev/xprs-flutter/releases/latest/download/xprs-windows-x64-setup.exe">
+  <span><b>Linux</b><em data-sub>x64 &middot; tar.gz</em></span></a></li>
+<li><a data-dl="windows" href="https://github.com/xprs-dev/xprs-flutter/releases/latest">
   <svg viewBox="0 0 24 24" role="img" aria-label="Windows" fill="currentColor">
     <path d="M3 5.6l7.6-1.05v7.2H3zM11.6 4.4L21 3.1v8.65h-9.4z
              M3 12.75h7.6v7.2L3 18.9zM11.6 12.75H21v8.65l-9.4-1.3z"/>
   </svg>
-  <span><b>Windows</b><em>x64 &middot; installer</em></span></a></li>
-<li><a href="https://github.com/xprs-dev/xprs-flutter/releases/latest/download/xprs.apk">
+  <span><b>Windows</b><em data-sub>x64 &middot; installer</em></span></a></li>
+<li><a data-dl="android" href="https://github.com/xprs-dev/xprs-flutter/releases/latest">
   <svg viewBox="0 0 24 24" role="img" aria-label="Android" fill="none"
        stroke="currentColor" stroke-width="1.6" stroke-linecap="round"
        stroke-linejoin="round">
@@ -250,11 +250,48 @@ newest one:</p>
     <circle cx="14.4" cy="8.4" r=".9" fill="currentColor" stroke="none"/>
     <path d="M3.6 12v4M20.4 12v4M9.5 19v2M14.5 19v2"/>
   </svg>
-  <span><b>Android</b><em>APK &middot; all devices</em></span></a></li>
+  <span><b>Android</b><em data-sub>APK &middot; arm64</em></span></a></li>
 </ul>
-<p>Android also has smaller per-processor builds, and every version ever
-released is on the <a href="https://github.com/xprs-dev/xprs-flutter/releases">releases page</a>. Windows and Linux are
-unsigned, so both will warn you on first run.</p>
+<p>Android has builds for other processors, and every version ever released is
+on the <a href="https://github.com/xprs-dev/xprs-flutter/releases">releases page</a>. Windows and Linux are unsigned, so
+both will warn you on first run.</p>
+
+<script>
+/* The buttons above link to the releases page in the markup, which cannot go
+   stale. This upgrades them to the exact file for the current release.
+   
+   Read from updates/stable.json rather than github.com/.../releases/latest/
+   download/<name>: that path only works while the FILE NAME never changes, and
+   it broke the moment the release process started stamping versions into
+   names (xprs-linux-x64.tar.gz became xprs-1.2.0-linux-x64.tar.gz). The feed
+   is same-origin, refreshed every three hours by .github/workflows/sync.yml,
+   and names each asset with its real URL and size. If it is unreachable or
+   malformed the links stay pointing at the releases page. */
+(function () {
+  var pick = {
+    linux:   function (n) { return /-linux-x64\.tar\.gz$/.test(n); },
+    windows: function (n) { return /-setup\.exe$/.test(n); },
+    android: function (n) { return /-android-arm64-v8a\.apk$/.test(n); }
+  };
+  function mb(b) { return (b / 1048576).toFixed(0) + ' MB'; }
+  fetch('updates/stable.json', { cache: 'no-cache' })
+    .then(function (r) { return r.ok ? r.json() : null; })
+    .then(function (d) {
+      if (!d || !d.assets) return;
+      document.querySelectorAll('a[data-dl]').forEach(function (a) {
+        var want = pick[a.getAttribute('data-dl')];
+        var hit = d.assets.filter(function (x) { return want(x.name); })[0];
+        if (!hit || !hit.url) return;
+        a.href = hit.url;
+        var sub = a.querySelector('[data-sub]');
+        if (sub && d.version) {
+          sub.textContent = d.version + ' \u00b7 ' + mb(hit.size);
+        }
+      });
+    })
+    .catch(function () { /* markup already points somewhere that works */ });
+})();
+</script>
 
 <h2 id="implementations"><a href="#implementations">Running it</a></h2>
 <ul class="links">
