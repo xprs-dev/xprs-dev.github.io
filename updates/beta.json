@@ -1,40 +1,40 @@
 {
-  "version": "1.2.3",
-  "tagName": "v1.2.3",
-  "name": "XPRS 1.2.3",
-  "body": "**Full Changelog**: https://github.com/xprs-dev/xprs-flutter/compare/v1.2.2...v1.2.3",
-  "publishedAt": "2026-08-29T20:25:27Z",
+  "version": "1.2.4",
+  "tagName": "v1.2.4",
+  "name": "XPRS 1.2.4",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/xprs-flutter/compare/v1.2.3...v1.2.4",
+  "publishedAt": "2026-08-30T14:33:47Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.2.3-android-arm64-v8a.apk",
-      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.3/xprs-1.2.3-android-arm64-v8a.apk",
-      "size": 57103580,
-      "sha256": "72088e1a542fda167831a58b2c2b07aba76d246a4673536f1ebdeba78707173a"
+      "name": "xprs-1.2.4-android-arm64-v8a.apk",
+      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.4/xprs-1.2.4-android-arm64-v8a.apk",
+      "size": 57169116,
+      "sha256": "486ae21684bf3dcde47940a4364c2a097957ad13dcda4d1a20e6b18b7cb65a4b"
     },
     {
-      "name": "xprs-1.2.3-android-armeabi-v7a.apk",
-      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.3/xprs-1.2.3-android-armeabi-v7a.apk",
-      "size": 47163592,
-      "sha256": "ae56b78787b3307ea809e32e5d18e35ea0a4c59547f06c687d70f2b785df39f7"
+      "name": "xprs-1.2.4-android-armeabi-v7a.apk",
+      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.4/xprs-1.2.4-android-armeabi-v7a.apk",
+      "size": 47196360,
+      "sha256": "300d17a5853c215da43b112a5972b895ef4041120438e5dfab8383ac0ad11e56"
     },
     {
-      "name": "xprs-1.2.3-android-x86_64.apk",
-      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.3/xprs-1.2.3-android-x86_64.apk",
-      "size": 61397074,
-      "sha256": "9d5d09fde2cd22593cc06231c021d2e98fc95fcc791021ba77a8926ba353c5df"
+      "name": "xprs-1.2.4-android-x86_64.apk",
+      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.4/xprs-1.2.4-android-x86_64.apk",
+      "size": 61462610,
+      "sha256": "a5549d1689874717f64a474b3cf058d3c5f8435cda073e5179c18206667b5d6c"
     },
     {
-      "name": "xprs-1.2.3-linux-x64.tar.gz",
-      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.3/xprs-1.2.3-linux-x64.tar.gz",
-      "size": 35026315,
-      "sha256": "de424e32367881cb0b45106b679a9a7b17985366d6aa45fbb62aa8a3403b306e"
+      "name": "xprs-1.2.4-linux-x64.tar.gz",
+      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.4/xprs-1.2.4-linux-x64.tar.gz",
+      "size": 35035312,
+      "sha256": "b9dd01d203f5372d7222012f297308289cec97218cb360bd02b1e86587a76dd3"
     },
     {
-      "name": "xprs-1.2.3-windows-x64-setup.exe",
-      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.3/xprs-1.2.3-windows-x64-setup.exe",
-      "size": 28873799,
-      "sha256": "133be487c24b14b51d304968ee533d0588f967fef325285473b3a19db2cd7c22"
+      "name": "xprs-1.2.4-windows-x64-setup.exe",
+      "url": "https://github.com/xprs-dev/xprs-flutter/releases/download/v1.2.4/xprs-1.2.4-windows-x64-setup.exe",
+      "size": 28882139,
+      "sha256": "b9855a90bf5042ddb3f5f9faede3434839e0aaf95ce364dc197fab3846807184"
     }
   ]
 }
