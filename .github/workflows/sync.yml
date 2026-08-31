@@ -29,7 +29,7 @@ concurrency:
   cancel-in-progress: false
 
 env:
-  APP_REPO: xprs-dev/xprs-flutter
+  APP_REPO: xprs-dev/app
 
 jobs:
   feed:
