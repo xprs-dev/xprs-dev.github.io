@@ -5,12 +5,15 @@ name: sync update feed
 # The feed ANNOUNCES; it does not host. Each channel document names the newest
 # version and, for every artifact, its size, its direct download URL and its
 # sha256. Only JSON is committed here, so this repo stays a few KB however many
-# releases ship -- and Pages never has to serve a 60 MB APK.
+# releases ship.
 #
 # The sha256 is the load-bearing field: it is the content address an XPRS phone
-# fetches the artifact by over Reticulum from a super-archiver that mirrored it.
-# The URL is what that mirror downloads from once, and the fallback for a device
-# with no Reticulum path.
+# fetches the artifact by over Reticulum from an always-on archiver that mirrored
+# it. The URL is what that mirror downloads from once, and the fallback for a
+# device with no Reticulum path. It points at xprs.dev/downloads (the
+# xprs-dev/downloads repository), never at github.com: the app itself must not
+# depend on GitHub (F-Droid). A tag is published only once its files are
+# served there.
 
 on:
   schedule:
@@ -30,6 +33,7 @@ concurrency:
 
 env:
   APP_REPO: xprs-dev/app
+  DOWNLOADS: https://xprs.dev/downloads
 
 jobs:
   feed:
@@ -85,8 +89,11 @@ jobs:
           set -euo pipefail
           cur_beta=$(jq -r '.tagName // ""' updates/beta.json 2>/dev/null || echo "")
           cur_stable=$(jq -r '.tagName // ""' updates/stable.json 2>/dev/null || echo "")
+          # A feed still naming another host (GitHub, before xprs.dev/downloads)
+          # is rewritten even when its versions are current.
           if [ "$cur_beta" = "${{ steps.tags.outputs.newest }}" ] && \
-             [ "$cur_stable" = "${{ steps.tags.outputs.stable }}" ]; then
+             [ "$cur_stable" = "${{ steps.tags.outputs.stable }}" ] && \
+             ! jq -r '.assets[].url' updates/*.json | grep -qv "^$DOWNLOADS/"; then
             echo "current=yes" >> "$GITHUB_OUTPUT"
           else
             echo "current=no" >> "$GITHUB_OUTPUT"
@@ -114,10 +121,18 @@ jobs:
             date=$(gh release view "$tag" -R "$APP_REPO" --json publishedAt --jq .publishedAt)
             # Run from inside the app checkout: `dart run` resolves package:
             # imports against the package config of the directory it runs in.
+            # Not on xprs.dev/downloads yet (its hourly run has not picked
+            # the release up): leave this channel as it is, and try next time.
+            for f in "$GITHUB_WORKSPACE"/dl/*; do
+              if ! curl -fsI "$DOWNLOADS/$tag/$(basename "$f")" > /dev/null; then
+                echo "::notice::$tag is not on $DOWNLOADS yet; skipping it this run"
+                return 0
+              fi
+            done
             ( cd app && dart run tool/publish_release.dart \
                 --site "$GITHUB_WORKSPACE" \
                 --version "$ver" \
-                --base-url "https://github.com/$APP_REPO/releases/download/$tag" \
+                --base-url "$DOWNLOADS/$tag" \
                 --name "XPRS $ver" \
                 --notes "$GITHUB_WORKSPACE/notes.md" \
                 --date "$date" \
