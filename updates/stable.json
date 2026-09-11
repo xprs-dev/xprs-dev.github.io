@@ -8,31 +8,31 @@
   "assets": [
     {
       "name": "xprs-1.2.16-android-arm64-v8a.apk",
-      "url": "https://github.com/xprs-dev/app/releases/download/v1.2.16/xprs-1.2.16-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.2.16/xprs-1.2.16-android-arm64-v8a.apk",
       "size": 49043740,
       "sha256": "17f48b229ee7ea0b9b75feaee341c1c0273aab56ebe774c0b8e3b383e40528f3"
     },
     {
       "name": "xprs-1.2.16-android-armeabi-v7a.apk",
-      "url": "https://github.com/xprs-dev/app/releases/download/v1.2.16/xprs-1.2.16-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.2.16/xprs-1.2.16-android-armeabi-v7a.apk",
       "size": 39681340,
       "sha256": "b0eeb79998e5b9133a2b6e7aca74aab7782a137cfa54a67a2548c00d8598d532"
     },
     {
       "name": "xprs-1.2.16-android-x86_64.apk",
-      "url": "https://github.com/xprs-dev/app/releases/download/v1.2.16/xprs-1.2.16-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.2.16/xprs-1.2.16-android-x86_64.apk",
       "size": 52708442,
       "sha256": "27206dc153029896dc0abf1b20a9dd97a27c6de14968e186605825857de2c8a4"
     },
     {
       "name": "xprs-1.2.16-linux-x64.tar.gz",
-      "url": "https://github.com/xprs-dev/app/releases/download/v1.2.16/xprs-1.2.16-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.2.16/xprs-1.2.16-linux-x64.tar.gz",
       "size": 33617713,
       "sha256": "1bd90b7a574ef31c8893ff6e3f40514b4685e9649b9bc703fd83626b51ad79b9"
     },
     {
       "name": "xprs-1.2.16-windows-x64-setup.exe",
-      "url": "https://github.com/xprs-dev/app/releases/download/v1.2.16/xprs-1.2.16-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.2.16/xprs-1.2.16-windows-x64-setup.exe",
       "size": 28717684,
       "sha256": "65952eb40e4b3d740cf0c81806a71fb5bfb7abb920f32d133a876dba5786ce1e"
     }
