@@ -1,40 +1,40 @@
 {
-  "version": "1.2.22",
-  "tagName": "v1.2.22",
-  "name": "XPRS 1.2.22",
-  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.2.21...v1.2.22",
-  "publishedAt": "2026-10-06T18:02:10Z",
+  "version": "1.2.23",
+  "tagName": "v1.2.23",
+  "name": "XPRS 1.2.23",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.2.22...v1.2.23",
+  "publishedAt": "2026-10-07T18:04:40Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.2.22-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.2.22/xprs-1.2.22-android-arm64-v8a.apk",
-      "size": 50201874,
-      "sha256": "10c1c8a7d98b1acb1fadd796dd2f10e1ae485ba533dbfae4a7c70bd02857e356"
+      "name": "xprs-1.2.23-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.2.23/xprs-1.2.23-android-arm64-v8a.apk",
+      "size": 50189586,
+      "sha256": "a4d0790f612d633006630fc0d4aaf36d987ea209cc9a2af484e208ccba141d0b"
     },
     {
-      "name": "xprs-1.2.22-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.2.22/xprs-1.2.22-android-armeabi-v7a.apk",
-      "size": 40588574,
-      "sha256": "a524576573cffc453b631fee6b209b57cb9db69b24f560bcab4280727f998367"
+      "name": "xprs-1.2.23-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.2.23/xprs-1.2.23-android-armeabi-v7a.apk",
+      "size": 40604958,
+      "sha256": "52d4dd06b64d77b606b0d30fb12547b7b4a98a9605ec4f1b60e2f209f50dbd5d"
     },
     {
-      "name": "xprs-1.2.22-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.2.22/xprs-1.2.22-android-x86_64.apk",
-      "size": 54007040,
-      "sha256": "729524df380211d9bdb5bf377c9d6df5c2c890017063236db74fbd1d9c328392"
+      "name": "xprs-1.2.23-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.2.23/xprs-1.2.23-android-x86_64.apk",
+      "size": 53994752,
+      "sha256": "ef8af95c18cec620700d4eb36d930fc56869bcee52f4931d26e15313485a7a7b"
     },
     {
-      "name": "xprs-1.2.22-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.2.22/xprs-1.2.22-linux-x64.tar.gz",
-      "size": 34164826,
-      "sha256": "f4770626b074f4f53d73dd12c5a74e229e29fd12bcf1b99f8ccb6001f68b5241"
+      "name": "xprs-1.2.23-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.2.23/xprs-1.2.23-linux-x64.tar.gz",
+      "size": 34159802,
+      "sha256": "6dd428b827c23301d96143f0e1156ec30d25c4c5b9389c514e8fab12228d9e23"
     },
     {
-      "name": "xprs-1.2.22-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.2.22/xprs-1.2.22-windows-x64-setup.exe",
-      "size": 29151257,
-      "sha256": "2bd36b2c5467fd043c661ebc327a21d5657d36fc07ed448437e97cc9238e52e6"
+      "name": "xprs-1.2.23-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.2.23/xprs-1.2.23-windows-x64-setup.exe",
+      "size": 29140846,
+      "sha256": "931bd579deddc2bc4f12afd24b3b6f8600c2b7d3d2f07eea52651e5b0bb5a228"
     }
   ]
 }
