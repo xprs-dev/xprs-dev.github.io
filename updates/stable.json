@@ -1,40 +1,40 @@
 {
-  "version": "1.3.2",
-  "tagName": "v1.3.2",
-  "name": "XPRS 1.3.2",
-  "body": "## XPRS 1.3.2\n\n### The rooms catch up\n- **Local, Regional and Global keep what was said while you were away.** A phone used to show a stranger's room message only while it was live, and lost it on the next open; the catch-up fetched it back from a nearby station and it was dropped again. Room messages heard within their scope are now kept, bounded by the archive quota and age cap. Nothing changes about what the phone *serves*: it announces no archiver role and answers strangers from its own publications only.\n- **A busy room no longer hides a quiet one.** Chat 0.7.58 refills one room at a time; before, a Meshtastic channel bridged into Regional could fill the whole refill window and leave Local empty.\n\n### Web chat (phone share server and ESP32 hotspot)\n- Older messages of each room show on open: the page asks each room's archive separately (`room=` on `/api/xprs/history`).\n- Traffic shows one entry per packet, with a tag per radio it went out or came in on.\n- The dead settings link under the chat is gone.\n\n### Stations\n- ESP32 firmware published alongside: a station now answers a history ask on the radio the asker can hear, not only the one the first copy of the ask arrived on.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.1...v1.3.2",
-  "publishedAt": "2026-10-25T11:56:10Z",
+  "version": "1.3.3",
+  "tagName": "v1.3.3",
+  "name": "XPRS 1.3.3",
+  "body": "## XPRS 1.3.3\n\n- **Chat draws a room in the order things were said.** Messages fetched from an archive arrive newest first, and 1.3.2 showed them upside down. Chat 0.7.59 opens a room by each message's own time, and a message arriving while the room is open is placed by it rather than appended.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.2...v1.3.3",
+  "publishedAt": "2026-10-25T12:24:18Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.3.2-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.3.2/xprs-1.3.2-android-arm64-v8a.apk",
-      "size": 51316594,
-      "sha256": "5f82ddc3063d066b26ec5e48021dcced053c5a75d36f8d41113ca610410d8edd"
+      "name": "xprs-1.3.3-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-android-arm64-v8a.apk",
+      "size": 51365746,
+      "sha256": "46f9171d8027ebc07254ba6ec9d45ea525a2cac21f7a92ef1533bde74fc2a837"
     },
     {
-      "name": "xprs-1.3.2-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.3.2/xprs-1.3.2-android-armeabi-v7a.apk",
-      "size": 41867134,
-      "sha256": "b727d5e005e9a238ad10f9ef8719262b4d72926fd85a573d1f17cc5f65679be4"
+      "name": "xprs-1.3.3-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-android-armeabi-v7a.apk",
+      "size": 41912190,
+      "sha256": "c671d122825012fa182a53cb7478f7e085ab4332efe895798cc0070f30afcbc5"
     },
     {
-      "name": "xprs-1.3.2-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.3.2/xprs-1.3.2-android-x86_64.apk",
-      "size": 55187296,
-      "sha256": "28979cefc65c04599b2163ce1939b9d8bcf76331f2f21c8c2373dcbc64c59d32"
+      "name": "xprs-1.3.3-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-android-x86_64.apk",
+      "size": 55232352,
+      "sha256": "cf8f1224391e870b42925f0fec91affd2935cb5e795063115b68ba8530d88fb9"
     },
     {
-      "name": "xprs-1.3.2-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.3.2/xprs-1.3.2-linux-x64.tar.gz",
-      "size": 34809346,
-      "sha256": "5b5fd187f8bfc6732d7129a91a9fd8420a2eee4c8a490674c78cbbfdc13116a2"
+      "name": "xprs-1.3.3-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-linux-x64.tar.gz",
+      "size": 34863938,
+      "sha256": "bd955e2f2dd95137bd058327e720ae65f998fb9f815f2657baae1b545779f01f"
     },
     {
-      "name": "xprs-1.3.2-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.3.2/xprs-1.3.2-windows-x64-setup.exe",
-      "size": 29622678,
-      "sha256": "7a2dc01637ff6f25fa225ce5cb3540cede483b36511845cca2317285e2e8d3bf"
+      "name": "xprs-1.3.3-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-windows-x64-setup.exe",
+      "size": 29670005,
+      "sha256": "7303f6fd2f2a06c2fe715b5877270362bb8f95be79617fafdd7e90b890339af4"
     }
   ]
 }
