@@ -1,40 +1,40 @@
 {
-  "version": "1.3.3",
-  "tagName": "v1.3.3",
-  "name": "XPRS 1.3.3",
-  "body": "## XPRS 1.3.3\n\n- **Chat draws a room in the order things were said.** Messages fetched from an archive arrive newest first, and 1.3.2 showed them upside down. Chat 0.7.59 opens a room by each message's own time, and a message arriving while the room is open is placed by it rather than appended.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.2...v1.3.3",
-  "publishedAt": "2026-10-25T12:24:18Z",
+  "version": "1.3.5",
+  "tagName": "v1.3.5",
+  "name": "XPRS 1.3.5",
+  "body": "## XPRS 1.3.5\n\n### Every phone keeps the station firmware\n- A new background service, on by default, reads the firmware release document from xprs.dev, believes only descriptions signed by the project's firmware publisher, downloads and verifies each released image (about 1.5 MB per board), keeps the newest set, and offers it by digest over Reticulum and Bluetooth. It also relays the publisher's signed descriptions to this phone's archivers. A station near any phone can therefore find and fetch its next firmware without the internet. `GET /api/firmware/mirror` shows its state.\n\n### Publishing a folder\n- `POST /api/xprs/folder/publish {\"name\",\"tag\",\"dir\"}` publishes a directory as a folder the format can find (XPRS.md 7.7.3): the files served by digest, the listing stored and held, and signed folder and member descriptions aired and deposited with the archivers. The firmware release uses it.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.3...v1.3.5\n\n_1.3.4 was tagged with a lock file a local build had rewritten and never published; 1.3.5 is the same release. `release.sh` now refuses a drifted lock._",
+  "publishedAt": "2026-10-25T15:23:52Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.3.3-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-android-arm64-v8a.apk",
-      "size": 51365746,
-      "sha256": "46f9171d8027ebc07254ba6ec9d45ea525a2cac21f7a92ef1533bde74fc2a837"
+      "name": "xprs-1.3.5-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-android-arm64-v8a.apk",
+      "size": 51431282,
+      "sha256": "54eb7b89707bd043ca4eb7190e765e0d044204ad6cbaeb0d67ecb35bd5beb495"
     },
     {
-      "name": "xprs-1.3.3-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-android-armeabi-v7a.apk",
-      "size": 41912190,
-      "sha256": "c671d122825012fa182a53cb7478f7e085ab4332efe895798cc0070f30afcbc5"
+      "name": "xprs-1.3.5-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-android-armeabi-v7a.apk",
+      "size": 41961342,
+      "sha256": "d09bcaef363596373d7a98f5a85121b6e5b5b15f30695524d5675ab16e83b536"
     },
     {
-      "name": "xprs-1.3.3-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-android-x86_64.apk",
+      "name": "xprs-1.3.5-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-android-x86_64.apk",
       "size": 55232352,
-      "sha256": "cf8f1224391e870b42925f0fec91affd2935cb5e795063115b68ba8530d88fb9"
+      "sha256": "7a4e92122662e763d843497fa589e3a8fbeadaa7476ae9b170d2201f174de8c3"
     },
     {
-      "name": "xprs-1.3.3-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-linux-x64.tar.gz",
-      "size": 34863938,
-      "sha256": "bd955e2f2dd95137bd058327e720ae65f998fb9f815f2657baae1b545779f01f"
+      "name": "xprs-1.3.5-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-linux-x64.tar.gz",
+      "size": 34881270,
+      "sha256": "6b7a63c17a45e89616ec41217d7f717be0b27ab70a58bddc0287898ffbdb8d92"
     },
     {
-      "name": "xprs-1.3.3-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.3.3/xprs-1.3.3-windows-x64-setup.exe",
-      "size": 29670005,
-      "sha256": "7303f6fd2f2a06c2fe715b5877270362bb8f95be79617fafdd7e90b890339af4"
+      "name": "xprs-1.3.5-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-windows-x64-setup.exe",
+      "size": 29680203,
+      "sha256": "d0dd9cd9e8569916a229e62c0f642a2636b6f1417fdc70848dfa72754f35d6ab"
     }
   ]
 }
