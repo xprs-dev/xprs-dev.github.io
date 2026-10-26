@@ -1,40 +1,40 @@
 {
-  "version": "1.3.5",
-  "tagName": "v1.3.5",
-  "name": "XPRS 1.3.5",
-  "body": "## XPRS 1.3.5\n\n### Every phone keeps the station firmware\n- A new background service, on by default, reads the firmware release document from xprs.dev, believes only descriptions signed by the project's firmware publisher, downloads and verifies each released image (about 1.5 MB per board), keeps the newest set, and offers it by digest over Reticulum and Bluetooth. It also relays the publisher's signed descriptions to this phone's archivers. A station near any phone can therefore find and fetch its next firmware without the internet. `GET /api/firmware/mirror` shows its state.\n\n### Publishing a folder\n- `POST /api/xprs/folder/publish {\"name\",\"tag\",\"dir\"}` publishes a directory as a folder the format can find (XPRS.md 7.7.3): the files served by digest, the listing stored and held, and signed folder and member descriptions aired and deposited with the archivers. The firmware release uses it.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.3...v1.3.5\n\n_1.3.4 was tagged with a lock file a local build had rewritten and never published; 1.3.5 is the same release. `release.sh` now refuses a drifted lock._",
-  "publishedAt": "2026-10-25T15:23:52Z",
+  "version": "1.3.6",
+  "tagName": "v1.3.6",
+  "name": "XPRS 1.3.6",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.5...v1.3.6",
+  "publishedAt": "2026-10-26T15:54:20Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.3.5-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-android-arm64-v8a.apk",
-      "size": 51431282,
-      "sha256": "54eb7b89707bd043ca4eb7190e765e0d044204ad6cbaeb0d67ecb35bd5beb495"
+      "name": "xprs-1.3.6-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.3.6/xprs-1.3.6-android-arm64-v8a.apk",
+      "size": 51427186,
+      "sha256": "0959e6d395b5fc20f858f7ed7acc8c162d74ae5591abc50cf8500e2a1408a4a6"
     },
     {
-      "name": "xprs-1.3.5-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-android-armeabi-v7a.apk",
-      "size": 41961342,
-      "sha256": "d09bcaef363596373d7a98f5a85121b6e5b5b15f30695524d5675ab16e83b536"
+      "name": "xprs-1.3.6-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.3.6/xprs-1.3.6-android-armeabi-v7a.apk",
+      "size": 41973630,
+      "sha256": "d1d8cda71bbe8295617078216aca53763da0dac8c2c4a0a17ad0b1a5f1a38f01"
     },
     {
-      "name": "xprs-1.3.5-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-android-x86_64.apk",
-      "size": 55232352,
-      "sha256": "7a4e92122662e763d843497fa589e3a8fbeadaa7476ae9b170d2201f174de8c3"
+      "name": "xprs-1.3.6-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.3.6/xprs-1.3.6-android-x86_64.apk",
+      "size": 55293792,
+      "sha256": "32486330ff49fabf5dfb168662ecbfc1dd56743561a02a65937f22ca6c262be4"
     },
     {
-      "name": "xprs-1.3.5-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-linux-x64.tar.gz",
-      "size": 34881270,
-      "sha256": "6b7a63c17a45e89616ec41217d7f717be0b27ab70a58bddc0287898ffbdb8d92"
+      "name": "xprs-1.3.6-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.3.6/xprs-1.3.6-linux-x64.tar.gz",
+      "size": 34885543,
+      "sha256": "fdfa2e991c0488042adc3a3fa66314f6a759896043bfead600a0808d175cb51c"
     },
     {
-      "name": "xprs-1.3.5-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.3.5/xprs-1.3.5-windows-x64-setup.exe",
-      "size": 29680203,
-      "sha256": "d0dd9cd9e8569916a229e62c0f642a2636b6f1417fdc70848dfa72754f35d6ab"
+      "name": "xprs-1.3.6-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.3.6/xprs-1.3.6-windows-x64-setup.exe",
+      "size": 29681123,
+      "sha256": "96c529caef3029e782e9cb3e9dbbb1ed6c41403d3ac4e3a2bfa19551bb4411e0"
     }
   ]
 }
