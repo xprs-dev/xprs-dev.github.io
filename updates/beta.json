@@ -1,40 +1,40 @@
 {
-  "version": "1.5.0",
-  "tagName": "v1.5.0",
-  "name": "XPRS 1.5.0",
-  "body": "## XPRS 1.5.0 — one core for the phone and the station\n\nThe XPRS core now lives in its own repository ([xprs-dev/core](https://github.com/xprs-dev/core)) and runs unchanged in the app and in the [server edition](https://github.com/xprs-dev/server). 1.4.0's battery work came along: a phone on battery is still a messenger with a radio, and a full station only when plugged in.\n\n### Web chat on the phone's hotspot\n- **A blog post shows the moment it is published** (sending, published, or refused with Retry) instead of waiting for the archive's next write.\n- **Formatted text** (XPRS.md 4.11): headings, bold, italic, lists, quotes and links, written beside a live preview with a packet counter. A line break travels as U+2028, a paragraph as U+2029.\n- **Images by reference.** The browser shrinks a picture, hashes it and stores it on the phone (`/api/xprs/file/<ref>`); the post carries only the hash, so a radio link carries the words and whoever can fetches the picture.\n- Stations host **rooms, a forum, alerts and moderation**, and share rooms across a **mesh of trusted stations**; the administrator sets the banner, logo, stylesheet and theme.\n\n### The core\n- Identity, transports, delivery, the archive, groups and the receive door are one plain-Dart package shared with the server. The screens forward intent and the core decides lanes and reach.\n- The USB flasher, the transport core, preferences and i18n moved with it; `tool/arch_guard.dart` keeps UI out of it.\n- When a transfer or a directed wire needs the shared transport, the core asks for a hub (`CoreHost.requestHub`, answered by `RnsSession`). A phone on battery still holds none otherwise.\n\n### Battery (from 1.4.0, now in the core)\n- Station when plugged in, normal on battery; the line lane to the archiver; a hub on request; the empty room's cheaper scan and beacon. See docs/performance.md 8.19–8.23.\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.4.0...v1.5.0",
-  "publishedAt": "2026-11-07T16:23:02Z",
+  "version": "1.5.1",
+  "tagName": "v1.5.1",
+  "name": "XPRS 1.5.1",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.5.0...v1.5.1",
+  "publishedAt": "2026-11-07T18:23:45Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.5.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-android-arm64-v8a.apk",
+      "name": "xprs-1.5.1-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-android-arm64-v8a.apk",
       "size": 51595122,
-      "sha256": "7cdc050c1e8653deca203afc904202075f13b5164ed497537df25a2c91715b00"
+      "sha256": "2177e296f55c35e286f0a95fca129cb1ddc1e4ecec3665f7743f157f306260fc"
     },
     {
-      "name": "xprs-1.5.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-android-armeabi-v7a.apk",
+      "name": "xprs-1.5.1-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-android-armeabi-v7a.apk",
       "size": 42157950,
-      "sha256": "7ff11f3287d8d2beca0da8785591135edb167f1d1d64ce9a9e91d13bfcef3e5c"
+      "sha256": "25d644139456c657be855c1d1827f4337660b3263708e2529da9ac37f39863e9"
     },
     {
-      "name": "xprs-1.5.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-android-x86_64.apk",
+      "name": "xprs-1.5.1-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-android-x86_64.apk",
       "size": 55461728,
-      "sha256": "75e05c95b5b39cf0bac817cce81be3eb438903fa53820c8f12a87d24cc216f42"
+      "sha256": "157a1354dbcb42f04c1f5dfa33fcc04ce5d0964b670564c06b9a3cf79b735d0b"
     },
     {
-      "name": "xprs-1.5.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-linux-x64.tar.gz",
-      "size": 34960611,
-      "sha256": "e2f8fc02213c75cc8e97998cbd4e4a7f6dc1c82917eaac635fddcc05799cb882"
+      "name": "xprs-1.5.1-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-linux-x64.tar.gz",
+      "size": 34961181,
+      "sha256": "9ae6b5db78a2fe635cb97135489d2d9af66cdab65818e782d9a76347b5d7502c"
     },
     {
-      "name": "xprs-1.5.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-windows-x64-setup.exe",
-      "size": 29736424,
-      "sha256": "31727aa61dcb89d550cd4a8a8dfee2133b4fee0c70f088678aae23b5f31c7da5"
+      "name": "xprs-1.5.1-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-windows-x64-setup.exe",
+      "size": 29740369,
+      "sha256": "adcc53bf8c2c25a0d6f764686a0f253a496732127dec100c718021ca77079e1f"
     }
   ]
 }
