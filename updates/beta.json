@@ -1,40 +1,40 @@
 {
-  "version": "1.4.0",
-  "tagName": "v1.4.0",
-  "name": "XPRS 1.4.0",
-  "body": "## XPRS 1.4.0 — a phone on battery is a messenger with a radio\n\nUsers reported severe battery drain on Android. The audit (docs/performance.md §8.19–8.22) found a phone running as a full always-on Reticulum station regardless of power: four public hubs held open, shared folders re-published to the DHT every minute, a transport role, and several leaks around the power tier. This release changes what a phone *is* on battery, not only what it costs.\n\n### Two profiles\n- **Station** when plugged in (charging, full, or on a charger at 100%), or when the owner says so: everything as before.\n- **Normal** on battery: no public hub is held open, nothing is published to the DHT, the phone forwards for nobody. Bluetooth presence, scanning, the digipeater and the beacon stay on. Preference `power.profile` = `auto` (default) / `station` / `normal`; `/api/node/role` key `powerProfile`.\n\n### The line lane (XPRS.md §13.0.2, §13.4)\n- An archiver announces where it answers a plain TCP connection (`dial:`) and whether it has room for new stations (`room:`). A phone remembers the archivers it hears and keeps **one idle socket** to the ones it chose, with a four-minute keepalive.\n- Over that socket the phone asks `q:mail only:ME`, catches up with `cmd:history since:`, deposits its mail — and the archiver **delivers** held and arriving mail without being asked. Chats between two phones on battery travel phone → socket → archiver → socket → phone.\n- Archiver side: `q:mail` answered (on the socket and over every lane), peers registered only after a signed line verifies, inline history served once (no duplicate paced replay), load read from the mailbox declarations naming it (§12.9.5), `room:no` past the operator's ceiling. Set up with `POST /api/xprs/archiver {\"public\":true,\"dial\":\"host\"}`.\n\n### A hub on request\n- A battery phone brings one hub up only when something needs the shared transport — serving a file a far station asked for, fetching one, a Reticulum-only contact — and drops it five minutes after the last reason lets go (fifteen for a transfer). `GET/POST /api/rns/session`.\n\n### Fixed, in every profile\n- Shared folders re-advertised every 60 s (every file, each a link handshake); now only on change, plus the 30-minute republish.\n- A `mesh-dial` hold that could pin the phone at full power until a departed peer returned.\n- The Dart fallback tick that undid the battery tier; `radioStatus()` once a minute instead of every tick.\n- Native: the per-tick wake lock released when Dart answers (was 3 s flat); the `active` tier's standing lock; headless-boot screen state; the legacy scan now follows the scan mode; a presence refresh no longer reopens the advert window (duty back to 5 s in 60); the advert rotation idles while the window is closed; silent-scan restarts back off.\n- An edge-bridge leaf no longer answers path requests between hubs; the engine isolate's stats post goes 2 s → 10 s; the stall probe is debug-only.\n- One battery reader (`PowerState`) for the whole app; `connectedNotCharging` counts as plugged in everywhere; the frozen battery percentage that kept `dialBudgetLow()` from ever firing.\n\n### Empty room\n- No XPRS radio heard for five minutes: both scans LOW_POWER, the connectable presence advert about once a second (still connectable), the beacon every three minutes. The first frame heard brings it all back on the next tick.\n\n### Naming\n- \"Indexer\" is now \"archiver\" across the app, library, firmware and wapps. Stored settings (`indexer.*`) migrate once; the firmware's `xprs.ini` still reads `[indexer]`; `/api/status` reports `archiver`.\n\n### Bundled wapps\n- Archive 0.7.9, Torrents 0.6.4.\n\n### Not yet measured\nThe overnight `dumpsys batterystats` before/after on a phone is still owed (performance.md §8.11's protocol); the numbers above are from the code, not a soak.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.3.8...v1.4.0",
-  "publishedAt": "2026-11-06T10:08:57Z",
+  "version": "1.5.0",
+  "tagName": "v1.5.0",
+  "name": "XPRS 1.5.0",
+  "body": "## XPRS 1.5.0 — one core for the phone and the station\n\nThe XPRS core now lives in its own repository ([xprs-dev/core](https://github.com/xprs-dev/core)) and runs unchanged in the app and in the [server edition](https://github.com/xprs-dev/server). 1.4.0's battery work came along: a phone on battery is still a messenger with a radio, and a full station only when plugged in.\n\n### Web chat on the phone's hotspot\n- **A blog post shows the moment it is published** (sending, published, or refused with Retry) instead of waiting for the archive's next write.\n- **Formatted text** (XPRS.md 4.11): headings, bold, italic, lists, quotes and links, written beside a live preview with a packet counter. A line break travels as U+2028, a paragraph as U+2029.\n- **Images by reference.** The browser shrinks a picture, hashes it and stores it on the phone (`/api/xprs/file/<ref>`); the post carries only the hash, so a radio link carries the words and whoever can fetches the picture.\n- Stations host **rooms, a forum, alerts and moderation**, and share rooms across a **mesh of trusted stations**; the administrator sets the banner, logo, stylesheet and theme.\n\n### The core\n- Identity, transports, delivery, the archive, groups and the receive door are one plain-Dart package shared with the server. The screens forward intent and the core decides lanes and reach.\n- The USB flasher, the transport core, preferences and i18n moved with it; `tool/arch_guard.dart` keeps UI out of it.\n- When a transfer or a directed wire needs the shared transport, the core asks for a hub (`CoreHost.requestHub`, answered by `RnsSession`). A phone on battery still holds none otherwise.\n\n### Battery (from 1.4.0, now in the core)\n- Station when plugged in, normal on battery; the line lane to the archiver; a hub on request; the empty room's cheaper scan and beacon. See docs/performance.md 8.19–8.23.\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.4.0...v1.5.0",
+  "publishedAt": "2026-11-07T16:23:02Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.4.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.4.0/xprs-1.4.0-android-arm64-v8a.apk",
-      "size": 51505010,
-      "sha256": "bdb78d3dd72ee760b3975d43b017f90a0e88dec82525fb823e05ccf4913f9024"
+      "name": "xprs-1.5.0-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-android-arm64-v8a.apk",
+      "size": 51595122,
+      "sha256": "7cdc050c1e8653deca203afc904202075f13b5164ed497537df25a2c91715b00"
     },
     {
-      "name": "xprs-1.4.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.4.0/xprs-1.4.0-android-armeabi-v7a.apk",
-      "size": 42051454,
-      "sha256": "b14d98ae88f0fe6a9df4be8ce2ad5384cffd3204116fa240abcf9f077c89cf6e"
+      "name": "xprs-1.5.0-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-android-armeabi-v7a.apk",
+      "size": 42157950,
+      "sha256": "7ff11f3287d8d2beca0da8785591135edb167f1d1d64ce9a9e91d13bfcef3e5c"
     },
     {
-      "name": "xprs-1.4.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.4.0/xprs-1.4.0-android-x86_64.apk",
-      "size": 55371616,
-      "sha256": "e2a88132146d6b0723abc948293e9dc2d2652d94fb5b08de93789fd4322ce278"
+      "name": "xprs-1.5.0-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-android-x86_64.apk",
+      "size": 55461728,
+      "sha256": "75e05c95b5b39cf0bac817cce81be3eb438903fa53820c8f12a87d24cc216f42"
     },
     {
-      "name": "xprs-1.4.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.4.0/xprs-1.4.0-linux-x64.tar.gz",
-      "size": 34900218,
-      "sha256": "de41a180e88cd67d50bd9eeb780a3e3161a37ee8bf1c64406044a2429da0d382"
+      "name": "xprs-1.5.0-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-linux-x64.tar.gz",
+      "size": 34960611,
+      "sha256": "e2f8fc02213c75cc8e97998cbd4e4a7f6dc1c82917eaac635fddcc05799cb882"
     },
     {
-      "name": "xprs-1.4.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.4.0/xprs-1.4.0-windows-x64-setup.exe",
-      "size": 29703161,
-      "sha256": "288e14b12aecd43bb4767e496ac339e28e27ab42d7ca81442875cedeb96f60be"
+      "name": "xprs-1.5.0-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.5.0/xprs-1.5.0-windows-x64-setup.exe",
+      "size": 29736424,
+      "sha256": "31727aa61dcb89d550cd4a8a8dfee2133b4fee0c70f088678aae23b5f31c7da5"
     }
   ]
 }
