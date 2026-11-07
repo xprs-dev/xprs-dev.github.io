@@ -50,8 +50,25 @@ jobs:
         with:
           repository: ${{ env.APP_REPO }}
           path: app
-      - name: Fetch reticulum-dart (path dependency of the app)
-        run: git clone --depth 1 https://github.com/xprs-dev/reticulum-dart.git reticulum-dart
+      # The app's path dependencies, at the commits its release pinned
+      # (.reticulum-dart-commit, .core-commit; release.sh writes them). Since
+      # 1.5.0 the XPRS core is its own repository, xprs-dev/core.
+      - name: Fetch reticulum-dart and core (path dependencies of the app)
+        run: |
+          set -euo pipefail
+          fetch() {
+            repo="$1" dir="$2" pin="$3"
+            git init -q "$dir"
+            git -C "$dir" remote add origin "https://github.com/xprs-dev/$repo.git"
+            if [ -n "$pin" ]; then
+              git -C "$dir" fetch -q --depth 1 origin "$pin"
+            else
+              git -C "$dir" fetch -q --depth 1 origin main
+            fi
+            git -C "$dir" checkout -q FETCH_HEAD
+          }
+          fetch reticulum-dart reticulum-dart "$(cat app/.reticulum-dart-commit 2>/dev/null || true)"
+          fetch core core "$(cat app/.core-commit 2>/dev/null || true)"
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
