@@ -1,40 +1,40 @@
 {
-  "version": "1.5.1",
-  "tagName": "v1.5.1",
-  "name": "XPRS 1.5.1",
-  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.5.0...v1.5.1",
-  "publishedAt": "2026-11-07T18:23:45Z",
+  "version": "1.6.0",
+  "tagName": "v1.6.0",
+  "name": "XPRS 1.6.0",
+  "body": "## XPRS 1.6.0 — Quieter, kinder chat\n\nMost of this release comes from user feedback on the Chat app (0.7.61).\n\n### Notifications per room\n- Every chat room has its own notifications switch: in the room's ⋮ menu (or long-press), and as a bell in the open room's header.\n- The **Global** room is quiet by default; it was too busy to be worth an interruption. Local, Regional, groups and 1:1 conversations notify as before.\n- A room with notifications off still receives and stores everything, shows its unread count on its own row, and is marked with a bell. It just doesn't raise notifications or add to the app's badge.\n\n### Messages to someone whose key isn't known yet\n- \"Message X1ABCD directly\" no longer fails with *No key for this contact yet*. The message waits in the outbox, marked with a key, and is sent sealed as soon as the key arrives.\n- The app asks the archivers for that station's public key right away instead of waiting to hear it.\n- If you don't want to wait, **Send now, unsealed** sends it in the open (still signed), from the message's menu, its Info page, or the prompt in the conversation.\n\n### Message info, as a full page\n- **Info** opens a full page instead of a small popup: the original text and every edit, who sent it and when, the route through each relay to this station, how it was heard (radio or network, signal strength, copies, parts), signature and sealing, delivery state, and the raw packet with a copy button.\n\n### Smaller changes\n- Tapping a sender's name opens the same menu as the message's ⋮ button, rather than a menu that could only block them. Tapping a member in a room's member list opens a conversation with them.\n- Android: XPRS runs with whatever permissions you grant. Without Bluetooth permission it sends no Bluetooth adverts, and Settings shows a permission you grant from outside the app as soon as you open it.\n- Share server: visitors on the station's own network are heard on the LAN and offered a mailbox, so their mail is held and delivered through the page.\n- Station choice: an archiver reachable over the LAN or internet takes over from one you only reach by radio, once it's heard.\n- The mesh log is quieter: XPRS beacons are logged once a minute per station, or when what they say changes.\n- \"Indexer\" is now called \"Archiver\" everywhere.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.5.1...v1.6.0",
+  "publishedAt": "2026-11-08T17:39:18Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.5.1-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-android-arm64-v8a.apk",
-      "size": 51595122,
-      "sha256": "2177e296f55c35e286f0a95fca129cb1ddc1e4ecec3665f7743f157f306260fc"
+      "name": "xprs-1.6.0-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-android-arm64-v8a.apk",
+      "size": 51697522,
+      "sha256": "9c85c8d12ef4d1c18a86ec6cab3a8383458480698e2508562fc49e37db77d351"
     },
     {
-      "name": "xprs-1.5.1-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-android-armeabi-v7a.apk",
-      "size": 42157950,
-      "sha256": "25d644139456c657be855c1d1827f4337660b3263708e2529da9ac37f39863e9"
+      "name": "xprs-1.6.0-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-android-armeabi-v7a.apk",
+      "size": 42260350,
+      "sha256": "0c124787f517543adaea7e58403493f8711af65e9be265b412a36844c909caa3"
     },
     {
-      "name": "xprs-1.5.1-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-android-x86_64.apk",
-      "size": 55461728,
-      "sha256": "157a1354dbcb42f04c1f5dfa33fcc04ce5d0964b670564c06b9a3cf79b735d0b"
+      "name": "xprs-1.6.0-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-android-x86_64.apk",
+      "size": 55564128,
+      "sha256": "d29890b3c15af3f03397590189699afbc3bc31c010c2c18d992c25069927ab06"
     },
     {
-      "name": "xprs-1.5.1-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-linux-x64.tar.gz",
-      "size": 34961181,
-      "sha256": "9ae6b5db78a2fe635cb97135489d2d9af66cdab65818e782d9a76347b5d7502c"
+      "name": "xprs-1.6.0-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-linux-x64.tar.gz",
+      "size": 34965650,
+      "sha256": "d399e855d9b93f01754c032e22d697f81d3f3f62bbcf68ad40c0bd2b2de71feb"
     },
     {
-      "name": "xprs-1.5.1-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.5.1/xprs-1.5.1-windows-x64-setup.exe",
-      "size": 29740369,
-      "sha256": "adcc53bf8c2c25a0d6f764686a0f253a496732127dec100c718021ca77079e1f"
+      "name": "xprs-1.6.0-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-windows-x64-setup.exe",
+      "size": 29738723,
+      "sha256": "afc6ce34e9c2213fee82e43b74e1b2c8dc56b5b276b808c6155cf21662f57f36"
     }
   ]
 }
