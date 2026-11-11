@@ -65,11 +65,47 @@
     if (b instanceof URLSearchParams) return Promise.resolve(b.toString());
     return Promise.resolve(String(b));
   }
+  // The page polls as it does on a station's own network (the chat every
+  // 3 s, the traffic every 5 s). Over a link each poll is a whole call on a
+  // board that answers one at a time, and on a small one (an ESP32-C3) every
+  // call in flight takes RAM its WiFi needs. So calls go to the station one
+  // at a time, and an identical GET within GET_REUSE_MS shares the answer
+  // already fetched or on its way. Anything that changes something (a POST,
+  // PUT, DELETE) clears them: a sent message shows at once.
+  var GET_REUSE_MS = 15000;
+  var gets = {};
+  var line = Promise.resolve();
+  function oneAtATime(fn) {
+    var p = line.then(fn, fn);
+    line = p.then(function () {}, function () {});
+    return p;
+  }
+  // One call over the link. No status means the link is gone (the station's
+  // own uplink dropped, a gateway restarted): reach the station again, its
+  // proof checked again, and make the call once more.
+  function api(method, path, query, b) {
+    return window.XprsRns.api(method, path, query, b).then(function (r) {
+      if (r.status) return r;
+      return reach().then(function () {
+        return window.XprsRns.api(method, path, query, b);
+      }, function () { return r; });
+    });
+  }
   function call(method, u, body) {
     var a = apiPath(u);
-    return bodyBytes(body).then(function (b) {
-      return window.XprsRns.api(method, a.path, a.query, b);
-    });
+    if (method !== 'GET') {
+      gets = {};
+      return bodyBytes(body).then(function (b) {
+        return oneAtATime(function () { return api(method, a.path, a.query, b); });
+      });
+    }
+    var key = a.path + '?' + a.query, now = Date.now(), g = gets[key];
+    if (g && now - g.t < GET_REUSE_MS) return g.p;
+    var p = oneAtATime(function () { return api('GET', a.path, a.query, null); });
+    gets[key] = { t: now, p: p };
+    p.then(function (r) { if (!r.status && gets[key] && gets[key].p === p) delete gets[key]; },
+           function () { if (gets[key] && gets[key].p === p) delete gets[key]; });
+    return p;
   }
 
   function RnsXHR() {
@@ -113,7 +149,7 @@
     }
     var done = false, timer = null;
     function fire(name) { var h = self[name]; if (h) try { h.call(self, { type: name.slice(2), target: self }); } catch (e) { console.error(e); } }
-    if (this.timeout > 0) timer = setTimeout(function () { if (done) return; done = true; self.readyState = 4; fire('ontimeout'); fire('onloadend'); }, Math.max(this.timeout, 20000));
+    if (this.timeout > 0) timer = setTimeout(function () { if (done) return; done = true; self.readyState = 4; fire('ontimeout'); fire('onloadend'); }, Math.max(this.timeout, 60000));
     call(this._m, this._u, body).then(function (r) {
       if (done || self._aborted) return; done = true; if (timer) clearTimeout(timer);
       self.status = r.status; self._type = r.type || '';
@@ -179,41 +215,61 @@
   }
 
   // ---- connect, verify, show ---------------------------------------------
-  function tryGateways(list, i) {
-    if (i >= list.length) return Promise.reject(new Error('no gateway answered'));
-    say('Gateway ' + list[i] + '…');
-    return window.XprsRns.connect(list[i]).then(function (hello) {
-      return window.XprsRns.resolve(CALL).then(function (j) {
-        var r = JSON.parse(j);
-        if (!r.rns) throw new Error(list[i] + ' has not heard ' + CALL + ' on Reticulum');
-        say('Opening a link to ' + CALL + '…');
-        return window.XprsRns.open(r.rns).then(function (ok) {
-          if (!ok) throw new Error('no link to ' + CALL + ' through ' + list[i]);
-          return list[i];
-        });
-      });
+  // Reaching the station is one step, retried: a gateway, the station's
+  // Reticulum key, a link to it, and its proof checked here. A small station
+  // on a busy WiFi drops its own uplink now and then, and the link being
+  // opened at that moment is lost; the next try usually gets through.
+  var TRIES = 3, gateways = [], gw = '', nick = '';
+  function sleep(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
+  function once(i) {
+    if (i >= gateways.length) return Promise.reject(new Error('no gateway reached ' + CALL));
+    var g = gateways[i];
+    say('Gateway ' + g + '…');
+    return window.XprsRns.connect(g).then(function () {
+      return window.XprsRns.resolve(CALL);
+    }).then(function (j) {
+      var r = JSON.parse(j);
+      if (!r.rns) throw new Error(g + ' has not heard ' + CALL + ' on Reticulum');
+      say('Opening a link to ' + CALL + '…');
+      return window.XprsRns.open(r.rns);
+    }).then(function (ok) {
+      if (!ok) throw new Error('no link to ' + CALL + ' through ' + g);
+      var n = nonce();
+      return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, CALL, n)); });
+    }).then(function (v) {
+      if (!v.ok) throw new Error('This is not ' + CALL + ': ' + v.why);
+      gw = g; nick = v.nick || '';
     }).catch(function (e) {
       say(e.message || String(e), true);
-      return tryGateways(list, i + 1);
+      return once(i + 1);
     });
+  }
+  var reaching = null;
+  function reach() {
+    if (reaching) return reaching;
+    var t = 0;
+    function attempt() {
+      return once(0).catch(function (e) {
+        if (++t >= TRIES) throw e;
+        say('Trying again…');
+        return sleep(3000).then(attempt);
+      });
+    }
+    reaching = attempt();
+    reaching.then(function () { reaching = null; }, function () { reaching = null; });
+    return reaching;
   }
 
   function start() {
     if (!CALL) { say('No station named in the address: xprs.dev/in/<callsign>', true); return; }
     document.title = CALL + ' · XPRS';
-    var gw;
     load(BASE + 'rns.js').then(function () {
       return getText(BASE + 'gateways.json');
     }).then(function (t) {
-      var list = JSON.parse(t).gateways || [];
-      return tryGateways(list, 0);
-    }).then(function (g) {
-      gw = g;
-      var n = nonce();
-      return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, CALL, n)); });
-    }).then(function (v) {
-      if (!v.ok) throw new Error('This is not ' + CALL + ': ' + v.why);
-      say(CALL + ' proved itself' + (v.nick ? ' (' + v.nick + ')' : '') + '. Loading its portal…');
+      gateways = JSON.parse(t).gateways || [];
+      return reach();
+    }).then(function () {
+      say(CALL + ' proved itself' + (nick ? ' (' + nick + ')' : '') + '. Loading its portal…');
       return getText(BASE + 'portal.html');
     }).then(function (html) {
       window.XMLHttpRequest = RnsXHR;
