@@ -95,7 +95,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
       var s = st[c] || (st[c] = { call: c, last: 0, bearer: '', nick: '', pos: null, posTs: 0 });
       if (r.ts > s.last) { s.last = r.ts; s.bearer = r.bearer || ''; }
       var t = field(w, 't');
-      if (t === 'identity') { var n = field(w, 'nick'); if (n && !s.nick) s.nick = n; }
+      if (t === 'identity') { var n = field(w, 'nick'); if (n && n !== '-' && !s.nick) s.nick = n; }
       // The newest packet that states pos: wins (XPRS.md 6.3.2, kept per
       // field); pos:- withdraws it.
       var pf = (t === 'identity' || t === 'service' || t === 'observation') ? field(w, 'pos') : null;
