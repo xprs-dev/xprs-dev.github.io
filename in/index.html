@@ -14,6 +14,9 @@ header{display:flex;align-items:center;gap:16px;padding:10px 16px;border-bottom:
 h1{font-size:18px;letter-spacing:4px;color:var(--accent);margin:0}
 #count{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #count.bad{color:var(--bad)}
+nav{display:flex;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:2px;flex:none}
+nav a{color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:4px}
+nav a.on{background:#21262d;color:var(--text)}
 form{margin-left:auto;flex:none}
 #go{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;width:130px;font:inherit;text-transform:uppercase}
 #go::placeholder{text-transform:none;color:var(--muted)}
@@ -21,6 +24,14 @@ main{flex:1;display:flex;min-height:0}
 #map{flex:1;background:#1f1f1f}
 #side{width:260px;overflow:auto;border-left:1px solid var(--border)}
 #side:empty{display:none}
+#list{flex:1;overflow:auto;display:none}
+body.listing #list{display:block}
+body.listing #map,body.listing #side{display:none}
+#list .st{max-width:720px;margin:0 auto;align-items:center}
+#list .st div{min-width:0;display:flex;gap:10px;align-items:baseline}
+#list .st em{font-style:normal;color:#43A047;font-size:12px}
+#list p{color:var(--muted);text-align:center;padding:16px}
+#list button{display:block;margin:12px auto 24px;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font:inherit;cursor:pointer}
 .st{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none}
 .st:hover{background:var(--panel)}
 .st b{color:var(--accent);font-weight:600}
@@ -34,13 +45,13 @@ main{flex:1;display:flex;min-height:0}
 .leaflet-control-zoom a:hover{background:#21262d}
 .leaflet-control-attribution{background:rgba(22,27,34,.8)!important;color:var(--muted)}
 .leaflet-control-attribution a{color:#7fb0e0}
-@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:10px 12px}h1{font-size:15px;letter-spacing:2px}#count{font-size:13px}#go{width:80px;padding:6px 8px}.leaflet-control-attribution{font-size:10px}}
+@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:10px 12px}h1{font-size:15px;letter-spacing:2px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}#count{display:none}.leaflet-control-attribution{font-size:10px}}
 </style>
 </head>
 <body>
-<header><h1>XPRS</h1><span id="count">Connecting…</span>
+<header><h1>XPRS</h1><nav><a href="#" id="tab-map" class="on">Map</a><a href="#list" id="tab-list">List</a></nav><span id="count">Connecting…</span>
 <form id="goform"><input id="go" placeholder="Callsign" autocomplete="off" spellcheck="false"></form></header>
-<main><div id="map"></div><div id="side"></div></main>
+<main><div id="map"></div><div id="side"></div><div id="list"></div></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
 /* xprs.dev/in/: stations on a map. Reached over Reticulum through a gateway
@@ -52,6 +63,39 @@ main{flex:1;display:flex;min-height:0}
   var RECENT = 86400;
   var countEl = document.getElementById('count');
   function say(t, bad) { countEl.textContent = t; countEl.className = bad ? 'bad' : ''; }
+  var stations = [], shown = 50;
+  function view() {
+    var listing = location.hash === '#list';
+    document.body.classList.toggle('listing', listing);
+    document.getElementById('tab-map').classList.toggle('on', !listing);
+    document.getElementById('tab-list').classList.toggle('on', listing);
+    document.getElementById('go').placeholder = listing ? 'Filter' : 'Callsign';
+    if (listing) drawList(); else map.invalidateSize();
+  }
+  window.addEventListener('hashchange', view);
+  document.getElementById('go').oninput = function () { shown = 50; if (location.hash === '#list') drawList(); };
+  function drawList() {
+    var box = document.getElementById('list'), q = document.getElementById('go').value.trim().toLowerCase();
+    var hits = stations.filter(function (s) {
+      return !q || s.call.toLowerCase().indexOf(q) >= 0 || s.nick.toLowerCase().indexOf(q) >= 0;
+    });
+    box.innerHTML = '';
+    if (!stations.length) { box.innerHTML = '<p>Connecting…</p>'; return; }
+    if (!hits.length) { box.innerHTML = '<p>No station matches.</p>'; return; }
+    hits.slice(0, shown).forEach(function (s) {
+      var a = document.createElement('a');
+      a.className = 'st'; a.href = '/in/' + s.call.toLowerCase();
+      a.innerHTML = '<div><b>' + esc(s.call) + '</b><i>' + esc(s.nick) + '</i>' + (s.pos ? '<em>●</em>' : '') +
+        '</div><span>' + ago(s.last) + '</span>';
+      box.appendChild(a);
+    });
+    if (hits.length > shown) {
+      var more = document.createElement('button');
+      more.textContent = 'Show ' + Math.min(50, hits.length - shown) + ' more of ' + (hits.length - shown);
+      more.onclick = function () { shown += 50; drawList(); };
+      box.appendChild(more);
+    }
+  }
   document.getElementById('goform').onsubmit = function (e) {
     e.preventDefault();
     var c = document.getElementById('go').value.trim().toLowerCase();
@@ -165,6 +209,8 @@ main{flex:1;display:flex;min-height:0}
     var all = Object.keys(st).map(function (k) { return st[k]; });
     var recent = all.filter(function (s) { return now - s.last < RECENT; }).length;
     var placed = all.filter(function (s) { return s.pos; }).sort(function (a, b) { return b.last - a.last; });
+    stations = all.sort(function (a, b) { return b.last - a.last; });
+    if (location.hash === '#list') drawList();
     var side = document.getElementById('side'), bounds = L.latLngBounds([]);
     side.innerHTML = '';
     placed.forEach(function (s) {
@@ -226,6 +272,7 @@ main{flex:1;display:flex;min-height:0}
       return history('').then(function (b) { render(a.concat(b)); });
     });
   }).catch(function () { say('Can\u2019t reach the network right now', true); });
+  view();
 })();
 </script>
 </body>
