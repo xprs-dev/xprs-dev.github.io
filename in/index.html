@@ -194,7 +194,9 @@ body.listing #map,body.listing #side{display:none}
     var st = {}, now = Date.now() / 1000;
     rows.forEach(function (r) {
       var w = r.wire || '', c = base(field(w, 'f'));
-      if (!c || c.length < 4) return;
+      // XPRS stations only: other networks' nodes (MT…, MC…) and radio
+      // callsigns are heard here but cannot be opened over Reticulum.
+      if (!/^X[1-5][A-Z0-9]{2,6}$/.test(c)) return;
       var s = st[c] || (st[c] = { call: c, last: 0, nick: '', pos: null, posTs: 0 });
       if (r.ts > s.last) s.last = r.ts;
       var t = field(w, 't');
