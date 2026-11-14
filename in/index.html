@@ -12,9 +12,9 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/
 body{display:flex;flex-direction:column}
 header{display:flex;align-items:center;gap:16px;padding:10px 16px;border-bottom:1px solid var(--border)}
 h1{font-size:18px;letter-spacing:4px;color:var(--accent);margin:0}
-#count{color:var(--muted)}
+#count{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #count.bad{color:var(--bad)}
-form{margin-left:auto}
+form{margin-left:auto;flex:none}
 #go{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;width:130px;font:inherit;text-transform:uppercase}
 #go::placeholder{text-transform:none;color:var(--muted)}
 main{flex:1;display:flex;min-height:0}
@@ -34,7 +34,7 @@ main{flex:1;display:flex;min-height:0}
 .leaflet-control-zoom a:hover{background:#21262d}
 .leaflet-control-attribution{background:rgba(22,27,34,.8)!important;color:var(--muted)}
 .leaflet-control-attribution a{color:#7fb0e0}
-@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}}
+@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:10px 12px}h1{font-size:15px;letter-spacing:2px}#count{font-size:13px}#go{width:80px;padding:6px 8px}.leaflet-control-attribution{font-size:10px}}
 </style>
 </head>
 <body>
@@ -62,6 +62,7 @@ main{flex:1;display:flex;min-height:0}
   function nonce() { var a = new Uint8Array(12); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
 
   var map = L.map('map', { worldCopyJump: true }).setView([30, 0], 2);
+  map.attributionControl.setPrefix(false);
 
   // OpenStreetMap tiles repainted in the Protomaps "dark" palette, the same
   // recolouring as the app's map `tile-style: dark` (app/lib/wapp/geoui/
@@ -115,7 +116,7 @@ main{flex:1;display:flex;min-height:0}
       return cv;
     }
   });
-  new DarkTiles({ maxZoom: 18, attribution: '&copy; OpenStreetMap contributors, colours after Protomaps' }).addTo(map);
+  new DarkTiles({ maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
 
   // A wire's field (`m:` is the rest of the line).
   function field(w, k) {
