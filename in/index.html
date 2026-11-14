@@ -24,7 +24,7 @@ main{flex:1;display:flex;min-height:0}
 #map{flex:1;background:#1f1f1f}
 #side{width:260px;overflow:auto;border-left:1px solid var(--border)}
 #side:empty{display:none}
-#list{flex:1;overflow:auto;display:none}
+#list{flex:1;overflow:auto;display:none;scrollbar-gutter:stable}
 body.listing #list{display:block}
 body.listing #map,body.listing #side{display:none}
 #list .st{max-width:720px;margin:0 auto;align-items:center}
@@ -45,7 +45,7 @@ body.listing #map,body.listing #side{display:none}
 .leaflet-control-zoom a:hover{background:#21262d}
 .leaflet-control-attribution{background:rgba(22,27,34,.8)!important;color:var(--muted)}
 .leaflet-control-attribution a{color:#7fb0e0}
-@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:10px 12px}h1{font-size:15px;letter-spacing:2px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}#count{display:none}.leaflet-control-attribution{font-size:10px}}
+@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:10px 12px}h1{font-size:15px;letter-spacing:2px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}header{flex-wrap:wrap;row-gap:4px}#count{order:9;flex-basis:100%;font-size:12px}.leaflet-control-attribution{font-size:10px}}
 </style>
 </head>
 <body>
@@ -230,7 +230,7 @@ body.listing #map,body.listing #side{display:none}
       bounds.extend(ll);
     });
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
-    say(placed.length + ' mapped \u00b7 ' + recent + ' heard today');
+    say(all.length + ' stations \u00b7 ' + recent + ' today \u00b7 ' + placed.length + ' mapped');
   }
 
   function history(kind) {
