@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>XPRS stations</title>
+<link rel="icon" href="/favicon.svg">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<style>
+:root{--bg:#0a0a0b;--panel:#141416;--border:#26262a;--text:#f2f0ee;--muted:#8f8a86;--accent:#ffa86a;--bad:#ff6b6b;--ok:#7fd18b}
+@media (prefers-color-scheme: light){:root{--bg:#fafaf7;--panel:#ffffff;--border:#e3e1dc;--text:#1f2328;--muted:#6b7280;--accent:#c2581d;--bad:#c62828;--ok:#2e7d32}}
+html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+header{display:flex;align-items:baseline;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+h1{font-size:20px;letter-spacing:4px;color:var(--accent);margin:0}
+#sub{color:var(--muted);font-size:14px}
+#status{padding:8px 16px;color:var(--muted);font-size:14px}
+#status .bad{color:var(--bad)}
+main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(100vh - 110px);min-height:480px}
+#map{height:100%;border-right:1px solid var(--border)}
+#side{overflow:auto;padding:0 0 16px}
+#side h2{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:14px 16px 6px}
+.st{display:block;padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none}
+.st:hover{background:var(--panel)}
+.st b{color:var(--accent);letter-spacing:.5px}
+.st .meta{color:var(--muted);font-size:13px}
+.st .pin{color:var(--ok);font-size:13px}
+.leaflet-popup-content a{color:#c2581d;font-weight:600}
+@media (max-width:820px){main{grid-template-columns:1fr;height:auto}#map{height:55vh;border-right:0;border-bottom:1px solid var(--border)}}
+</style>
+</head>
+<body>
+<header><h1>XPRS</h1><span id="sub">Stations a gateway hears on Reticulum. Open one to reach its portal.</span></header>
+<div id="status"></div>
+<main><div id="map"></div><div id="side"><h2>On the map</h2><div id="placed"></div><h2>Without a position</h2><div id="unplaced"></div></div></main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<script>
+/*
+ * xprs.dev/in/: the stations a gateway knows, and where they say they are.
+ *
+ * Like a station's portal (shell.js), this reaches a station over Reticulum
+ * through a gateway and checks its proof here: the gateway's OWN station.
+ * Its public history API is read over that link -- the wires it heard,
+ * signed by their authors -- and each station is placed by the latest
+ * `pos:` it announced itself: its identity's place (6.3.2, set by its
+ * administrator in the portal's Location card), or a service. A
+ * position with few decimals or a wide `acc:` is a region, drawn as one
+ * (XPRS.md 15.1: the decimals state the precision claimed).
+ */
+(function () {
+  'use strict';
+  var box = document.getElementById('status');
+  function say(t, bad) { box.innerHTML = ''; var d = document.createElement('div'); d.textContent = t; if (bad) d.className = 'bad'; box.appendChild(d); }
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function load(src) { return new Promise(function (ok, no) { var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = function () { no(new Error('could not load ' + src)); }; document.head.appendChild(s); }); }
+  function nonce() { var a = new Uint8Array(12); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
+
+  var map = L.map('map', { worldCopyJump: true }).setView([30, 0], 2);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    maxZoom: 18, attribution: '&copy; OpenStreetMap contributors'
+  }).addTo(map);
+
+  // A wire's field (`m:` is the rest of the line).
+  function field(w, k) {
+    var head = w.indexOf(' m:') >= 0 ? w.slice(0, w.indexOf(' m:')) : w;
+    var parts = head.split(' ');
+    for (var i = 0; i < parts.length; i++) if (parts[i].indexOf(k + ':') === 0) return parts[i].slice(k.length + 1);
+    return null;
+  }
+  function base(c) { return String(c || '').toUpperCase().split('-')[0]; }
+  // pos: as XPRS.md 15.1 has it: redaction bars dropped, precision from decimals.
+  function parsePos(p) {
+    if (!p) return null;
+    p = p.replace(/█/g, '');
+    var m = /^(-?\d+(?:\.(\d*))?),(-?\d+(?:\.(\d*))?)$/.exec(p);
+    if (!m) return null;
+    var lat = parseFloat(m[1]), lon = parseFloat(m[3]);
+    if (!(lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180)) return null;
+    var dec = Math.min((m[2] || '').length, (m[4] || '').length);
+    return { lat: lat, lon: lon, metres: [111000, 11100, 1110, 111, 11, 1.1][Math.min(dec, 5)] };
+  }
+  function accMetres(a) {
+    var m = /^(\d+(?:\.\d+)?)(m|km)?$/.exec(a || '');
+    return m ? parseFloat(m[1]) * (m[2] === 'km' ? 1000 : 1) : 0;
+  }
+  function ago(ts) {
+    var s = Math.max(0, Date.now() / 1000 - ts);
+    return s < 120 ? 'just now' : s < 7200 ? Math.round(s / 60) + ' min ago' : s < 172800 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago';
+  }
+
+  function render(rows, via) {
+    var st = {};
+    rows.forEach(function (r) {
+      var w = r.wire || '', c = base(field(w, 'f'));
+      if (!c || c.length < 4) return;
+      var s = st[c] || (st[c] = { call: c, last: 0, bearer: '', nick: '', pos: null, posTs: 0 });
+      if (r.ts > s.last) { s.last = r.ts; s.bearer = r.bearer || ''; }
+      var t = field(w, 't');
+      if (t === 'identity') { var n = field(w, 'nick'); if (n && !s.nick) s.nick = n; }
+      // The newest packet that states pos: wins (XPRS.md 6.3.2, kept per
+      // field); pos:- withdraws it.
+      var pf = (t === 'identity' || t === 'service' || t === 'observation') ? field(w, 'pos') : null;
+      if (pf !== null && r.ts >= s.posTs) {
+        var p = pf === '-' ? null : parsePos(pf);
+        if (p) p.metres = Math.max(p.metres, accMetres(field(w, 'acc')));
+        if (p || pf === '-') { s.pos = p; s.posTs = r.ts; }
+      }
+    });
+    var list = Object.keys(st).map(function (k) { return st[k]; }).sort(function (a, b) { return b.last - a.last; });
+    var placed = document.getElementById('placed'), unplaced = document.getElementById('unplaced');
+    placed.innerHTML = ''; unplaced.innerHTML = '';
+    var bounds = [];
+    list.forEach(function (s) {
+      var href = '/in/' + s.call.toLowerCase();
+      var meta = esc(s.nick ? s.nick + ' · ' : '') + 'heard ' + ago(s.last) + (s.bearer ? ' on ' + esc(s.bearer) : '');
+      var a = document.createElement('a');
+      a.className = 'st'; a.href = href;
+      a.innerHTML = '<b>' + esc(s.call) + '</b><div class="meta">' + meta + '</div>' +
+        (s.pos ? '<div class="pin">' + s.pos.lat.toFixed(4) + ', ' + s.pos.lon.toFixed(4) +
+          (s.pos.metres >= 20000 ? ' (region, ~' + Math.round(s.pos.metres / 1000) + ' km)' : '') + '</div>' : '');
+      (s.pos ? placed : unplaced).appendChild(a);
+      if (!s.pos) return;
+      var pop = '<a href="' + href + '">' + esc(s.call) + '</a><br>' + meta;
+      var ll = [s.pos.lat, s.pos.lon];
+      if (s.pos.metres >= 20000) {
+        L.circle(ll, { radius: s.pos.metres, color: '#c2581d', weight: 1, fillOpacity: .08 }).addTo(map).bindPopup(pop);
+      }
+      L.circleMarker(ll, { radius: 7, color: '#c2581d', fillColor: '#ffa86a', fillOpacity: .9, weight: 2 }).addTo(map).bindPopup(pop);
+      bounds.push(ll);
+    });
+    if (!placed.children.length) placed.innerHTML = '<div class="st meta">No station has announced a position yet.</div>';
+    if (bounds.length) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
+    say(list.length + ' stations heard by ' + via + ', ' + bounds.length + ' with a position.');
+  }
+
+  function history(kind) {
+    var q = { limit: '200' };
+    if (kind) q.kind = kind;
+    return window.XprsRns.api('GET', '/api/xprs/history', JSON.stringify(q), null).then(function (r) {
+      if (r.status !== 200) return [];
+      try { return JSON.parse(new TextDecoder().decode(r.body)).rows || []; } catch (e) { return []; }
+    });
+  }
+
+  function viaGateway(gws, i) {
+    if (i >= gws.length) return Promise.reject(new Error('no gateway answered'));
+    var g = gws[i], station;
+    say('Gateway ' + g + '…');
+    return window.XprsRns.connect(g).then(function (hello) {
+      station = (JSON.parse(hello).station || '').toUpperCase();
+      if (!station) throw new Error(g + ' names no station');
+      return window.XprsRns.resolve(station);
+    }).then(function (j) {
+      var r = JSON.parse(j);
+      if (!r.rns) throw new Error(g + ' gave no key for ' + station);
+      say('Opening a link to ' + station + '…');
+      return window.XprsRns.open(r.rns);
+    }).then(function (ok) {
+      if (!ok) throw new Error('no link to ' + station);
+      var n = nonce();
+      return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, station, n)); });
+    }).then(function (v) {
+      if (!v.ok) throw new Error('This is not ' + station + ': ' + v.why);
+      say(station + ' proved itself. Reading what it heard…');
+      return station;
+    }).catch(function (e) {
+      say(e.message || String(e), true);
+      return viaGateway(gws, i + 1);
+    });
+  }
+
+  load('/in/rns.js').then(function () {
+    return fetch('/in/gateways.json', { cache: 'no-cache' }).then(function (r) { return r.json(); });
+  }).then(function (j) {
+    return viaGateway(j.gateways || [], 0);
+  }).then(function (station) {
+    return history('identity,service,observation').then(function (a) {
+      return history('').then(function (b) { render(a.concat(b), station); });
+    });
+  }).catch(function (e) { say(e.message || String(e), true); });
+})();
+</script>
+</body>
+</html>
