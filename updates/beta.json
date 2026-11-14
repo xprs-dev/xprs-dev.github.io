@@ -1,40 +1,40 @@
 {
-  "version": "1.6.0",
-  "tagName": "v1.6.0",
-  "name": "XPRS 1.6.0",
-  "body": "## XPRS 1.6.0 — Quieter, kinder chat\n\nMost of this release comes from user feedback on the Chat app (0.7.61).\n\n### Notifications per room\n- Every chat room has its own notifications switch: in the room's ⋮ menu (or long-press), and as a bell in the open room's header.\n- The **Global** room is quiet by default; it was too busy to be worth an interruption. Local, Regional, groups and 1:1 conversations notify as before.\n- A room with notifications off still receives and stores everything, shows its unread count on its own row, and is marked with a bell. It just doesn't raise notifications or add to the app's badge.\n\n### Messages to someone whose key isn't known yet\n- \"Message X1ABCD directly\" no longer fails with *No key for this contact yet*. The message waits in the outbox, marked with a key, and is sent sealed as soon as the key arrives.\n- The app asks the archivers for that station's public key right away instead of waiting to hear it.\n- If you don't want to wait, **Send now, unsealed** sends it in the open (still signed), from the message's menu, its Info page, or the prompt in the conversation.\n\n### Message info, as a full page\n- **Info** opens a full page instead of a small popup: the original text and every edit, who sent it and when, the route through each relay to this station, how it was heard (radio or network, signal strength, copies, parts), signature and sealing, delivery state, and the raw packet with a copy button.\n\n### Smaller changes\n- Tapping a sender's name opens the same menu as the message's ⋮ button, rather than a menu that could only block them. Tapping a member in a room's member list opens a conversation with them.\n- Android: XPRS runs with whatever permissions you grant. Without Bluetooth permission it sends no Bluetooth adverts, and Settings shows a permission you grant from outside the app as soon as you open it.\n- Share server: visitors on the station's own network are heard on the LAN and offered a mailbox, so their mail is held and delivered through the page.\n- Station choice: an archiver reachable over the LAN or internet takes over from one you only reach by radio, once it's heard.\n- The mesh log is quieter: XPRS beacons are logged once a minute per station, or when what they say changes.\n- \"Indexer\" is now called \"Archiver\" everywhere.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.5.1...v1.6.0",
-  "publishedAt": "2026-11-08T17:39:18Z",
+  "version": "1.8.0",
+  "tagName": "v1.8.0",
+  "name": "XPRS 1.8.0",
+  "body": "## XPRS 1.8.0\n\n### New: Check-in\nVisit stations in person and collect a signed check-in and the station's badge.\n- **Map** in a dark theme, with your check-ins (white), stations giving check-ins nearby (green), events (amber) and your own station (blue). Save an area of the map for use off-grid.\n- **Explore**: stations giving check-ins, nearest first, with their distance, an intro written by the station and whether you have been there. Each has a sheet with **Copy coordinates** (paste into Google Maps, OsmAnd or Organic Maps) and **Show on map**.\n- **Logbook** with stats and a streak, a **badge wall**, and check-in **events** with a badge of their own. A check-in can be removed from the logbook.\n- **My station**: give check-ins, a greeting for visitors, an intro of up to 100 characters, a badge, and events.\n- Stations you have never followed are found two ways that merge: announcements this device hears, and what your archivers kept while you were away.\n\n### New: share your station's position\n**Settings > Privacy > Share my station's position**, off by default. Choose how coarsely, from 10 m to 10 km: the position is snapped to the centre of a fixed square that size, so listening longer reveals nothing more. A station without GPS can be given a fixed position.\n\n### Improvements\n- Map: a dark style repainting OpenStreetMap tiles, clipped to the map, with a cleaner layout; a screen's buttons fit a phone in one row that scrolls sideways.\n- Launcher: an app's icon is drawn black on a light colour and white on a dark one.\n- Android notification: \"Active as X1ABCD · 3 reachable\"; tapping it opens Mesh.\n- A station that receives a signed command from someone whose key it does not know yet asks for the key instead of refusing.\n- An app may send a message longer than one packet; it goes out in parts and arrives whole.\n- Web chat page: Gallery, Music and Library, Internet WiFi in Administration, and the station's place.\n\n### For developers\n- `hal_xprs_follow_kind`: an app follows a packet type; the core keeps it from every lane and fetches what is new from archivers.\n- `hal_xprs_position`, `ui.map.locate`, `ui.snack`, `tile-style: dark`.\n- Every Android build from CI is signed with the release key.",
+  "publishedAt": "2026-11-14T09:13:21Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.6.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-android-arm64-v8a.apk",
-      "size": 51697522,
-      "sha256": "9c85c8d12ef4d1c18a86ec6cab3a8383458480698e2508562fc49e37db77d351"
+      "name": "xprs-1.8.0-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.8.0/xprs-1.8.0-android-arm64-v8a.apk",
+      "size": 50317103,
+      "sha256": "db25b91a2d2e0de91565d8435460582c31cd21d4c1aebc64f238c7f9e6aa64e4"
     },
     {
-      "name": "xprs-1.6.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-android-armeabi-v7a.apk",
-      "size": 42260350,
-      "sha256": "0c124787f517543adaea7e58403493f8711af65e9be265b412a36844c909caa3"
+      "name": "xprs-1.8.0-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.8.0/xprs-1.8.0-android-armeabi-v7a.apk",
+      "size": 44042041,
+      "sha256": "cd7fb3f1fce5297cd4068464ebc3dca83ccf69633654fa0f7c60d7c0f4f7f07a"
     },
     {
-      "name": "xprs-1.6.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-android-x86_64.apk",
-      "size": 55564128,
-      "sha256": "d29890b3c15af3f03397590189699afbc3bc31c010c2c18d992c25069927ab06"
+      "name": "xprs-1.8.0-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.8.0/xprs-1.8.0-android-x86_64.apk",
+      "size": 53626656,
+      "sha256": "07ce78b3a16fdf1ee1f62d7f60816c3a84148a76dbdfcc6ae238196899bfe224"
     },
     {
-      "name": "xprs-1.6.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-linux-x64.tar.gz",
-      "size": 34965650,
-      "sha256": "d399e855d9b93f01754c032e22d697f81d3f3f62bbcf68ad40c0bd2b2de71feb"
+      "name": "xprs-1.8.0-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.8.0/xprs-1.8.0-linux-x64.tar.gz",
+      "size": 33781180,
+      "sha256": "eabf53e3bb766104d80ccdfb0c731cef77527245e6814e5fdcbf13ac9003c066"
     },
     {
-      "name": "xprs-1.6.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.6.0/xprs-1.6.0-windows-x64-setup.exe",
-      "size": 29738723,
-      "sha256": "afc6ce34e9c2213fee82e43b74e1b2c8dc56b5b276b808c6155cf21662f57f36"
+      "name": "xprs-1.8.0-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.8.0/xprs-1.8.0-windows-x64-setup.exe",
+      "size": 29320388,
+      "sha256": "ac6bf0275e15cbf5cb37891b54f08df7a889990a3ce0efe004b028077cf6bf46"
     }
   ]
 }
