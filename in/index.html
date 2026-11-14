@@ -108,7 +108,7 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
     var list = Object.keys(st).map(function (k) { return st[k]; }).sort(function (a, b) { return b.last - a.last; });
     var placed = document.getElementById('placed'), unplaced = document.getElementById('unplaced');
     placed.innerHTML = ''; unplaced.innerHTML = '';
-    var bounds = [];
+    var bounds = L.latLngBounds([]);
     list.forEach(function (s) {
       var href = '/in/' + s.call.toLowerCase();
       var meta = esc(s.nick ? s.nick + ' · ' : '') + 'heard ' + ago(s.last) + (s.bearer ? ' on ' + esc(s.bearer) : '');
@@ -122,14 +122,15 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
       var pop = '<a href="' + href + '">' + esc(s.call) + '</a><br>' + meta;
       var ll = [s.pos.lat, s.pos.lon];
       if (s.pos.metres >= 20000) {
-        L.circle(ll, { radius: s.pos.metres, color: '#c2581d', weight: 1, fillOpacity: .08 }).addTo(map).bindPopup(pop);
+        var ring = L.circle(ll, { radius: s.pos.metres, color: '#c2581d', weight: 1, fillOpacity: .08 }).addTo(map).bindPopup(pop);
+        bounds.extend(ring.getBounds());
       }
       L.circleMarker(ll, { radius: 7, color: '#c2581d', fillColor: '#ffa86a', fillOpacity: .9, weight: 2 }).addTo(map).bindPopup(pop);
-      bounds.push(ll);
+      bounds.extend(ll);
     });
     if (!placed.children.length) placed.innerHTML = '<div class="st meta">No station has announced a position yet.</div>';
-    if (bounds.length) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
-    say(list.length + ' stations heard by ' + via + ', ' + bounds.length + ' with a position.');
+    if (bounds.isValid()) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
+    say(list.length + ' stations heard by ' + via + ', ' + placed.querySelectorAll('a.st').length + ' with a position.');
   }
 
   function history(kind) {
