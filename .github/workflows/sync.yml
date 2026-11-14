@@ -53,13 +53,18 @@ jobs:
       # The app's path dependencies, at the commits its release pinned
       # (.reticulum-dart-commit, .core-commit; release.sh writes them). Since
       # 1.5.0 the XPRS core is its own repository, xprs-dev/core.
-      - name: Fetch reticulum-dart and core (path dependencies of the app)
+      # zx, the stores' database, is core's own path dependency at
+      # ../../x1watt/zx as seen from core/, i.e. beside this workspace.
+      - name: Fetch reticulum-dart, core and zx (path dependencies of the app)
         run: |
           set -euo pipefail
           fetch() {
             repo="$1" dir="$2" pin="$3"
+            case "$repo" in */*) url="https://github.com/$repo.git" ;;
+                            *) url="https://github.com/xprs-dev/$repo.git" ;; esac
+            mkdir -p "$(dirname "$dir")"
             git init -q "$dir"
-            git -C "$dir" remote add origin "https://github.com/xprs-dev/$repo.git"
+            git -C "$dir" remote add origin "$url"
             if [ -n "$pin" ]; then
               git -C "$dir" fetch -q --depth 1 origin "$pin"
             else
@@ -69,9 +74,11 @@ jobs:
           }
           fetch reticulum-dart reticulum-dart "$(cat app/.reticulum-dart-commit 2>/dev/null || true)"
           fetch core core "$(cat app/.core-commit 2>/dev/null || true)"
+          fetch x1watt/zx ../x1watt/zx "$(cat app/.zx-commit 2>/dev/null || true)"
       - uses: subosito/flutter-action@v2
         with:
           channel: stable
+          flutter-version: 3.47.9
           cache: true
       - run: flutter pub get
         working-directory: app
