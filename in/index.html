@@ -7,56 +7,56 @@
 <link rel="icon" href="/favicon.svg">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
-:root{--bg:#0a0a0b;--panel:#141416;--border:#26262a;--text:#f2f0ee;--muted:#8f8a86;--accent:#ffa86a;--bad:#ff6b6b;--ok:#7fd18b}
-/* Black, like the check-in app's map (apps/checkin, tile-style "dark"). */
-html,body{margin:0;background:var(--bg);color:var(--text);font:15px/1.5 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-header{display:flex;align-items:baseline;gap:12px;padding:14px 16px;border-bottom:1px solid var(--border);flex-wrap:wrap}
-h1{font-size:20px;letter-spacing:4px;color:var(--accent);margin:0}
-#sub{color:var(--muted);font-size:14px}
-#status{padding:8px 16px;color:var(--muted);font-size:14px}
-#status .bad{color:var(--bad)}
-main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(100vh - 110px);min-height:480px}
-#map{height:100%;border-right:1px solid var(--border);background:#1f1f1f}
-.leaflet-container{background:#1f1f1f}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:#161b22;color:#e6edf3;border:1px solid #30363d;box-shadow:none}
-.leaflet-container a.leaflet-popup-close-button{color:#8b949e}
-.leaflet-control-zoom a{background:#161b22;color:#e6edf3;border-color:#30363d}
-.leaflet-control-zoom a:hover{background:#21262d}
-.leaflet-control-attribution{background:rgba(22,27,34,.8)!important;color:#8b949e}
-.leaflet-control-attribution a{color:#7fb0e0}
-#side{overflow:auto;padding:0 0 16px}
-#side h2{font-size:13px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin:14px 16px 6px}
-.st{display:block;padding:9px 16px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none}
+:root{--bg:#0a0a0b;--panel:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#ffa86a;--bad:#ff6b6b}
+html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
+body{display:flex;flex-direction:column}
+header{display:flex;align-items:center;gap:16px;padding:10px 16px;border-bottom:1px solid var(--border)}
+h1{font-size:18px;letter-spacing:4px;color:var(--accent);margin:0}
+#count{color:var(--muted)}
+#count.bad{color:var(--bad)}
+form{margin-left:auto}
+#go{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;width:130px;font:inherit;text-transform:uppercase}
+#go::placeholder{text-transform:none;color:var(--muted)}
+main{flex:1;display:flex;min-height:0}
+#map{flex:1;background:#1f1f1f}
+#side{width:260px;overflow:auto;border-left:1px solid var(--border)}
+#side:empty{display:none}
+.st{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none}
 .st:hover{background:var(--panel)}
-.st b{color:var(--accent);letter-spacing:.5px}
-.st .meta{color:var(--muted);font-size:13px}
-.st .pin{color:var(--ok);font-size:13px}
-.leaflet-popup-content a{color:#ffa86a;font-weight:600}
-@media (max-width:820px){main{grid-template-columns:1fr;height:auto}#map{height:55vh;border-right:0;border-bottom:1px solid var(--border)}}
+.st b{color:var(--accent);font-weight:600}
+.st span{color:var(--muted);font-size:13px;white-space:nowrap}
+.st i{font-style:normal;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.leaflet-container{background:#1f1f1f;font:inherit}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--text);border:1px solid var(--border);box-shadow:none}
+.leaflet-popup-content a{color:var(--accent);font-weight:600}
+.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
+.leaflet-control-zoom a{background:var(--panel);color:var(--text);border-color:var(--border)}
+.leaflet-control-zoom a:hover{background:#21262d}
+.leaflet-control-attribution{background:rgba(22,27,34,.8)!important;color:var(--muted)}
+.leaflet-control-attribution a{color:#7fb0e0}
+@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}}
 </style>
 </head>
 <body>
-<header><h1>XPRS</h1><span id="sub">Stations a gateway hears on Reticulum. Open one to reach its portal.</span></header>
-<div id="status"></div>
-<main><div id="map"></div><div id="side"><h2>On the map</h2><div id="placed"></div><h2>Without a position</h2><div id="unplaced"></div></div></main>
+<header><h1>XPRS</h1><span id="count">Connecting…</span>
+<form id="goform"><input id="go" placeholder="Callsign" autocomplete="off" spellcheck="false"></form></header>
+<main><div id="map"></div><div id="side"></div></main>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <script>
-/*
- * xprs.dev/in/: the stations a gateway knows, and where they say they are.
- *
- * Like a station's portal (shell.js), this reaches a station over Reticulum
- * through a gateway and checks its proof here: the gateway's OWN station.
- * Its public history API is read over that link -- the wires it heard,
- * signed by their authors -- and each station is placed by the latest
- * `pos:` it announced itself: its identity's place (6.3.2, set by its
- * administrator in the portal's Location card), or a service. A
- * position with few decimals or a wide `acc:` is a region, drawn as one
- * (XPRS.md 15.1: the decimals state the precision claimed).
- */
+/* xprs.dev/in/: stations on a map. Reached over Reticulum through a gateway
+ * (gateways.json), whose station's public history gives the identities it
+ * heard; a station is placed by the newest pos:/acc: in them (XPRS.md 6.3.2,
+ * 15.1). Only stations heard in the last RECENT seconds are counted. */
 (function () {
   'use strict';
-  var box = document.getElementById('status');
-  function say(t, bad) { box.innerHTML = ''; var d = document.createElement('div'); d.textContent = t; if (bad) d.className = 'bad'; box.appendChild(d); }
+  var RECENT = 86400;
+  var countEl = document.getElementById('count');
+  function say(t, bad) { countEl.textContent = t; countEl.className = bad ? 'bad' : ''; }
+  document.getElementById('goform').onsubmit = function (e) {
+    e.preventDefault();
+    var c = document.getElementById('go').value.trim().toLowerCase();
+    if (/^[a-z0-9]{3,8}(-[0-9]{1,2})?$/.test(c)) location.href = '/in/' + c;
+  };
   function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
   function load(src) { return new Promise(function (ok, no) { var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = function () { no(new Error('could not load ' + src)); }; document.head.appendChild(s); }); }
   function nonce() { var a = new Uint8Array(12); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
@@ -145,40 +145,34 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
     return s < 120 ? 'just now' : s < 7200 ? Math.round(s / 60) + ' min ago' : s < 172800 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago';
   }
 
-  function render(rows, via) {
-    var st = {};
+  function render(rows) {
+    var st = {}, now = Date.now() / 1000;
     rows.forEach(function (r) {
       var w = r.wire || '', c = base(field(w, 'f'));
       if (!c || c.length < 4) return;
-      var s = st[c] || (st[c] = { call: c, last: 0, bearer: '', nick: '', pos: null, posTs: 0 });
-      if (r.ts > s.last) { s.last = r.ts; s.bearer = r.bearer || ''; }
+      var s = st[c] || (st[c] = { call: c, last: 0, nick: '', pos: null, posTs: 0 });
+      if (r.ts > s.last) s.last = r.ts;
       var t = field(w, 't');
       if (t === 'identity') { var n = field(w, 'nick'); if (n && n !== '-' && !s.nick) s.nick = n; }
-      // The newest packet that states pos: wins (XPRS.md 6.3.2, kept per
-      // field); pos:- withdraws it.
-      var pf = (t === 'identity' || t === 'service' || t === 'observation') ? field(w, 'pos') : null;
+      var pf = (t === 'identity' || t === 'service') ? field(w, 'pos') : null;
       if (pf !== null && r.ts >= s.posTs) {
         var p = pf === '-' ? null : parsePos(pf);
         if (p) p.metres = Math.max(p.metres, accMetres(field(w, 'acc')));
         if (p || pf === '-') { s.pos = p; s.posTs = r.ts; }
       }
     });
-    var list = Object.keys(st).map(function (k) { return st[k]; }).sort(function (a, b) { return b.last - a.last; });
-    var placed = document.getElementById('placed'), unplaced = document.getElementById('unplaced');
-    placed.innerHTML = ''; unplaced.innerHTML = '';
-    var bounds = L.latLngBounds([]);
-    list.forEach(function (s) {
-      var href = '/in/' + s.call.toLowerCase();
-      var meta = esc(s.nick ? s.nick + ' · ' : '') + 'heard ' + ago(s.last) + (s.bearer ? ' on ' + esc(s.bearer) : '');
+    var all = Object.keys(st).map(function (k) { return st[k]; });
+    var recent = all.filter(function (s) { return now - s.last < RECENT; }).length;
+    var placed = all.filter(function (s) { return s.pos; }).sort(function (a, b) { return b.last - a.last; });
+    var side = document.getElementById('side'), bounds = L.latLngBounds([]);
+    side.innerHTML = '';
+    placed.forEach(function (s) {
+      var href = '/in/' + s.call.toLowerCase(), ll = [s.pos.lat, s.pos.lon];
       var a = document.createElement('a');
       a.className = 'st'; a.href = href;
-      a.innerHTML = '<b>' + esc(s.call) + '</b><div class="meta">' + meta + '</div>' +
-        (s.pos ? '<div class="pin">' + s.pos.lat.toFixed(4) + ', ' + s.pos.lon.toFixed(4) +
-          (s.pos.metres >= 20000 ? ' (region, ~' + Math.round(s.pos.metres / 1000) + ' km)' : '') + '</div>' : '');
-      (s.pos ? placed : unplaced).appendChild(a);
-      if (!s.pos) return;
-      var pop = '<a href="' + href + '">' + esc(s.call) + '</a><br>' + meta;
-      var ll = [s.pos.lat, s.pos.lon];
+      a.innerHTML = '<div><b>' + esc(s.call) + '</b><br><i>' + esc(s.nick) + '</i></div><span>' + ago(s.last) + '</span>';
+      side.appendChild(a);
+      var pop = '<a href="' + href + '">' + esc(s.call) + '</a>' + (s.nick ? ' ' + esc(s.nick) : '') + '<br>' + ago(s.last);
       if (s.pos.metres >= 20000) {
         var ring = L.circle(ll, { radius: s.pos.metres, color: '#FFC107', weight: 1, fillOpacity: .07 }).addTo(map).bindPopup(pop);
         bounds.extend(ring.getBounds());
@@ -186,9 +180,8 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
       L.circleMarker(ll, { radius: 7, color: '#A5D6A7', fillColor: '#43A047', fillOpacity: .95, weight: 2 }).addTo(map).bindPopup(pop);
       bounds.extend(ll);
     });
-    if (!placed.children.length) placed.innerHTML = '<div class="st meta">No station has announced a position yet.</div>';
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
-    say(list.length + ' stations heard by ' + via + ', ' + placed.querySelectorAll('a.st').length + ' with a position.');
+    say(placed.length + ' on the map \u00b7 ' + recent + ' heard today');
   }
 
   function history(kind) {
@@ -203,7 +196,6 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
   function viaGateway(gws, i) {
     if (i >= gws.length) return Promise.reject(new Error('no gateway answered'));
     var g = gws[i], station;
-    say('Gateway ' + g + '…');
     return window.XprsRns.connect(g).then(function (hello) {
       station = (JSON.parse(hello).station || '').toUpperCase();
       if (!station) throw new Error(g + ' names no station');
@@ -211,7 +203,6 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
     }).then(function (j) {
       var r = JSON.parse(j);
       if (!r.rns) throw new Error(g + ' gave no key for ' + station);
-      say('Opening a link to ' + station + '…');
       return window.XprsRns.open(r.rns);
     }).then(function (ok) {
       if (!ok) throw new Error('no link to ' + station);
@@ -219,10 +210,8 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
       return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, station, n)); });
     }).then(function (v) {
       if (!v.ok) throw new Error('This is not ' + station + ': ' + v.why);
-      say(station + ' proved itself. Reading what it heard…');
       return station;
     }).catch(function (e) {
-      say(e.message || String(e), true);
       return viaGateway(gws, i + 1);
     });
   }
@@ -233,9 +222,9 @@ main{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:0;height:calc(10
     return viaGateway(j.gateways || [], 0);
   }).then(function (station) {
     return history('identity,service,observation').then(function (a) {
-      return history('').then(function (b) { render(a.concat(b), station); });
+      return history('').then(function (b) { render(a.concat(b)); });
     });
-  }).catch(function (e) { say(e.message || String(e), true); });
+  }).catch(function () { say('Can\u2019t reach the network right now', true); });
 })();
 </script>
 </body>
