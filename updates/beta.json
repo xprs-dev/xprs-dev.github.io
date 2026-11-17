@@ -1,40 +1,40 @@
 {
-  "version": "1.9.0",
-  "tagName": "v1.9.0",
-  "name": "XPRS 1.9.0",
-  "body": "## Updates\n\n- The app checks for a new version on its own: a minute after start, then every 6 hours, and when you come back to it if a check is overdue.\n- New versions download in the background, on Wi-Fi only unless you allow mobile data, and are verified before you are told.\n- One \"ready to install\" notification opens the Updates page; the menu shows a dot and the home screen a banner while an update waits.\n- The Updates page is simpler: one status line, one button, the release notes and four switches.\n- Installs made by F-Droid keep letting F-Droid handle updates.\n\n## This device and its people\n\n- Each install now has its own X3 callsign for the device, owned by the X1 profiles on it, as on the station firmwares. Settings > This device shows it and its owner.\n- The device signs its own beacon (where it stands, who it hears, how long it has run), its key binding and its answer to \"who owns you\". Chat, messages, posts, check-ins and mail stay with your X1.\n- On Bluetooth the device takes every fourth beacon; on the LAN both beacons go out each time.\n- The phone no longer counts its own device as a neighbour or asks it for history, and the device answers history requests from other stations with \"not here\", on every lane.\n\n## Check-in 0.4.2\n\n- The map opens on where you are once the position is known; \"Show all\" frames everything.\n- Tapping an event opens its details.\n- My station is grouped into Check-ins, Welcome, Badge and Events, with shorter wording throughout.\n\n## Maps\n\n- Pinch and double-tap zoom, with smooth zoom steps.\n\n## Fixes\n\n- No GPS requests on Linux.\n- Translations for the new settings in German, Spanish, French and Portuguese.\n- The web chat page passes your session when it fetches files, and uploads name their room.",
-  "publishedAt": "2026-11-14T16:39:20Z",
+  "version": "1.10.0",
+  "tagName": "v1.10.0",
+  "name": "XPRS 1.10.0",
+  "body": "## Groups\n\n- A new group is public by default: anyone can read it, only members post. Switch it to private when creating it, or later from the group's page; a private group's posts are sealed so only members can read them.\n- Somebody who is not a member and writes in a group is offered \"Ask to join\". The request reaches only the admin and the moderators, who see it at the top of Members and accept or decline it.\n- The admin can make a member a moderator, and take the role back. The member is asked first and keeps posting meanwhile. Moderators accept requests to join, remove members and correct or remove posts. In a small group the admin does all of this.\n- Members read what was said before they joined, asked of the stations nearby and the always-on ones, not only of archivers you named.\n- A group's folders are folded in the chat list: one row with a count, tap the arrow to show them. A folded group carries its folders' unread count.\n- Names: group names keep their spaces, people are shown by the name they chose (Bea (X13SUZ)), and searching for a group's callsign shows its name.\n\n## Stations\n\n- Visit another station from the Mesh app: its rooms, folders, photos and files, fetched over Reticulum.\n- Your phone can be a station: share a folder of photos, music or files from the Mesh app, and decide who sees each room.\n- How a message reaches a station is shown hop by hop.\n\n## Fixes\n\n- Much lower memory use on the server and on long-running devices.\n- A station no longer relays expired history requests or repeats other people's join requests.\n- A join request heard twice is shown once.\n- Settings are saved as you type them.\n- Check-in 0.5.0 and Mesh 1.5.1.",
+  "publishedAt": "2026-11-17T10:52:48Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.9.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.9.0/xprs-1.9.0-android-arm64-v8a.apk",
-      "size": 50317103,
-      "sha256": "8120311311c09ad4a0ec6c6dd9f0cecf263b79f32539a6a0ebf286fab9a48da4"
+      "name": "xprs-1.10.0-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-arm64-v8a.apk",
+      "size": 50759471,
+      "sha256": "3018d78a21d380e0eb1483bfe802c4124d724c87daaa5b7f7514b8031c32b8f0"
     },
     {
-      "name": "xprs-1.9.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.9.0/xprs-1.9.0-android-armeabi-v7a.apk",
-      "size": 44042041,
-      "sha256": "6484ea4251d411ec4aef4f650049a08aa5b182c5e3deba43f1929680778f9fa0"
+      "name": "xprs-1.10.0-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-armeabi-v7a.apk",
+      "size": 44500793,
+      "sha256": "f4e27d974faea6314e4e38c2b22d1ff7096b4d3f17f6427f1ed5f0a5fcec3e44"
     },
     {
-      "name": "xprs-1.9.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.9.0/xprs-1.9.0-android-x86_64.apk",
-      "size": 53692192,
-      "sha256": "bb416b6b4920800dc40169b97b3d2efd29bd1861ece4775f7b2e97c61500a5e5"
+      "name": "xprs-1.10.0-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-x86_64.apk",
+      "size": 54134560,
+      "sha256": "a19b62d73d84e2496ccd1c70f0f5eb2e5c5d20aaf9ee87f0779a7105b13dc8d0"
     },
     {
-      "name": "xprs-1.9.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.9.0/xprs-1.9.0-linux-x64.tar.gz",
-      "size": 33775495,
-      "sha256": "1bcb8c53491732ebb3a05bbd6abc9b8bea4a3769931dcdbdf4eded348728e69a"
+      "name": "xprs-1.10.0-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-linux-x64.tar.gz",
+      "size": 33995528,
+      "sha256": "f96d7d1b3eea10064e0b5dbe5006a1ff9f96075dbba8e99a7fcb5939982c2890"
     },
     {
-      "name": "xprs-1.9.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.9.0/xprs-1.9.0-windows-x64-setup.exe",
-      "size": 29331979,
-      "sha256": "21f7b53fcc7c008e892b4faeecf4fb9ebbf423c179f7855b523fbd23b1f7cf8e"
+      "name": "xprs-1.10.0-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-windows-x64-setup.exe",
+      "size": 29508706,
+      "sha256": "ae8f84b7b6d1202167522132ec1c20fa788b06bebb09fd813981e1322ae43e5e"
     }
   ]
 }
