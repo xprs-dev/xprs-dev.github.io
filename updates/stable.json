@@ -1,40 +1,40 @@
 {
-  "version": "1.10.0",
-  "tagName": "v1.10.0",
-  "name": "XPRS 1.10.0",
-  "body": "## Groups\n\n- A new group is public by default: anyone can read it, only members post. Switch it to private when creating it, or later from the group's page; a private group's posts are sealed so only members can read them.\n- Somebody who is not a member and writes in a group is offered \"Ask to join\". The request reaches only the admin and the moderators, who see it at the top of Members and accept or decline it.\n- The admin can make a member a moderator, and take the role back. The member is asked first and keeps posting meanwhile. Moderators accept requests to join, remove members and correct or remove posts. In a small group the admin does all of this.\n- Members read what was said before they joined, asked of the stations nearby and the always-on ones, not only of archivers you named.\n- A group's folders are folded in the chat list: one row with a count, tap the arrow to show them. A folded group carries its folders' unread count.\n- Names: group names keep their spaces, people are shown by the name they chose (Bea (X13SUZ)), and searching for a group's callsign shows its name.\n\n## Stations\n\n- Visit another station from the Mesh app: its rooms, folders, photos and files, fetched over Reticulum.\n- Your phone can be a station: share a folder of photos, music or files from the Mesh app, and decide who sees each room.\n- How a message reaches a station is shown hop by hop.\n\n## Fixes\n\n- Much lower memory use on the server and on long-running devices.\n- A station no longer relays expired history requests or repeats other people's join requests.\n- A join request heard twice is shown once.\n- Settings are saved as you type them.\n- Check-in 0.5.0 and Mesh 1.5.1.",
-  "publishedAt": "2026-11-17T10:52:48Z",
+  "version": "1.11.0",
+  "tagName": "v1.11.0",
+  "name": "XPRS 1.11.0",
+  "body": "## Archiver\n\n- The Archiver is now part of the app instead of a wapp: open it from the top-left menu. The old Archive wapp is removed on update; its settings carry over.\n- A new Impact tab shows what your device gives the network:\n  - how many stations rely on it to hold their mail;\n  - requests answered and messages delivered in the last 30 days;\n  - charts of requests served (14 days) and storage given (30 days);\n  - what it keeps (yours, people you follow, strangers);\n  - the last 24 hours, and milestones.\n- The home screen invites you to become an archiver, and thanks you with your week's numbers once you are one.\n- On a phone, the archiver answers under the device's own X3 callsign, not your personal X1 callsign, and signs with the device's key.\n- An archiver address you type by hand is kept; it is no longer replaced by the one the archiver announces.\n- After being offline, the phone reconnects to its archiver as soon as the internet is back instead of waiting up to ten minutes.\n\n## Look\n\n- A plain black-and-white theme replaces the purple accents.\n\n## Search and groups\n\n- Search finds people, stations and groups by name through the archivers.\n- New groups get an X5 callsign.\n\n## Fixes\n\n- A held request, and its answer, is handed over once instead of being sent again and again; archivers send far fewer packets.",
+  "publishedAt": "2026-11-18T09:47:50Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.10.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-arm64-v8a.apk",
-      "size": 50759471,
-      "sha256": "3018d78a21d380e0eb1483bfe802c4124d724c87daaa5b7f7514b8031c32b8f0"
+      "name": "xprs-1.11.0-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.11.0/xprs-1.11.0-android-arm64-v8a.apk",
+      "size": 50944177,
+      "sha256": "757ee0fb51d795a857c3e77785a5d8ccbbf276e08b34ba88d4391da825a18771"
     },
     {
-      "name": "xprs-1.10.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-armeabi-v7a.apk",
-      "size": 44500793,
-      "sha256": "f4e27d974faea6314e4e38c2b22d1ff7096b4d3f17f6427f1ed5f0a5fcec3e44"
+      "name": "xprs-1.11.0-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.11.0/xprs-1.11.0-android-armeabi-v7a.apk",
+      "size": 44656827,
+      "sha256": "193c0fd523b4a0be10f7a8a265694652fa9c7863d245fb275c63a7821e8488b7"
     },
     {
-      "name": "xprs-1.10.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-x86_64.apk",
-      "size": 54134560,
-      "sha256": "a19b62d73d84e2496ccd1c70f0f5eb2e5c5d20aaf9ee87f0779a7105b13dc8d0"
+      "name": "xprs-1.11.0-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.11.0/xprs-1.11.0-android-x86_64.apk",
+      "size": 54257826,
+      "sha256": "13c4c49dad811d4c96e689827a21daabf9e61158e972ae6a84ce4a0d1e4450a9"
     },
     {
-      "name": "xprs-1.10.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-linux-x64.tar.gz",
-      "size": 33995528,
-      "sha256": "f96d7d1b3eea10064e0b5dbe5006a1ff9f96075dbba8e99a7fcb5939982c2890"
+      "name": "xprs-1.11.0-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.11.0/xprs-1.11.0-linux-x64.tar.gz",
+      "size": 34047796,
+      "sha256": "99e7570cefeee4ddf4c055d42c32ab75dc140885c8018c2f26925cec2e29cdd5"
     },
     {
-      "name": "xprs-1.10.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-windows-x64-setup.exe",
-      "size": 29508706,
-      "sha256": "ae8f84b7b6d1202167522132ec1c20fa788b06bebb09fd813981e1322ae43e5e"
+      "name": "xprs-1.11.0-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.11.0/xprs-1.11.0-windows-x64-setup.exe",
+      "size": 29537632,
+      "sha256": "41f613c58577e8e70126fb39f59971719b3897d5085aee4958555b54d9dc5ef0"
     }
   ]
 }

@@ -1,40 +1,40 @@
 {
-  "version": "1.10.0",
-  "tagName": "v1.10.0",
-  "name": "XPRS 1.10.0",
-  "body": "## Groups\n\n- A new group is public by default: anyone can read it, only members post. Switch it to private when creating it, or later from the group's page; a private group's posts are sealed so only members can read them.\n- Somebody who is not a member and writes in a group is offered \"Ask to join\". The request reaches only the admin and the moderators, who see it at the top of Members and accept or decline it.\n- The admin can make a member a moderator, and take the role back. The member is asked first and keeps posting meanwhile. Moderators accept requests to join, remove members and correct or remove posts. In a small group the admin does all of this.\n- Members read what was said before they joined, asked of the stations nearby and the always-on ones, not only of archivers you named.\n- A group's folders are folded in the chat list: one row with a count, tap the arrow to show them. A folded group carries its folders' unread count.\n- Names: group names keep their spaces, people are shown by the name they chose (Bea (X13SUZ)), and searching for a group's callsign shows its name.\n\n## Stations\n\n- Visit another station from the Mesh app: its rooms, folders, photos and files, fetched over Reticulum.\n- Your phone can be a station: share a folder of photos, music or files from the Mesh app, and decide who sees each room.\n- How a message reaches a station is shown hop by hop.\n\n## Fixes\n\n- Much lower memory use on the server and on long-running devices.\n- A station no longer relays expired history requests or repeats other people's join requests.\n- A join request heard twice is shown once.\n- Settings are saved as you type them.\n- Check-in 0.5.0 and Mesh 1.5.1.",
-  "publishedAt": "2026-11-17T10:52:48Z",
-  "prerelease": false,
+  "version": "1.12.0-beta.1",
+  "tagName": "v1.12.0-beta.1",
+  "name": "XPRS 1.12.0-beta.1",
+  "body": "Beta: test it before 1.12.0 goes to the stable channel and F-Droid.\n\n## Chat and posts\n- Links in chat messages and forum posts are tappable and open in your browser.\n- Messages and posts show formatting: **bold**, *italic*, ~~struck~~, `code`, headings, lists and quotes, read the same way as in the web chat.\n- A bare link stops before trailing punctuation or emphasis marks, so `**https://example.org**` is a bold link (the web chat reads it the same way).\n\n## Fixes\n- A long status was shown up to three times on its author's phone, with words glued together (\"seethe\"). It now shows once, its parts joined correctly (Status wapp 0.5.7).\n- Parts of a long status heard live are no longer shown as separate posts.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.11.0...v1.12.0-beta.1",
+  "publishedAt": "2026-11-18T18:04:55Z",
+  "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.10.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-arm64-v8a.apk",
-      "size": 50759471,
-      "sha256": "3018d78a21d380e0eb1483bfe802c4124d724c87daaa5b7f7514b8031c32b8f0"
+      "name": "xprs-1.12.0-beta.1-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-android-arm64-v8a.apk",
+      "size": 50948273,
+      "sha256": "1db3bfe5f9e3f901a2872980ac49fc0d72d8416a2dae31aa6fecd1e29d09a2f7"
     },
     {
-      "name": "xprs-1.10.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-armeabi-v7a.apk",
-      "size": 44500793,
-      "sha256": "f4e27d974faea6314e4e38c2b22d1ff7096b4d3f17f6427f1ed5f0a5fcec3e44"
+      "name": "xprs-1.12.0-beta.1-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-android-armeabi-v7a.apk",
+      "size": 44693691,
+      "sha256": "752944be798f73679e3b017968bd43ea853df5f6a1585529bba50563edf0e31a"
     },
     {
-      "name": "xprs-1.10.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-android-x86_64.apk",
-      "size": 54134560,
-      "sha256": "a19b62d73d84e2496ccd1c70f0f5eb2e5c5d20aaf9ee87f0779a7105b13dc8d0"
+      "name": "xprs-1.12.0-beta.1-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-android-x86_64.apk",
+      "size": 54327458,
+      "sha256": "c9594dcd7dc140834641223cac8ae260688ffbf30b884ddb271e6e907a1816ec"
     },
     {
-      "name": "xprs-1.10.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-linux-x64.tar.gz",
-      "size": 33995528,
-      "sha256": "f96d7d1b3eea10064e0b5dbe5006a1ff9f96075dbba8e99a7fcb5939982c2890"
+      "name": "xprs-1.12.0-beta.1-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-linux-x64.tar.gz",
+      "size": 34071810,
+      "sha256": "81ccb28ad465f3c8052327427bd3307b8f1deff4996c1024dff5c7b46299382e"
     },
     {
-      "name": "xprs-1.10.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.10.0/xprs-1.10.0-windows-x64-setup.exe",
-      "size": 29508706,
-      "sha256": "ae8f84b7b6d1202167522132ec1c20fa788b06bebb09fd813981e1322ae43e5e"
+      "name": "xprs-1.12.0-beta.1-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-windows-x64-setup.exe",
+      "size": 29553940,
+      "sha256": "9d4a0c4b9807e2e65925a413c6da70379271ed9efec8e57d7d9431e81275a5bf"
     }
   ]
 }
