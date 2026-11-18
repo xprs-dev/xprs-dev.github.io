@@ -1,40 +1,40 @@
 {
-  "version": "1.12.0-beta.1",
-  "tagName": "v1.12.0-beta.1",
-  "name": "XPRS 1.12.0-beta.1",
-  "body": "Beta: test it before 1.12.0 goes to the stable channel and F-Droid.\n\n## Chat and posts\n- Links in chat messages and forum posts are tappable and open in your browser.\n- Messages and posts show formatting: **bold**, *italic*, ~~struck~~, `code`, headings, lists and quotes, read the same way as in the web chat.\n- A bare link stops before trailing punctuation or emphasis marks, so `**https://example.org**` is a bold link (the web chat reads it the same way).\n\n## Fixes\n- A long status was shown up to three times on its author's phone, with words glued together (\"seethe\"). It now shows once, its parts joined correctly (Status wapp 0.5.7).\n- Parts of a long status heard live are no longer shown as separate posts.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.11.0...v1.12.0-beta.1",
-  "publishedAt": "2026-11-18T18:04:55Z",
+  "version": "1.12.0-beta.2",
+  "tagName": "v1.12.0-beta.2",
+  "name": "XPRS 1.12.0-beta.2",
+  "body": "Beta: test it before 1.12.0 goes to the stable channel and F-Droid.\n\n## Updates\n- Updates find and download themselves in the background. XPRS checks every hour, keeps checking while the app is closed (on Android it rides the background service), and remembers a new version across restarts.\n- A new Updates page: the card names the version that is coming (\"Downloading XPRS 1.12.0-beta.2\"), the installed version sits under it, the progress says where the bytes come from, and the release notes are drawn with their formatting.\n\n## Archiver\n- Change your station's callsign from the Archive tab or Settings > This device: roll a new one, go back to the previous one, save. A new callsign is a new station key; other stations learn it from the next announcements.\n\n## Other\n- The menu's exit item now reads Exit.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.1...v1.12.0-beta.2",
+  "publishedAt": "2026-11-18T20:11:30Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.12.0-beta.1-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-android-arm64-v8a.apk",
-      "size": 50948273,
-      "sha256": "1db3bfe5f9e3f901a2872980ac49fc0d72d8416a2dae31aa6fecd1e29d09a2f7"
+      "name": "xprs-1.12.0-beta.2-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.2/xprs-1.12.0-beta.2-android-arm64-v8a.apk",
+      "size": 50952369,
+      "sha256": "353162f5d3f9523fb713964ad2eedb84565369fb41049c3e404860ada438a75d"
     },
     {
-      "name": "xprs-1.12.0-beta.1-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-android-armeabi-v7a.apk",
-      "size": 44693691,
-      "sha256": "752944be798f73679e3b017968bd43ea853df5f6a1585529bba50563edf0e31a"
+      "name": "xprs-1.12.0-beta.2-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.2/xprs-1.12.0-beta.2-android-armeabi-v7a.apk",
+      "size": 44710075,
+      "sha256": "2723e456c62dd5453d4b8bdd73044a85adb910473011987e42e8431269c8e7fc"
     },
     {
-      "name": "xprs-1.12.0-beta.1-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-android-x86_64.apk",
+      "name": "xprs-1.12.0-beta.2-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.2/xprs-1.12.0-beta.2-android-x86_64.apk",
       "size": 54327458,
-      "sha256": "c9594dcd7dc140834641223cac8ae260688ffbf30b884ddb271e6e907a1816ec"
+      "sha256": "31239cf324978758142f16dbb746e3482c709c2f3ea31f713b6e683dc2a5aecb"
     },
     {
-      "name": "xprs-1.12.0-beta.1-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-linux-x64.tar.gz",
-      "size": 34071810,
-      "sha256": "81ccb28ad465f3c8052327427bd3307b8f1deff4996c1024dff5c7b46299382e"
+      "name": "xprs-1.12.0-beta.2-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.2/xprs-1.12.0-beta.2-linux-x64.tar.gz",
+      "size": 34078699,
+      "sha256": "29c7af10d6c3327c3c65bf55b041237ba0b870fe68370652b242e62df183f264"
     },
     {
-      "name": "xprs-1.12.0-beta.1-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.1/xprs-1.12.0-beta.1-windows-x64-setup.exe",
-      "size": 29553940,
-      "sha256": "9d4a0c4b9807e2e65925a413c6da70379271ed9efec8e57d7d9431e81275a5bf"
+      "name": "xprs-1.12.0-beta.2-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.2/xprs-1.12.0-beta.2-windows-x64-setup.exe",
+      "size": 29561686,
+      "sha256": "aedb7a13f6e8b8e75ba2466a4754f0d78ca6bffc86aadb782bba927b9bb21f9d"
     }
   ]
 }
