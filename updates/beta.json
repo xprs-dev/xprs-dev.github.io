@@ -1,40 +1,40 @@
 {
-  "version": "1.12.0-beta.4",
-  "tagName": "v1.12.0-beta.4",
-  "name": "XPRS 1.12.0-beta.4",
-  "body": "Beta: test it before 1.12.0 goes to the stable channel and F-Droid.\n\n## New\n- App Creator works on a phone: bottom navigation with the wapp's name on top and one Save; code scrolls sideways instead of wrapping, files are chips, build output is folded; the Screens tab has a full-width canvas, an Add block sheet and properties underneath; the Text tab has language chips.\n- Wapps can be built on the device, where there is no wasi-sdk: the Compiler add-on runs clang and wasm-ld on the app's own runtime. It is installed like any other wapp, and App Creator has an AI button that opens it when it is installed.\n- Install a .wapp file someone passed on (Install 1.4.4: menu > Install a file...). A picked file keeps its name whatever extension the system picker gave it.\n- Wapps can make full HTTP requests (`hal_http_request2`: headers, a byte body, a timeout) and are woken when the answer arrives.\n- Archiver tops the menu, and each group has its own menu.\n\n## Fixes\n- Share works again.\n- A wapp installed from another page shows in the launcher at once, with its functionalities registered.\n- A wapp's chat and search hints are translated like its labels; the Screens canvas shows screen names as the wapp shows them.\n- App Creator: the App tab's fields are back (a slider value read as text blanked the card) and scale with large text; the manifest's title and description are read and written in the current schema.\n- Building a wapp on a device with an encrypted profile no longer fails with exit 1: the build runs in a plain scratch folder, and the step's own error output is kept.\n- Wapp HTTP requests: PUT and DELETE are no longer sent as GET.\n- Chat: a new group's callsign list has no end; prompts cycle without end and group callsigns never loop.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.3...v1.12.0-beta.4",
-  "publishedAt": "2026-11-19T06:40:47Z",
+  "version": "1.12.0-beta.5",
+  "tagName": "v1.12.0-beta.5",
+  "name": "XPRS 1.12.0-beta.5",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.4...v1.12.0-beta.5",
+  "publishedAt": "2026-11-19T11:25:41Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.12.0-beta.4-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.4/xprs-1.12.0-beta.4-android-arm64-v8a.apk",
-      "size": 51022001,
-      "sha256": "4c9711c98719822fc3ce69347ef54882c1a8a011268f1cbfb54ee1986fd645ca"
+      "name": "xprs-1.12.0-beta.5-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-android-arm64-v8a.apk",
+      "size": 51247562,
+      "sha256": "ca05862677b52b22441cac27614bf2ccaa0fc1aaed9d4119e9fc5d3e2c9dec68"
     },
     {
-      "name": "xprs-1.12.0-beta.4-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.4/xprs-1.12.0-beta.4-android-armeabi-v7a.apk",
-      "size": 44845243,
-      "sha256": "7abb93304f7d5246b9ab02911bd0c9021378b48f9dc8a22cbd25da5ccaae730f"
+      "name": "xprs-1.12.0-beta.5-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-android-armeabi-v7a.apk",
+      "size": 45070804,
+      "sha256": "82b7a30b8cd3b664bf77018cb99a284e92085303800804c7f961f3d30183bb47"
     },
     {
-      "name": "xprs-1.12.0-beta.4-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.4/xprs-1.12.0-beta.4-android-x86_64.apk",
-      "size": 54397090,
-      "sha256": "6f111661723301801fdeba266a337111455117308bc4045dbe8ac92db2572f01"
+      "name": "xprs-1.12.0-beta.5-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-android-x86_64.apk",
+      "size": 54622651,
+      "sha256": "42a576450f3d9811a99fbec8268aff9004c60199220403f95af31371c385a7ed"
     },
     {
-      "name": "xprs-1.12.0-beta.4-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.4/xprs-1.12.0-beta.4-linux-x64.tar.gz",
-      "size": 34133451,
-      "sha256": "99ee8cb56ca2467cb97cabcd65924b2320a070d6ba72d443076a5120af03042e"
+      "name": "xprs-1.12.0-beta.5-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-linux-x64.tar.gz",
+      "size": 34349475,
+      "sha256": "0d8f63143fd88c86aac1469eddd2dc1a08ca921349f006e256621b78c9640a46"
     },
     {
-      "name": "xprs-1.12.0-beta.4-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.4/xprs-1.12.0-beta.4-windows-x64-setup.exe",
-      "size": 29598136,
-      "sha256": "82c0838bee239cfb1b892e60126f5060c179c9694d51e697c480870030f686bc"
+      "name": "xprs-1.12.0-beta.5-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-windows-x64-setup.exe",
+      "size": 29797696,
+      "sha256": "7a9a3c1bcd2e596a7a19c24f9cea5f5c0d9de299244b30869a91db5a460c516a"
     }
   ]
 }
