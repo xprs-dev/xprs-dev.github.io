@@ -1,40 +1,40 @@
 {
-  "version": "1.12.0-beta.6",
-  "tagName": "v1.12.0-beta.6",
-  "name": "XPRS 1.12.0-beta.6",
-  "body": "Beta: test it before 1.12.0 goes to the stable channel and F-Droid.\n\n## Status\n- A post is one message, as on Twitter: the compose box counts down the characters left (130), grey, then yellow in the last 20, then red and negative past the limit, where Post is disabled. A status is never split into parts any more.\n- Accented letters and emoji take more room than plain letters, because the limit is the size of one message; an attached picture takes room too.\n- The compose box uses Twitter's type sizes: 20 px text and \"What's happening?\", a 13 px counter, a bold Post pill that fades to half while it cannot post. The reply box in a thread counts down the same way.\n\n## Groups\n- On a phone, a group is one bar that shows the path, and groups open into their folders.\n- New folder is in the bar's menu (the three lines), for the group's admin, public and private groups alike.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.5...v1.12.0-beta.6",
-  "publishedAt": "2026-11-19T14:15:30Z",
+  "version": "1.12.0-beta.7",
+  "tagName": "v1.12.0-beta.7",
+  "name": "XPRS 1.12.0-beta.7",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.6...v1.12.0-beta.7",
+  "publishedAt": "2026-11-19T14:58:42Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.12.0-beta.6-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-android-arm64-v8a.apk",
-      "size": 51427786,
-      "sha256": "d3f4331f7809bd47ba7e1b25dd09298f8baf45e5d42c988aa5a2b6fff1cf3552"
+      "name": "xprs-1.12.0-beta.7-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.7/xprs-1.12.0-beta.7-android-arm64-v8a.apk",
+      "size": 51431882,
+      "sha256": "7ed2d323af51c666009c5244a449c060747d3c092ae24ed700203a3ed9572a6b"
     },
     {
-      "name": "xprs-1.12.0-beta.6-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-android-armeabi-v7a.apk",
-      "size": 45140436,
-      "sha256": "eabcf57cab7cd1615233269a343a9cf9f7810f944ae51e8b2e2af3bfe3e5aa28"
+      "name": "xprs-1.12.0-beta.7-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.7/xprs-1.12.0-beta.7-android-armeabi-v7a.apk",
+      "size": 45173204,
+      "sha256": "fe4b496e913520b4a3be8a45dfb83ea0e487c0f8fc8b2c4448f728d810cb7264"
     },
     {
-      "name": "xprs-1.12.0-beta.6-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-android-x86_64.apk",
+      "name": "xprs-1.12.0-beta.7-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.7/xprs-1.12.0-beta.7-android-x86_64.apk",
       "size": 54806971,
-      "sha256": "836902817c06a736437dd30e10dd919f9a9bcc22ee8e886c863cae36cdc7138f"
+      "sha256": "2d897dd17dcb7c14d9961943efde008efcee54df69bf1bc79cc3d935096f5d7a"
     },
     {
-      "name": "xprs-1.12.0-beta.6-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-linux-x64.tar.gz",
-      "size": 34418848,
-      "sha256": "c4ebfc554bd0b3e309569eecc4b886e768e415c58be961e88bc67916824de0a7"
+      "name": "xprs-1.12.0-beta.7-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.7/xprs-1.12.0-beta.7-linux-x64.tar.gz",
+      "size": 34422570,
+      "sha256": "21fc630853e376fa5a1a49af7f833ba463d2a1a2cfbab4005cd1bb7d7bf84dbb"
     },
     {
-      "name": "xprs-1.12.0-beta.6-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-windows-x64-setup.exe",
-      "size": 29865262,
-      "sha256": "18df57a56bf0d84daeeae227a25912db3e36d656e445441b22b784aa3c2bba16"
+      "name": "xprs-1.12.0-beta.7-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.7/xprs-1.12.0-beta.7-windows-x64-setup.exe",
+      "size": 29867174,
+      "sha256": "1a2ccc54dbf54f8308292ae7a4c4daa59b3a6f62f72dcc311034350cc061a4bd"
     }
   ]
 }
