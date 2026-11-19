@@ -1,40 +1,40 @@
 {
-  "version": "1.12.0-beta.5",
-  "tagName": "v1.12.0-beta.5",
-  "name": "XPRS 1.12.0-beta.5",
-  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.4...v1.12.0-beta.5",
-  "publishedAt": "2026-11-19T11:25:41Z",
+  "version": "1.12.0-beta.6",
+  "tagName": "v1.12.0-beta.6",
+  "name": "XPRS 1.12.0-beta.6",
+  "body": "Beta: test it before 1.12.0 goes to the stable channel and F-Droid.\n\n## Status\n- A post is one message, as on Twitter: the compose box counts down the characters left (130), grey, then yellow in the last 20, then red and negative past the limit, where Post is disabled. A status is never split into parts any more.\n- Accented letters and emoji take more room than plain letters, because the limit is the size of one message; an attached picture takes room too.\n- The compose box uses Twitter's type sizes: 20 px text and \"What's happening?\", a 13 px counter, a bold Post pill that fades to half while it cannot post. The reply box in a thread counts down the same way.\n\n## Groups\n- On a phone, a group is one bar that shows the path, and groups open into their folders.\n- New folder is in the bar's menu (the three lines), for the group's admin, public and private groups alike.\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.0-beta.5...v1.12.0-beta.6",
+  "publishedAt": "2026-11-19T14:15:30Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.12.0-beta.5-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-android-arm64-v8a.apk",
-      "size": 51247562,
-      "sha256": "ca05862677b52b22441cac27614bf2ccaa0fc1aaed9d4119e9fc5d3e2c9dec68"
+      "name": "xprs-1.12.0-beta.6-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-android-arm64-v8a.apk",
+      "size": 51427786,
+      "sha256": "d3f4331f7809bd47ba7e1b25dd09298f8baf45e5d42c988aa5a2b6fff1cf3552"
     },
     {
-      "name": "xprs-1.12.0-beta.5-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-android-armeabi-v7a.apk",
-      "size": 45070804,
-      "sha256": "82b7a30b8cd3b664bf77018cb99a284e92085303800804c7f961f3d30183bb47"
+      "name": "xprs-1.12.0-beta.6-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-android-armeabi-v7a.apk",
+      "size": 45140436,
+      "sha256": "eabcf57cab7cd1615233269a343a9cf9f7810f944ae51e8b2e2af3bfe3e5aa28"
     },
     {
-      "name": "xprs-1.12.0-beta.5-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-android-x86_64.apk",
-      "size": 54622651,
-      "sha256": "42a576450f3d9811a99fbec8268aff9004c60199220403f95af31371c385a7ed"
+      "name": "xprs-1.12.0-beta.6-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-android-x86_64.apk",
+      "size": 54806971,
+      "sha256": "836902817c06a736437dd30e10dd919f9a9bcc22ee8e886c863cae36cdc7138f"
     },
     {
-      "name": "xprs-1.12.0-beta.5-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-linux-x64.tar.gz",
-      "size": 34349475,
-      "sha256": "0d8f63143fd88c86aac1469eddd2dc1a08ca921349f006e256621b78c9640a46"
+      "name": "xprs-1.12.0-beta.6-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-linux-x64.tar.gz",
+      "size": 34418848,
+      "sha256": "c4ebfc554bd0b3e309569eecc4b886e768e415c58be961e88bc67916824de0a7"
     },
     {
-      "name": "xprs-1.12.0-beta.5-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.12.0-beta.5/xprs-1.12.0-beta.5-windows-x64-setup.exe",
-      "size": 29797696,
-      "sha256": "7a9a3c1bcd2e596a7a19c24f9cea5f5c0d9de299244b30869a91db5a460c516a"
+      "name": "xprs-1.12.0-beta.6-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.12.0-beta.6/xprs-1.12.0-beta.6-windows-x64-setup.exe",
+      "size": 29865262,
+      "sha256": "18df57a56bf0d84daeeae227a25912db3e36d656e445441b22b784aa3c2bba16"
     }
   ]
 }
