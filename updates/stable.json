@@ -1,40 +1,40 @@
 {
-  "version": "1.12.0",
-  "tagName": "v1.12.0",
-  "name": "XPRS 1.12.0",
-  "body": "## XPRS 1.12.0\n\nStable release of the 1.12.0 betas.\n\n### Settings and Archiver\n- Settings is now a short menu where each topic opens its own page: Permissions, This device, Language, Location & privacy, Groups, Hardware, Network, Updates, Storage, Developer.\n- Groups and Hardware moved from the main menu into Settings.\n- File hosting for the mesh (host switch, charging-only, media storage) moved to the Archiver's Files tab, so everything stored for others is set in one place.\n- Coverage sits next to location sharing and uses the location typed for devices without GPS.\n- Archiver: choose the station's callsign; Archiver tops the main menu.\n- Hardware fixes: each radio type starts from its own defaults, Bluetooth and Wi-Fi Direct no longer ask for a frequency, long names fit, and lines with no data yet are hidden.\n\n### Chat and groups\n- Groups on a phone: one bar that shows the path, with groups opening into their folders; New folder in the bar's menu.\n- Public groups ranked by the archivers: most active, most members and fastest growing.\n- Rooms closed to new posts, room moderation, leaving, and asking to join.\n- Formatted text and tappable links in message bubbles and forum posts.\n\n### Wapps\n- Status counts down to one message, styled like a familiar short-post composer.\n- Alerts: the message is optional.\n- Build and edit wapps on the phone with the Compiler add-on; App Creator reworked for phones.\n- Install a `.wapp` file directly; a wapp installed elsewhere shows up at once.\n\n### Updates and network\n- Updates are found and downloaded in the background, and the page names the source while bytes move.\n- Every host serves what it holds over the Reticulum file lane; a server's directory can be fetched over the internet.\n\n### Menu\n- About XPRS opens https://xprs.dev.",
-  "publishedAt": "2026-11-20T08:39:41Z",
+  "version": "1.12.1",
+  "tagName": "v1.12.1",
+  "name": "XPRS 1.12.1",
+  "body": "## XPRS 1.12.1\n\nA build release: no changes inside the app since 1.12.0.\n\n### F-Droid\n- The app's source dependencies (reticulum-dart, core, zx, the wapp sources and the xcc compiler) are now pinned as git submodules under `deps/`, as F-Droid's maintainers asked in #2.\n- F-Droid's build recipe no longer names any dependency, so F-Droid can pick up new XPRS versions on its own instead of waiting for a hand-made update.\n- The Android APKs are still reproducible: each one matches F-Droid's own build of the same commit.",
+  "publishedAt": "2026-11-20T10:03:00Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.12.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0/xprs-1.12.0-android-arm64-v8a.apk",
+      "name": "xprs-1.12.1-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.1/xprs-1.12.1-android-arm64-v8a.apk",
       "size": 51509706,
-      "sha256": "fdc0c934db95f5f0cb958255767b2f8ff22d9d728cc0163e06fd85245b9413da"
+      "sha256": "dffe1e9638df66c866a988c6bc53c86d74be011189aef6ac362672fe45a9949d"
     },
     {
-      "name": "xprs-1.12.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0/xprs-1.12.0-android-armeabi-v7a.apk",
+      "name": "xprs-1.12.1-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.12.1/xprs-1.12.1-android-armeabi-v7a.apk",
       "size": 45251028,
-      "sha256": "7ff8f47ff0ba007a5de67b51f0197c02f569696d1cb2b64b3417c9e5036bee3d"
+      "sha256": "dfc59f70ec1ec2635b65f0c0a9f5d4bde3d8e5a5b16dd0c5800bc4cec326fcff"
     },
     {
-      "name": "xprs-1.12.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.12.0/xprs-1.12.0-android-x86_64.apk",
+      "name": "xprs-1.12.1-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.12.1/xprs-1.12.1-android-x86_64.apk",
       "size": 54884795,
-      "sha256": "9cbe186df148db5ca4ca91332c0706f3291ad88d4e13770f89fadb86f6f4572f"
+      "sha256": "55d298f0637e9b6cb276e72f508cf4a2ff9febb38597b2a1db4d04fb64ebed57"
     },
     {
-      "name": "xprs-1.12.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.12.0/xprs-1.12.0-linux-x64.tar.gz",
-      "size": 34469774,
-      "sha256": "3d7ed42598df7d9a32c55398d7540638e0e6dee6ebf061bdca8d96b7dbfbb0c0"
+      "name": "xprs-1.12.1-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.12.1/xprs-1.12.1-linux-x64.tar.gz",
+      "size": 34469463,
+      "sha256": "ed543ba4fd2122b47eb0caa053d91a620a79adadb8a822535e35a19722e6d8be"
     },
     {
-      "name": "xprs-1.12.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.12.0/xprs-1.12.0-windows-x64-setup.exe",
-      "size": 29904418,
-      "sha256": "2db793471e9b1b849486c3c6a5ddbfae5e2d5672446cc9cab69444fceef800cb"
+      "name": "xprs-1.12.1-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.12.1/xprs-1.12.1-windows-x64-setup.exe",
+      "size": 29907757,
+      "sha256": "08fdeea68ea9758359fa174460f34cab28fc2afc48367351a2eb86c72516cd14"
     }
   ]
 }
