@@ -1,40 +1,40 @@
 {
-  "version": "1.13.0-beta.4",
-  "tagName": "v1.13.0-beta.4",
-  "name": "XPRS 1.13.0-beta.4",
-  "body": "## XPRS 1.13.0-beta.4\n\n### Finding groups\n- A fresh install asks every archiver it hears announced on Reticulum (up to six) for its directory and public groups list, the one asked longest ago first. Before, only the first archiver it adopted was asked, often one far away that never answered.\n- Fixed: the directory ask waited for the one \"ask in flight\" slot, which the conversation ask had just taken every time, so it was never sent. It now goes out as soon as that answer arrives.\n- An archiver heard only over the internet is no longer treated as in earshot, so it is asked too.\n\nIncludes everything in beta.3 (notifications marked read when tapped or opened).\n\n### Known limits\n- Large files from a station still arrive whole rather than in pieces on a phone: the piece list is not found within the time allowed. Being worked on.\n- A fresh install can wait up to an hour to hear an archiver on a public hub.",
-  "publishedAt": "2026-11-21T15:57:21Z",
+  "version": "1.13.0-beta.5",
+  "tagName": "v1.13.0-beta.5",
+  "name": "XPRS 1.13.0-beta.5",
+  "body": "## XPRS 1.13.0-beta.5\n\n### Finding groups\n- A fresh install reads the directory and public groups list of every archiver it asked, not only the one it adopted. In beta.4 the answers arrived and were ignored, so the groups ranking stayed empty.\n- A station heard on Reticulum counts as an archiver only once it has said it archives (its own `serve:archive` announcement). Before, any always-on station could be adopted, including one that keeps nothing for others or had already gone.\n\n### Known limits\n- Large files from a station still arrive whole rather than in pieces on a phone.\n- A fresh install can wait up to an hour to hear an archiver on a public hub.",
+  "publishedAt": "2026-11-21T17:18:09Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.13.0-beta.4-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.4/xprs-1.13.0-beta.4-android-arm64-v8a.apk",
+      "name": "xprs-1.13.0-beta.5-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-android-arm64-v8a.apk",
       "size": 51509706,
-      "sha256": "d366b9e1135ceaceb42bd44ae646da385b046c17ea3389a11e0fd6125ba0af61"
+      "sha256": "3c42206a5bd123e24a9b63c1a4381f060255a5613866680f927850101f6a3e60"
     },
     {
-      "name": "xprs-1.13.0-beta.4-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.4/xprs-1.13.0-beta.4-android-armeabi-v7a.apk",
-      "size": 45300180,
-      "sha256": "fdaa82b1045d0a8ed18900db6b1090efedaa200509372b631228293632b58550"
+      "name": "xprs-1.13.0-beta.5-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-android-armeabi-v7a.apk",
+      "size": 45316564,
+      "sha256": "6b04451d630ae3ad34980d507b9a43c6f2144c656196bc3b33949fe187aa3b5c"
     },
     {
-      "name": "xprs-1.13.0-beta.4-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.4/xprs-1.13.0-beta.4-android-x86_64.apk",
+      "name": "xprs-1.13.0-beta.5-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-android-x86_64.apk",
       "size": 54884795,
-      "sha256": "99222fea59040d15c76f641fc5fe66f58fc1d4383200dc14cd782166b17a34e7"
+      "sha256": "55547c1765df31258398979f7b66e0103a22d8a1405a699760bd534da2212ca9"
     },
     {
-      "name": "xprs-1.13.0-beta.4-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.4/xprs-1.13.0-beta.4-linux-x64.tar.gz",
-      "size": 34491162,
-      "sha256": "b332f7c5bffd1d8dbc7a64bba731853a675daf508fc8868b285e7b09c6df4e84"
+      "name": "xprs-1.13.0-beta.5-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-linux-x64.tar.gz",
+      "size": 34500520,
+      "sha256": "3007bb9ed153bfb806fb7d7764dcb6a722caa011a30ccf927785530a6f0ae75a"
     },
     {
-      "name": "xprs-1.13.0-beta.4-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.4/xprs-1.13.0-beta.4-windows-x64-setup.exe",
-      "size": 29917735,
-      "sha256": "15560c26348aa5201c44cb0a3809838bb0a78ebdeb03bd6a488fab61dc279da4"
+      "name": "xprs-1.13.0-beta.5-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-windows-x64-setup.exe",
+      "size": 29922018,
+      "sha256": "3ecb7f5a9c262e1092b603c5bb50f4ec488a0e2d298c9a60688d63f54ff0558e"
     }
   ]
 }
