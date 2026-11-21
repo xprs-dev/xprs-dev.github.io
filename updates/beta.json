@@ -1,40 +1,40 @@
 {
-  "version": "1.13.0-beta.2",
-  "tagName": "v1.13.0-beta.2",
-  "name": "XPRS 1.13.0-beta.2",
-  "body": "## XPRS 1.13.0-beta.2\n\nFixes found testing beta.1 on a phone against a station.\n\n### Files\n- A fetch asks the station named as holder for its own record first, so the piece list is known at once and a large file comes in pieces. In beta.1 a phone waited 30 seconds and then took the whole file from one holder.\n- A fetch started in a device's first seconds, before it has a Reticulum route to the holder, tries again (after 1, 2 and 4 minutes) instead of failing once and waiting out its time.\n\n### Settings\n- The device row shows the name you transmit as.\n\n### Known limits\n- Across a public hub a holder's acceptance can arrive after the fetch has already started on the whole file, so pieces are not used there yet.\n- A fresh install can wait up to an hour to hear an archiver on a public hub, and its public groups list can stay empty; under investigation.",
-  "publishedAt": "2026-11-21T14:53:23Z",
+  "version": "1.13.0-beta.3",
+  "tagName": "v1.13.0-beta.3",
+  "name": "XPRS 1.13.0-beta.3",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.13.0-beta.2...v1.13.0-beta.3",
+  "publishedAt": "2026-11-21T15:34:33Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.13.0-beta.2-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.2/xprs-1.13.0-beta.2-android-arm64-v8a.apk",
+      "name": "xprs-1.13.0-beta.3-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.3/xprs-1.13.0-beta.3-android-arm64-v8a.apk",
       "size": 51509706,
-      "sha256": "dab3019773ec020b29391c87e64e33fe0594ef6de5d239897092d7751485c663"
+      "sha256": "4edb0790f986e7bbabe4c9c0095a3d66ad41eb88a1df1dc93b65a83bc3874928"
     },
     {
-      "name": "xprs-1.13.0-beta.2-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.2/xprs-1.13.0-beta.2-android-armeabi-v7a.apk",
+      "name": "xprs-1.13.0-beta.3-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.3/xprs-1.13.0-beta.3-android-armeabi-v7a.apk",
       "size": 45300180,
-      "sha256": "ebdf88c62f86760d7908d82ef82b4720a8e635700a10cf9e4242c6fed496bb07"
+      "sha256": "356d862c7fdd139490b22dfd1f1a9e8ff15fcb99fc2f0bbb02567658eddd153b"
     },
     {
-      "name": "xprs-1.13.0-beta.2-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.2/xprs-1.13.0-beta.2-android-x86_64.apk",
+      "name": "xprs-1.13.0-beta.3-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.3/xprs-1.13.0-beta.3-android-x86_64.apk",
       "size": 54884795,
-      "sha256": "66ef5f528d87d7db35ac3c106e12dfe2f75d769ea0f34647cdcf45f74621a799"
+      "sha256": "3d87ac4c2bf5ca09f591dd368c5204698ca58758221d66e1f1ab03347f036535"
     },
     {
-      "name": "xprs-1.13.0-beta.2-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.2/xprs-1.13.0-beta.2-linux-x64.tar.gz",
-      "size": 34488148,
-      "sha256": "96fbd753dd30f286b445bae1ffc6fc8e60f107dc537cd7194b247c420abb2f6c"
+      "name": "xprs-1.13.0-beta.3-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.3/xprs-1.13.0-beta.3-linux-x64.tar.gz",
+      "size": 34490455,
+      "sha256": "9694a205594806be68aff825091d36acf7c0c7d7850f202ad70d042c08b53b4c"
     },
     {
-      "name": "xprs-1.13.0-beta.2-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.2/xprs-1.13.0-beta.2-windows-x64-setup.exe",
-      "size": 29915750,
-      "sha256": "396c9fca68ef9891c611947cb703e9a43d3a8b9d9efdc948501982de238cb04b"
+      "name": "xprs-1.13.0-beta.3-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.3/xprs-1.13.0-beta.3-windows-x64-setup.exe",
+      "size": 29913983,
+      "sha256": "4fb3adeba5071a2d0519588937e7932d910b0b013b3c8539fba50c7e313689ca"
     }
   ]
 }
