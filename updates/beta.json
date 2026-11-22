@@ -1,40 +1,40 @@
 {
-  "version": "1.13.0-beta.5",
-  "tagName": "v1.13.0-beta.5",
-  "name": "XPRS 1.13.0-beta.5",
-  "body": "## XPRS 1.13.0-beta.5\n\n### Finding groups\n- A fresh install reads the directory and public groups list of every archiver it asked, not only the one it adopted. In beta.4 the answers arrived and were ignored, so the groups ranking stayed empty.\n- A station heard on Reticulum counts as an archiver only once it has said it archives (its own `serve:archive` announcement). Before, any always-on station could be adopted, including one that keeps nothing for others or had already gone.\n\n### Known limits\n- Large files from a station still arrive whole rather than in pieces on a phone.\n- A fresh install can wait up to an hour to hear an archiver on a public hub.",
-  "publishedAt": "2026-11-21T17:18:09Z",
+  "version": "1.13.0-beta.6",
+  "tagName": "v1.13.0-beta.6",
+  "name": "XPRS 1.13.0-beta.6",
+  "body": "## XPRS 1.13.0-beta.6\n\n### Links to chat groups\n- A group can be shared as a link: `https://xprs.dev/in/<x5 callsign>`, or `https://xprs.dev/in/g/<name>` for an open group.\n- In a browser the link opens the web chat on that group, from a station that keeps it. A public group can be read and written in at once; a private one asks to join.\n- On Android the link opens XPRS on the group. On Linux the web page has an \"Open in XPRS\" button.\n- Chat: every group, with an X5 callsign or an open one by name, has \"Share link\" in its menu and in its header, showing the link with a Copy button and a code to scan.\n\n### Finding groups and files\n- A fresh install asks stations that reach it over the internet for their directory, without waiting for an archiver's hourly announce: the public groups list fills in within minutes.\n- A file is fetched from a station known by any of its announces, not only one kind.\n- An archiver's answer that could not be delivered is no longer counted as delivered, and an unanswered directory ask is asked again after five minutes.\n\n### People and identities\n- The app keeps one record per person, by their key, with every identity learned under it.\n- Profile: \"Other identities\". You can state an e-mail address, a Meshtastic or MeshCore node, or a board's address, and choose how far each is told: nearby, in the region, or everywhere. A message's Info shows what its sender stated.\n- A station remembers people's keys across a restart.\n\n### Licensed callsigns\n- A licensed callsign belongs to one key for a year after that key was last active. Another key using it meanwhile is not believed.\n- Dates written in messages do not count for this, only when a station actually heard them, so nobody gains seniority by backdating.\n- A station that has just arrived learns who holds a callsign from what its archivers agree they witnessed.\n\n### Known limits\n- Large files from a station still arrive whole rather than in pieces on a phone.\n- Stations must run this version for the licensed-callsign agreement to be published and read.",
+  "publishedAt": "2026-11-22T11:37:49Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.13.0-beta.5-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-android-arm64-v8a.apk",
-      "size": 51509706,
-      "sha256": "3c42206a5bd123e24a9b63c1a4381f060255a5613866680f927850101f6a3e60"
+      "name": "xprs-1.13.0-beta.6-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.6/xprs-1.13.0-beta.6-android-arm64-v8a.apk",
+      "size": 51595722,
+      "sha256": "d5a8516533714baed67b69882d8229912ead2e7940a284d84856eb25b3f11d71"
     },
     {
-      "name": "xprs-1.13.0-beta.5-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-android-armeabi-v7a.apk",
-      "size": 45316564,
-      "sha256": "6b04451d630ae3ad34980d507b9a43c6f2144c656196bc3b33949fe187aa3b5c"
+      "name": "xprs-1.13.0-beta.6-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.6/xprs-1.13.0-beta.6-android-armeabi-v7a.apk",
+      "size": 45369812,
+      "sha256": "d655c32723ef39abc14102c48ffcd89f1e8960a6f79a46cae1c1f8d358b62543"
     },
     {
-      "name": "xprs-1.13.0-beta.5-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-android-x86_64.apk",
-      "size": 54884795,
-      "sha256": "55547c1765df31258398979f7b66e0103a22d8a1405a699760bd534da2212ca9"
+      "name": "xprs-1.13.0-beta.6-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.6/xprs-1.13.0-beta.6-android-x86_64.apk",
+      "size": 54970811,
+      "sha256": "81727ecb6c64aba962cac8f3aa6ec7b385c191afb27ad4304a9c2ee32edcb404"
     },
     {
-      "name": "xprs-1.13.0-beta.5-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-linux-x64.tar.gz",
-      "size": 34500520,
-      "sha256": "3007bb9ed153bfb806fb7d7764dcb6a722caa011a30ccf927785530a6f0ae75a"
+      "name": "xprs-1.13.0-beta.6-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.6/xprs-1.13.0-beta.6-linux-x64.tar.gz",
+      "size": 34499151,
+      "sha256": "31d09899e2b6f13a2a0f1ea85a15f7e14bb1bcc4fcae30c312ad116e531c3a66"
     },
     {
-      "name": "xprs-1.13.0-beta.5-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.13.0-beta.5/xprs-1.13.0-beta.5-windows-x64-setup.exe",
-      "size": 29922018,
-      "sha256": "3ecb7f5a9c262e1092b603c5bb50f4ec488a0e2d298c9a60688d63f54ff0558e"
+      "name": "xprs-1.13.0-beta.6-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.13.0-beta.6/xprs-1.13.0-beta.6-windows-x64-setup.exe",
+      "size": 29910516,
+      "sha256": "5855cfcb4059cfa4decf370ab62b4a79b9d1c14e63eada96786dd93f6d9d4ea1"
     }
   ]
 }
