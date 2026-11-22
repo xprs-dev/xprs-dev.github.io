@@ -1,0 +1,14 @@
+[
+  {
+    "relation": [
+      "delegate_permission/common.handle_all_urls"
+    ],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.xprs.app",
+      "sha256_cert_fingerprints": [
+        "2A:4B:46:25:89:5E:70:08:39:41:5A:81:C0:91:D9:49:69:91:67:AB:E0:3C:22:79:43:76:D1:8F:2F:7E:C2:D2"
+      ]
+    }
+  }
+]
