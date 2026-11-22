@@ -18,6 +18,13 @@
   var BASE = '/in/';
   var m = /^\/in\/([a-z0-9]{3,8}(?:-[0-9]{1,2})?)\/?$/i.exec(location.pathname);
   var CALL = m ? m[1].toUpperCase() : '';
+  // A group, not a station: xprs.dev/in/<x5 callsign> (a group has an X5
+  // callsign and no station has), or xprs.dev/in/g/<name> for an open group,
+  // whose name could be mistaken for a station's. Its page is the portal of
+  // a station that keeps the group, opened on the group.
+  var mg = /^\/in\/g\/([a-z0-9][a-z0-9_-]{0,15})\/?$/i.exec(location.pathname);
+  var GROUP = mg ? mg[1].toUpperCase() : (/^X5/.test(CALL) ? CALL : '');
+  if (GROUP) CALL = '';
   var box = document.getElementById('in-status');
   function say(t, bad) {
     if (!box) return;
@@ -221,7 +228,70 @@
   // opened at that moment is lost; the next try usually gets through.
   var TRIES = 3, gateways = [], gw = '', nick = '';
   function sleep(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
+  // A link to station [c] through the gateway already connected, its proof
+  // checked: its callsign derives from its key and it named this link.
+  function linkTo(c, g) {
+    return window.XprsRns.resolve(c).then(function (j) {
+      var r = JSON.parse(j);
+      if (!r.rns) throw new Error(g + ' has not heard ' + c + ' on Reticulum');
+      return window.XprsRns.open(r.rns);
+    }).then(function (ok) {
+      if (!ok) throw new Error('no link to ' + c + ' through ' + g);
+      var n = nonce();
+      return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, c, n)); });
+    }).then(function (v) {
+      if (!v.ok) throw new Error('This is not ' + c + ': ' + v.why);
+      return v;
+    });
+  }
+  // The stations to try for a group, in order: the gateway's own station
+  // says which archivers list the group in their index
+  // (GET /api/xprs/groups?g=, XPRS.md 12.9.7). The gateway's station is
+  // tried last when it does not list the group itself: a private group is
+  // in no index, and that station can still take a request to join.
+  function holdersOf(group, own) {
+    // The link's own call, not api(): that one re-reaches on a failure, and
+    // this runs inside the reach.
+    return window.XprsRns.api('GET', '/api/xprs/groups', JSON.stringify({ g: group }), null).then(function (r) {
+      var d = {};
+      try { d = JSON.parse(new TextDecoder().decode(r.body)); } catch (e) {}
+      var hs = (d.holders || []).map(function (h) { return String(h).toUpperCase(); });
+      if (hs.indexOf(own) < 0) hs.push(own);
+      return hs;
+    }).catch(function () { return [own]; });
+  }
+  function onceGroup(i) {
+    if (i >= gateways.length) return Promise.reject(new Error('no gateway reached a station that keeps ' + GROUP));
+    var g = gateways[i], own = '';
+    say('Gateway ' + g + '…');
+    return window.XprsRns.connect(g).then(function (hello) {
+      own = (JSON.parse(hello).station || '').toUpperCase();
+      if (!own) throw new Error(g + ' names no station');
+      return linkTo(own, g);
+    }).then(function () {
+      say('Asking who keeps ' + GROUP + '…');
+      return holdersOf(GROUP, own);
+    }).then(function (hs) {
+      // One after another; the first that proves itself is the one.
+      function next(k) {
+        if (k >= hs.length) throw new Error('no station that keeps ' + GROUP + ' answered');
+        // Already linked to the gateway's own station: no second link.
+        var step = hs[k] === own && k === 0 ? Promise.resolve({ nick: '' }) : linkTo(hs[k], g);
+        return step.then(function (v) {
+          CALL = hs[k]; gw = g; nick = v.nick || '';
+        }, function (e) {
+          say(e.message || String(e), true);
+          return next(k + 1);
+        });
+      }
+      return next(0);
+    }).catch(function (e) {
+      say(e.message || String(e), true);
+      return onceGroup(i + 1);
+    });
+  }
   function once(i) {
+    if (GROUP) return onceGroup(i);
     if (i >= gateways.length) return Promise.reject(new Error('no gateway reached ' + CALL));
     var g = gateways[i];
     say('Gateway ' + g + '…');
@@ -261,8 +331,8 @@
   }
 
   function start() {
-    if (!CALL) { say('No station named in the address: xprs.dev/in/<callsign>', true); return; }
-    document.title = CALL + ' · XPRS';
+    if (!CALL && !GROUP) { say('No station named in the address: xprs.dev/in/<callsign>', true); return; }
+    document.title = (GROUP || CALL) + ' · XPRS';
     load(BASE + 'rns.js').then(function () {
       return getText(BASE + 'gateways.json');
     }).then(function (t) {
@@ -270,11 +340,14 @@
       return reach();
     }).then(function () {
       say(CALL + ' proved itself' + (nick ? ' (' + nick + ')' : '') + '. Loading its portal…');
+      // The page opens on the group the address named (#g=, read by the
+      // portal page at start).
+      if (GROUP) history.replaceState(null, '', location.pathname + '#g=' + encodeURIComponent(GROUP));
       return getText(BASE + 'portal.html');
     }).then(function (html) {
       window.XMLHttpRequest = RnsXHR;
       window.fetch = rnsFetch;
-      window.XPRS_REMOTE = { station: CALL, gateway: gw };
+      window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP };
       document.open();
       document.write(html);
       document.close();

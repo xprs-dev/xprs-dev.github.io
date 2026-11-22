@@ -28,12 +28,14 @@ a{color:var(--accent)}
 /* xprs.dev/in/<callsign> opens that station's portal over Reticulum
  * (/in/shell.js). Any other unknown address is a plain "not here". */
 (function(){
-  var m=/^\/in\/([a-z0-9-]+)\/?$/i.exec(location.pathname);
+  var m=/^\/in\/([a-z0-9-]+)\/?$/i.exec(location.pathname)||
+        /^\/in\/g\/([a-z0-9][a-z0-9_-]{0,15})\/?$/i.exec(location.pathname);
   if(!m){
     document.getElementById('in-status').innerHTML='<div>Nothing here. <a href="/">xprs.dev</a></div>';
     return;
   }
-  document.getElementById('in-call').textContent='Reaching station '+m[1].toUpperCase()+' over Reticulum';
+  var grp=/^\/in\/g\//i.test(location.pathname)||/^x5/i.test(m[1]);
+  document.getElementById('in-call').textContent=(grp?'Opening group ':'Reaching station ')+m[1].toUpperCase()+' over Reticulum';
   var s=document.createElement('script');s.src='/in/shell.js';document.body.appendChild(s);
 })();
 </script>
