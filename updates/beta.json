@@ -1,40 +1,40 @@
 {
-  "version": "1.13.0",
-  "tagName": "v1.13.0",
-  "name": "XPRS 1.13.0",
-  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.1...v1.13.0",
-  "publishedAt": "2026-11-22T18:28:24Z",
-  "prerelease": false,
+  "version": "1.14.0-beta.2",
+  "tagName": "v1.14.0-beta.2",
+  "name": "XPRS 1.14.0-beta.2",
+  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.13.0...v1.14.0-beta.2",
+  "publishedAt": "2026-11-23T00:35:08Z",
+  "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.13.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-android-arm64-v8a.apk",
-      "size": 51661258,
-      "sha256": "c2dc15644680bdb894498d06d7b9fc45337d5ddaca0bd8de631949846d3c2efe"
+      "name": "xprs-1.14.0-beta.2-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.0-beta.2/xprs-1.14.0-beta.2-android-arm64-v8a.apk",
+      "size": 51665354,
+      "sha256": "89fb7f711330f7095be838f83fb13e69eeea24b9d6d3395d451d4becd8254224"
     },
     {
-      "name": "xprs-1.13.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-android-armeabi-v7a.apk",
-      "size": 45439444,
-      "sha256": "58231ff799d22ce97b479788dbe73a9b9b7ea3275094ebcc232b885e732c2547"
+      "name": "xprs-1.14.0-beta.2-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.0-beta.2/xprs-1.14.0-beta.2-android-armeabi-v7a.apk",
+      "size": 45472212,
+      "sha256": "bcee50019625e98c552ddb030d629b9f0ad8417caad5117e59011b7c9bc74040"
     },
     {
-      "name": "xprs-1.13.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-android-x86_64.apk",
-      "size": 55040443,
-      "sha256": "da4b842e33cea92fa5f8d408030f83ded4c050cc4173385ee92c99e5a23abf45"
+      "name": "xprs-1.14.0-beta.2-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.14.0-beta.2/xprs-1.14.0-beta.2-android-x86_64.apk",
+      "size": 55044539,
+      "sha256": "ec1e8875e695d51337d321aeea958659a3f7ba5c54d581f6b856826c79b99281"
     },
     {
-      "name": "xprs-1.13.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-linux-x64.tar.gz",
-      "size": 34525862,
-      "sha256": "842e866616c0e4fe30f2032a6e31b892f361da9db24a36a2d663b74610bb7eb1"
+      "name": "xprs-1.14.0-beta.2-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.14.0-beta.2/xprs-1.14.0-beta.2-linux-x64.tar.gz",
+      "size": 34539316,
+      "sha256": "9f739013f9c96a9b465e70e9cb9887cebe67a1cfe018730ecbb4249b8756082b"
     },
     {
-      "name": "xprs-1.13.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-windows-x64-setup.exe",
-      "size": 29923702,
-      "sha256": "6d9fede283924d5fd5b247a9c67149ccb3c9ceb2f76bc1f377ab7f62df492829"
+      "name": "xprs-1.14.0-beta.2-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.14.0-beta.2/xprs-1.14.0-beta.2-windows-x64-setup.exe",
+      "size": 29942031,
+      "sha256": "e31caa8c968dd9ab9ab17238ac0f6392f232d1cd4e34687fe45e4fbacf27e731"
     }
   ]
 }
