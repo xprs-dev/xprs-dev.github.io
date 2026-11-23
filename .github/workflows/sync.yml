@@ -23,6 +23,10 @@ on:
       tag:
         description: 'Publish this tag specifically (default: newest)'
         required: false
+      refresh:
+        description: 'Rebuild the feed even when it names the newest tags (a release text was corrected)'
+        required: false
+        default: 'no'
 
 permissions:
   contents: write
@@ -115,7 +119,8 @@ jobs:
           cur_stable=$(jq -r '.tagName // ""' updates/stable.json 2>/dev/null || echo "")
           # A feed still naming another host (GitHub, before xprs.dev/downloads)
           # is rewritten even when its versions are current.
-          if [ "$cur_beta" = "${{ steps.tags.outputs.newest }}" ] && \
+          if [ "${{ github.event.inputs.refresh }}" != "yes" ] && \
+             [ "$cur_beta" = "${{ steps.tags.outputs.newest }}" ] && \
              [ "$cur_stable" = "${{ steps.tags.outputs.stable }}" ] && \
              ! jq -r '.assets[].url' updates/*.json | grep -qv "^$DOWNLOADS/"; then
             echo "current=yes" >> "$GITHUB_OUTPUT"
