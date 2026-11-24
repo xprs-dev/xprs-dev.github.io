@@ -42,6 +42,8 @@ body.listing #map,body.listing #side{display:none}
 .st span{color:var(--muted);font-size:13px;white-space:nowrap}
 .st i{font-style:normal;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .leaflet-container{background:#1f1f1f;font:inherit}
+.cnt{background:var(--accent);color:#140c06;border-radius:50%;font-weight:700;font-size:12px;line-height:26px;text-align:center;box-shadow:0 0 0 2px rgba(10,10,11,.6)}
+.leaflet-popup-content hr{border:0;border-top:1px solid var(--line);margin:6px 0}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--text);border:1px solid var(--border);box-shadow:none}
 .leaflet-popup-content a{color:var(--accent);font-weight:600}
 .leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
@@ -110,6 +112,7 @@ body.listing #map,body.listing #side{display:none}
   function nonce() { var a = new Uint8Array(12); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
 
   var map = L.map('map', { worldCopyJump: true }).setView([30, 0], 2);
+  var layer = L.layerGroup().addTo(map);
   map.attributionControl.setPrefix(false);
 
   // OpenStreetMap tiles repainted in the Protomaps "dark" palette, the same
@@ -174,16 +177,32 @@ body.listing #map,body.listing #side{display:none}
     return null;
   }
   function base(c) { return String(c || '').toUpperCase().split('-')[0]; }
-  // pos: as XPRS.md 15.1 has it: redaction bars dropped, precision from decimals.
+  // pos: as XPRS.md 15.1 has it, precision from the decimals. A value with
+  // redaction bars (6.2.1: `38█████,-9█████`) hides its last digits: the
+  // station is somewhere in the square its readable digits name, so it is
+  // placed in the MIDDLE of that square (38.5,-9.5), with the square itself
+  // as `box`, not on the corner the stripped digits spell.
   function parsePos(p) {
     if (!p) return null;
-    p = p.replace(/█/g, '');
-    var m = /^(-?\d+(?:\.(\d*))?),(-?\d+(?:\.(\d*))?)$/.exec(p);
-    if (!m) return null;
-    var lat = parseFloat(m[1]), lon = parseFloat(m[3]);
-    if (!(lat >= -90 && lat <= 90 && lon >= -180 && lon <= 180)) return null;
-    var dec = Math.min((m[2] || '').length, (m[4] || '').length);
-    return { lat: lat, lon: lon, metres: [111000, 11100, 1110, 111, 11, 1.1][Math.min(dec, 5)] };
+    var parts = p.split(','), half = 0;
+    if (parts.length !== 2) return null;
+    function mid(raw) {
+      var shown = raw.replace(/█/g, '');
+      if (!/^-?\d+(\.\d*)?$/.test(shown)) return NaN;
+      var n = parseFloat(shown), dot = shown.indexOf('.');
+      var dec = dot < 0 ? 0 : shown.length - dot - 1;
+      if (shown === raw) return { v: n, dec: dec };
+      var unit = Math.pow(10, -dec);
+      if (unit / 2 > half) half = unit / 2;
+      return { v: shown.charAt(0) === '-' ? n - unit / 2 : n + unit / 2, dec: dec };
+    }
+    var la = mid(parts[0]), lo = mid(parts[1]);
+    if (!la || !lo || isNaN(la.v) || isNaN(lo.v)) return null;
+    if (!(la.v >= -90 && la.v <= 90 && lo.v >= -180 && lo.v <= 180)) return null;
+    var dec = Math.min(la.dec, lo.dec);
+    var out = { lat: la.v, lon: lo.v, metres: [111000, 11100, 1110, 111, 11, 1.1][Math.min(dec, 5)] };
+    if (half) out.box = [[la.v - half, lo.v - half], [la.v + half, lo.v + half]];
+    return out;
   }
   function accMetres(a) {
     var m = /^(\d+(?:\.\d+)?)(m|km)?$/.exec(a || '');
@@ -208,7 +227,7 @@ body.listing #map,body.listing #side{display:none}
       var pf = (t === 'identity' || t === 'service') ? field(w, 'pos') : null;
       if (pf !== null && r.ts >= s.posTs) {
         var p = pf === '-' ? null : parsePos(pf);
-        if (p) p.metres = Math.max(p.metres, accMetres(field(w, 'acc')));
+        if (p && !p.box) p.metres = Math.max(p.metres, accMetres(field(w, 'acc')));
         if (p || pf === '-') { s.pos = p; s.posTs = r.ts; }
       }
     });
@@ -219,6 +238,10 @@ body.listing #map,body.listing #side{display:none}
     if (location.hash === '#list') drawList();
     var side = document.getElementById('side'), bounds = L.latLngBounds([]);
     side.innerHTML = '';
+    layer.clearLayers();
+    // Stations that say only which square they are in share one square on
+    // the map, with how many they are, not a pile of markers on one point.
+    var boxes = {};
     placed.forEach(function (s) {
       var href = '/in/' + s.call.toLowerCase(), ll = [s.pos.lat, s.pos.lon];
       var a = document.createElement('a');
@@ -226,12 +249,23 @@ body.listing #map,body.listing #side{display:none}
       a.innerHTML = '<div><b>' + esc(s.call) + '</b><br><i>' + esc(s.nick) + '</i></div><span>' + ago(s.last) + '</span>';
       side.appendChild(a);
       var pop = '<a href="' + href + '">' + esc(s.call) + '</a>' + (s.nick ? ' ' + esc(s.nick) : '') + '<br>' + ago(s.last);
+      if (s.pos.box) {
+        var k = s.pos.box.join(';'), b = boxes[k] || (boxes[k] = { box: s.pos.box, ll: ll, pops: [] });
+        b.pops.push(pop);
+        return;
+      }
       if (s.pos.metres >= 20000) {
-        var ring = L.circle(ll, { radius: s.pos.metres, color: '#FFC107', weight: 1, fillOpacity: .07 }).addTo(map).bindPopup(pop);
+        var ring = L.circle(ll, { radius: s.pos.metres, color: '#FFC107', weight: 1, fillOpacity: .07 }).addTo(layer).bindPopup(pop);
         bounds.extend(ring.getBounds());
       }
-      L.circleMarker(ll, { radius: 7, color: '#A5D6A7', fillColor: '#43A047', fillOpacity: .95, weight: 2 }).addTo(map).bindPopup(pop);
+      L.circleMarker(ll, { radius: 7, color: '#A5D6A7', fillColor: '#43A047', fillOpacity: .95, weight: 2 }).addTo(layer).bindPopup(pop);
       bounds.extend(ll);
+    });
+    Object.keys(boxes).forEach(function (k) {
+      var b = boxes[k], pop = b.pops.slice(0, 12).join('<hr>') + (b.pops.length > 12 ? '<hr>+' + (b.pops.length - 12) : '');
+      L.rectangle(b.box, { color: '#ffa86a', weight: 1, fillOpacity: .1 }).addTo(layer).bindPopup(pop, { maxHeight: 220 });
+      L.marker(b.ll, { icon: L.divIcon({ className: 'cnt', html: String(b.pops.length), iconSize: [26, 26] }) }).addTo(layer).bindPopup(pop, { maxHeight: 220 });
+      bounds.extend(b.box);
     });
     if (bounds.isValid()) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
     say(all.length + ' stations \u00b7 ' + recent + ' today \u00b7 ' + placed.length + ' mapped');
@@ -274,7 +308,9 @@ body.listing #map,body.listing #side{display:none}
   }).then(function (j) {
     return viaGateway(j.gateways || [], 0);
   }).then(function (station) {
-    return history('identity,service,observation').then(function (a) {
+    // A station is placed from its identity (6.3.2 `pos:`), which is what a
+    // gateway serves a visitor; its beacons it keeps to itself.
+    return history('identity,service').then(function (a) {
       return history('').then(function (b) { render(a.concat(b)); });
     });
   }).catch(function () { say('Can\u2019t reach the network right now', true); });

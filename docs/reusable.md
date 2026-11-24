@@ -15,3 +15,7 @@
   one line for what is being done now, a bar of legs lit as they are done,
   and everything said kept under Details. Any page that reaches something in
   several steps before it can show it can use the same three.
+- `parsePos(p)` (`in/index.html`): a `pos:` as XPRS.md 15.1 reads it, a value
+  with redaction bars placed at the middle of the square its readable digits
+  name, with that square as `box`. The map draws one rectangle and a count
+  per square (`boxes` in `render()`). Any page that shows positions uses it.
