@@ -330,6 +330,27 @@
     return reaching;
   }
 
+  // The portal in place of this page, in the same window. Not document.open():
+  // that erases every listener on the window, and a NOSTR extension (nos2x)
+  // answers window.nostr through a 'message' listener it set before: the
+  // portal saw window.nostr and waited for ever on its first question. The
+  // parsed page replaces this one; its scripts, inert after parsing, run in
+  // order as fresh elements; then the two events a loaded page has had.
+  function swapIn(html) {
+    var doc = new DOMParser().parseFromString(html, 'text/html');
+    var root = document.importNode(doc.documentElement, true);
+    document.replaceChild(root, document.documentElement);
+    var dead = root.querySelectorAll('script'), i, j;
+    for (i = 0; i < dead.length; i++) {
+      var s = document.createElement('script');
+      for (j = 0; j < dead[i].attributes.length; j++) s.setAttribute(dead[i].attributes[j].name, dead[i].attributes[j].value);
+      s.text = dead[i].text;
+      dead[i].parentNode.replaceChild(s, dead[i]);
+    }
+    document.dispatchEvent(new Event('DOMContentLoaded', { bubbles: true }));
+    window.dispatchEvent(new Event('load'));
+  }
+
   function start() {
     if (!CALL && !GROUP) { say('No station named in the address: xprs.dev/in/<callsign>', true); return; }
     document.title = (GROUP || CALL) + ' · XPRS';
@@ -348,9 +369,7 @@
       window.XMLHttpRequest = RnsXHR;
       window.fetch = rnsFetch;
       window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP };
-      document.open();
-      document.write(html);
-      document.close();
+      swapIn(html);
       watch();
     }).catch(function (e) {
       say(e.message || String(e), true);
