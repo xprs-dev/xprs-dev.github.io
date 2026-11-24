@@ -1,40 +1,40 @@
 {
-  "version": "1.13.0",
-  "tagName": "v1.13.0",
-  "name": "XPRS 1.13.0",
-  "body": "**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.12.1...v1.13.0",
-  "publishedAt": "2026-11-22T18:28:24Z",
+  "version": "1.14.0",
+  "tagName": "v1.14.0",
+  "name": "XPRS 1.14.0",
+  "body": "- A public group's pictures are anybody's, like its words (10.7.1)\n- Chat 0.10.23: a button over the chat jumps to words that arrived late\n- Chat 0.10.23: words that arrive late are counted, rung and marked, and the room jumps to them\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.13.0...v1.14.0",
+  "publishedAt": "2026-11-24T06:40:24Z",
   "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.13.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-android-arm64-v8a.apk",
-      "size": 51661258,
-      "sha256": "c2dc15644680bdb894498d06d7b9fc45337d5ddaca0bd8de631949846d3c2efe"
+      "name": "xprs-1.14.0-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-android-arm64-v8a.apk",
+      "size": 51841576,
+      "sha256": "b07868b6d07b37d57839c2df09df500387c1c1102994fcb38c3e9101f439bba5"
     },
     {
-      "name": "xprs-1.13.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-android-armeabi-v7a.apk",
-      "size": 45439444,
-      "sha256": "58231ff799d22ce97b479788dbe73a9b9b7ea3275094ebcc232b885e732c2547"
+      "name": "xprs-1.14.0-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-android-armeabi-v7a.apk",
+      "size": 45681202,
+      "sha256": "0eb7342f80b3c8be3979cfbab0bac06fb7048146895988715dfcf67a2110179d"
     },
     {
-      "name": "xprs-1.13.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-android-x86_64.apk",
-      "size": 55040443,
-      "sha256": "da4b842e33cea92fa5f8d408030f83ded4c050cc4173385ee92c99e5a23abf45"
+      "name": "xprs-1.14.0-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-android-x86_64.apk",
+      "size": 55286297,
+      "sha256": "03d2264f5f8358b059c4b90aaa6cf51698d43859fe661b4755c44cecb1c1163d"
     },
     {
-      "name": "xprs-1.13.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-linux-x64.tar.gz",
-      "size": 34525862,
-      "sha256": "842e866616c0e4fe30f2032a6e31b892f361da9db24a36a2d663b74610bb7eb1"
+      "name": "xprs-1.14.0-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-linux-x64.tar.gz",
+      "size": 34638790,
+      "sha256": "b479900fb232788199bd16a7e1bae86e876c0b647a133139b1fbd967c845b0fe"
     },
     {
-      "name": "xprs-1.13.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.13.0/xprs-1.13.0-windows-x64-setup.exe",
-      "size": 29923702,
-      "sha256": "6d9fede283924d5fd5b247a9c67149ccb3c9ceb2f76bc1f377ab7f62df492829"
+      "name": "xprs-1.14.0-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-windows-x64-setup.exe",
+      "size": 30013844,
+      "sha256": "bbc5cdcce0fa540e1505df747516b81aabe99a0e99ac09433d25c59081ba65c8"
     }
   ]
 }

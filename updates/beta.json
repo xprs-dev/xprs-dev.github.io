@@ -1,40 +1,40 @@
 {
-  "version": "1.14.0-beta.11",
-  "tagName": "v1.14.0-beta.11",
-  "name": "XPRS 1.14.0-beta.11",
-  "body": "- Link previews: no repeated summary; web chat joins split messages\n- File lift keeps the caption's line breaks (4.11)\n- History asks by type read an index by type, built once in the archive's life on its writer thread\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.14.0-beta.10...v1.14.0-beta.11",
-  "publishedAt": "2026-11-23T21:46:59Z",
+  "version": "1.14.1-beta.1",
+  "tagName": "v1.14.1-beta.1",
+  "name": "XPRS 1.14.1-beta.1",
+  "body": "- Web chat: pictures drawn before the station's file answer load once it comes\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.14.0...v1.14.1-beta.1",
+  "publishedAt": "2026-11-24T08:37:11Z",
   "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.14.0-beta.11-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.14.0-beta.11/xprs-1.14.0-beta.11-android-arm64-v8a.apk",
-      "size": 51837480,
-      "sha256": "0165187447d82a28c7bc6cc3347eae1ac21a5330016f23fc86f1bf95a24669f9"
+      "name": "xprs-1.14.1-beta.1-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.1/xprs-1.14.1-beta.1-android-arm64-v8a.apk",
+      "size": 51841576,
+      "sha256": "287f2ded9190b3f9fca99376f4eee371882ea8bf4d8ae544a1172d739711008a"
     },
     {
-      "name": "xprs-1.14.0-beta.11-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.14.0-beta.11/xprs-1.14.0-beta.11-android-armeabi-v7a.apk",
-      "size": 45648434,
-      "sha256": "ed199503c94d7ebe1af76df43991d8bbb88c66cc59c251da906b7b11800eb012"
+      "name": "xprs-1.14.1-beta.1-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.1/xprs-1.14.1-beta.1-android-armeabi-v7a.apk",
+      "size": 45685298,
+      "sha256": "766b9ba472cace4130e9ea08aca2224edfc38e98159cdb863559a417d8e96d18"
     },
     {
-      "name": "xprs-1.14.0-beta.11-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.14.0-beta.11/xprs-1.14.0-beta.11-android-x86_64.apk",
-      "size": 55282201,
-      "sha256": "08c1b236fae7ced41558b32697c3d19a352b472f3208baf5c4b70088554cbbdb"
+      "name": "xprs-1.14.1-beta.1-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.1/xprs-1.14.1-beta.1-android-x86_64.apk",
+      "size": 55286297,
+      "sha256": "34c132ad94272c73a705691891d58ebb724aeeaad46955e4fdbad5c4b7b4fbca"
     },
     {
-      "name": "xprs-1.14.0-beta.11-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.14.0-beta.11/xprs-1.14.0-beta.11-linux-x64.tar.gz",
-      "size": 34630467,
-      "sha256": "011efb877b594c8350ce091fb21bc181bfd9bb6439c69ca38118e7575837ba1d"
+      "name": "xprs-1.14.1-beta.1-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.1/xprs-1.14.1-beta.1-linux-x64.tar.gz",
+      "size": 34637565,
+      "sha256": "2351e562f22716f84858f9de8d6e0686ca397bbc226e39a24bc6af5bb6292586"
     },
     {
-      "name": "xprs-1.14.0-beta.11-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.14.0-beta.11/xprs-1.14.0-beta.11-windows-x64-setup.exe",
-      "size": 30010694,
-      "sha256": "a4b015bbb4c4d4c355022c1ca820ef19776bd855e9007820617a2b0e070147df"
+      "name": "xprs-1.14.1-beta.1-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.1/xprs-1.14.1-beta.1-windows-x64-setup.exe",
+      "size": 30016558,
+      "sha256": "5270715e8573d9fd581f543f9e0bb8c37ed73c4198660171ef68029227bc26fc"
     }
   ]
 }
