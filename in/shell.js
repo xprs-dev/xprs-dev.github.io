@@ -25,13 +25,36 @@
   var mg = /^\/in\/g\/([a-z0-9][a-z0-9_-]{0,15})\/?$/i.exec(location.pathname);
   var GROUP = mg ? mg[1].toUpperCase() : (/^X5/.test(CALL) ? CALL : '');
   if (GROUP) CALL = '';
-  var box = document.getElementById('in-status');
-  function say(t, bad) {
-    if (!box) return;
+  // What the page shows while it looks (404.html): one line saying what is
+  // being done now, the legs of the way lit as they are done (step()), and
+  // everything said so far under Details. After the portal took the page's
+  // place these elements are gone from it, and a later reach() says nothing.
+  var box = document.getElementById('in-status'), logBox = document.getElementById('in-log');
+  var LEGS = { gateway: 0, station: 1, link: 2, proof: 3, portal: 4 };
+  function say(t, bad, quiet) {
+    if (!box || !box.isConnected) return;
+    if (!quiet) { box.textContent = t; box.className = bad ? 'bad' : ''; }
+    if (!logBox) return;
     var p = document.createElement('div');
     p.textContent = t;
     if (bad) p.className = 'bad';
-    box.appendChild(p);
+    logBox.appendChild(p);
+    document.getElementById('in-more').className = 'some';
+  }
+  function step(leg) {
+    var bar = document.getElementById('in-steps');
+    if (!bar) return;
+    bar.className = '';
+    for (var i = 0; i < bar.children.length; i++)
+      bar.children[i].className = i < LEGS[leg] ? 'done' : i === LEGS[leg] ? 'on' : '';
+  }
+  // The end of the way: what could not be done, and what to do about it.
+  function failed(t, detail) {
+    if (detail) say(detail, true, true);
+    say(t, true);
+    var bar = document.getElementById('in-steps'), acts = document.getElementById('in-acts');
+    if (bar) bar.className = 'bad';
+    if (acts) acts.className = 'show';
   }
   function load(src) {
     return new Promise(function (ok, no) {
@@ -263,12 +286,15 @@
   function onceGroup(i) {
     if (i >= gateways.length) return Promise.reject(new Error('no gateway reached a station that keeps ' + GROUP));
     var g = gateways[i], own = '';
-    say('Gateway ' + g + '…');
+    step('gateway');
+    say('Gateway ' + g, false, true);
+    say('Looking for ' + GROUP + '…');
     return window.XprsRns.connect(g).then(function (hello) {
       own = (JSON.parse(hello).station || '').toUpperCase();
       if (!own) throw new Error(g + ' names no station');
       return linkTo(own, g);
     }).then(function () {
+      step('station');
       say('Asking who keeps ' + GROUP + '…');
       return holdersOf(GROUP, own);
     }).then(function (hs) {
@@ -276,17 +302,18 @@
       function next(k) {
         if (k >= hs.length) throw new Error('no station that keeps ' + GROUP + ' answered');
         // Already linked to the gateway's own station: no second link.
-        var step = hs[k] === own && k === 0 ? Promise.resolve({ nick: '' }) : linkTo(hs[k], g);
-        return step.then(function (v) {
+        step('link');
+        var leg = hs[k] === own && k === 0 ? Promise.resolve({ nick: '' }) : linkTo(hs[k], g);
+        return leg.then(function (v) {
           CALL = hs[k]; gw = g; nick = v.nick || '';
         }, function (e) {
-          say(e.message || String(e), true);
+          say(e.message || String(e), true, true);
           return next(k + 1);
         });
       }
       return next(0);
     }).catch(function (e) {
-      say(e.message || String(e), true);
+      say(e.message || String(e), true, true);
       return onceGroup(i + 1);
     });
   }
@@ -294,23 +321,29 @@
     if (GROUP) return onceGroup(i);
     if (i >= gateways.length) return Promise.reject(new Error('no gateway reached ' + CALL));
     var g = gateways[i];
-    say('Gateway ' + g + '…');
+    step('gateway');
+    say('Gateway ' + g, false, true);
+    say('Looking for ' + CALL + '…');
     return window.XprsRns.connect(g).then(function () {
+      step('station');
       return window.XprsRns.resolve(CALL);
     }).then(function (j) {
       var r = JSON.parse(j);
       if (!r.rns) throw new Error(g + ' has not heard ' + CALL + ' on Reticulum');
+      step('link');
       say('Opening a link to ' + CALL + '…');
       return window.XprsRns.open(r.rns);
     }).then(function (ok) {
       if (!ok) throw new Error('no link to ' + CALL + ' through ' + g);
+      step('proof');
+      say('Checking it is ' + CALL + '…');
       var n = nonce();
       return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, CALL, n)); });
     }).then(function (v) {
       if (!v.ok) throw new Error('This is not ' + CALL + ': ' + v.why);
       gw = g; nick = v.nick || '';
     }).catch(function (e) {
-      say(e.message || String(e), true);
+      say(e.message || String(e), true, true);
       return once(i + 1);
     });
   }
@@ -352,7 +385,7 @@
   }
 
   function start() {
-    if (!CALL && !GROUP) { say('No station named in the address: xprs.dev/in/<callsign>', true); return; }
+    if (!CALL && !GROUP) { failed('No station has this name'); return; }
     document.title = (GROUP || CALL) + ' · XPRS';
     load(BASE + 'rns.js').then(function () {
       return getText(BASE + 'gateways.json');
@@ -360,7 +393,9 @@
       gateways = JSON.parse(t).gateways || [];
       return reach();
     }).then(function () {
-      say(CALL + ' proved itself' + (nick ? ' (' + nick + ')' : '') + '. Loading its portal…');
+      step('portal');
+      say(CALL + ' proved itself' + (nick ? ' (' + nick + ')' : ''), false, true);
+      say('Loading the portal…');
       // The page opens on the group the address named (#g=, read by the
       // portal page at start).
       if (GROUP) history.replaceState(null, '', location.pathname + '#g=' + encodeURIComponent(GROUP));
@@ -372,7 +407,7 @@
       swapIn(html);
       watch();
     }).catch(function (e) {
-      say(e.message || String(e), true);
+      failed('Can’t reach ' + (GROUP || CALL) + ' right now', e.message || String(e));
     });
   }
   start();

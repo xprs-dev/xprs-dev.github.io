@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>XPRS stations</title>
 <link rel="icon" href="/favicon.svg">
+<!-- The portal's logo font (portal/page/logo-font.css, copied by tool/sync_in.sh). -->
+<link rel="stylesheet" href="/in/logo-font.css">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
-:root{--bg:#0a0a0b;--panel:#161b22;--border:#30363d;--text:#e6edf3;--muted:#8b949e;--accent:#ffa86a;--bad:#ff6b6b}
+/* The portal's palette (portal/page/chat_page.html), so the map, the looking
+   page (404.html) and a station's portal read as one site. */
+:root{--bg:#0a0a0b;--panel:#141312;--border:rgba(255,168,106,.2);--text:#f2f0ee;--muted:#8f8a86;--accent:#ffa86a;--bad:#ff6b6b;--field:#1a1918;--line:#232120}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
 body{display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:16px;padding:10px 16px;border-bottom:1px solid var(--border)}
-h1{font-size:18px;letter-spacing:4px;color:var(--accent);margin:0}
+header{display:flex;align-items:center;gap:16px;padding:0 12px;min-height:40px;margin-top:5px;border-bottom:1px solid var(--border)}
+h1{font-family:'Wartext',sans-serif;font-weight:normal;font-size:38px;letter-spacing:5px;color:var(--accent);margin:-12px 0 0;transform:scaleY(.72);line-height:1}
 #count{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #count.bad{color:var(--bad)}
 nav{display:flex;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:2px;flex:none}
 nav a{color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:4px}
-nav a.on{background:#21262d;color:var(--text)}
+nav a.on{background:var(--line);color:var(--text)}
 form{margin-left:auto;flex:none}
 #go{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;width:130px;font:inherit;text-transform:uppercase}
 #go::placeholder{text-transform:none;color:var(--muted)}
@@ -32,7 +36,7 @@ body.listing #map,body.listing #side{display:none}
 #list .st em{font-style:normal;color:#43A047;font-size:12px}
 #list p{color:var(--muted);text-align:center;padding:16px}
 #list button{display:block;margin:12px auto 24px;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font:inherit;cursor:pointer}
-.st{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;border-bottom:1px solid var(--border);color:var(--text);text-decoration:none}
+.st{display:flex;justify-content:space-between;gap:8px;padding:8px 14px;border-bottom:1px solid var(--line);color:var(--text);text-decoration:none}
 .st:hover{background:var(--panel)}
 .st b{color:var(--accent);font-weight:600}
 .st span{color:var(--muted);font-size:13px;white-space:nowrap}
@@ -42,10 +46,10 @@ body.listing #map,body.listing #side{display:none}
 .leaflet-popup-content a{color:var(--accent);font-weight:600}
 .leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
 .leaflet-control-zoom a{background:var(--panel);color:var(--text);border-color:var(--border)}
-.leaflet-control-zoom a:hover{background:#21262d}
-.leaflet-control-attribution{background:rgba(22,27,34,.8)!important;color:var(--muted)}
+.leaflet-control-zoom a:hover{background:var(--line)}
+.leaflet-control-attribution{background:rgba(20,19,18,.8)!important;color:var(--muted)}
 .leaflet-control-attribution a{color:#7fb0e0}
-@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:10px 12px}h1{font-size:15px;letter-spacing:2px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}header{flex-wrap:wrap;row-gap:4px}#count{order:9;flex-basis:100%;font-size:12px}.leaflet-control-attribution{font-size:10px}}
+@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:0 12px 4px}h1{font-size:32px;letter-spacing:4px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}header{flex-wrap:wrap;row-gap:4px}#count{order:9;flex-basis:100%;font-size:12px}.leaflet-control-attribution{font-size:10px}}
 </style>
 </head>
 <body>
