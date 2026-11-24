@@ -43,6 +43,7 @@ body.listing #map,body.listing #side{display:none}
 .st i{font-style:normal;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .leaflet-container{background:#1f1f1f;font:inherit}
 .cnt{background:var(--accent);color:#140c06;border-radius:50%;font-weight:700;font-size:12px;line-height:26px;text-align:center;box-shadow:0 0 0 2px rgba(10,10,11,.6)}
+.leaflet-popup-content small{display:block;margin-top:3px;color:var(--muted);font-size:11px}
 .leaflet-popup-content hr{border:0;border-top:1px solid var(--line);margin:6px 0}
 .leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--text);border:1px solid var(--border);box-shadow:none}
 .leaflet-popup-content a{color:var(--accent);font-weight:600}
@@ -201,7 +202,12 @@ body.listing #map,body.listing #side{display:none}
     if (!(la.v >= -90 && la.v <= 90 && lo.v >= -180 && lo.v <= 180)) return null;
     var dec = Math.min(la.dec, lo.dec);
     var out = { lat: la.v, lon: lo.v, metres: [111000, 11100, 1110, 111, 11, 1.1][Math.min(dec, 5)] };
-    if (half) out.box = [[la.v - half, lo.v - half], [la.v + half, lo.v + half]];
+    if (half) {
+      out.box = [[la.v - half, lo.v - half], [la.v + half, lo.v + half]];
+      // How coarse the square is, as a person reads it: 1 degree is 100 km.
+      var m = Math.round(half * 2 * 100000);
+      out.range = m >= 1000 ? Math.round(m / 1000) + ' km' : m + ' m';
+    }
     return out;
   }
   function accMetres(a) {
@@ -239,8 +245,8 @@ body.listing #map,body.listing #side{display:none}
     var side = document.getElementById('side'), bounds = L.latLngBounds([]);
     side.innerHTML = '';
     layer.clearLayers();
-    // Stations that say only which square they are in share one square on
-    // the map, with how many they are, not a pile of markers on one point.
+    // Stations that say only which square they are in share one marker in
+    // its middle, with how many they are, not a pile of markers on one point.
     var boxes = {};
     placed.forEach(function (s) {
       var href = '/in/' + s.call.toLowerCase(), ll = [s.pos.lat, s.pos.lon];
@@ -250,7 +256,7 @@ body.listing #map,body.listing #side{display:none}
       side.appendChild(a);
       var pop = '<a href="' + href + '">' + esc(s.call) + '</a>' + (s.nick ? ' ' + esc(s.nick) : '') + '<br>' + ago(s.last);
       if (s.pos.box) {
-        var k = s.pos.box.join(';'), b = boxes[k] || (boxes[k] = { box: s.pos.box, ll: ll, pops: [] });
+        var k = s.pos.box.join(';'), b = boxes[k] || (boxes[k] = { box: s.pos.box, ll: ll, range: s.pos.range, pops: [] });
         b.pops.push(pop);
         return;
       }
@@ -262,8 +268,10 @@ body.listing #map,body.listing #side{display:none}
       bounds.extend(ll);
     });
     Object.keys(boxes).forEach(function (k) {
-      var b = boxes[k], pop = b.pops.slice(0, 12).join('<hr>') + (b.pops.length > 12 ? '<hr>+' + (b.pops.length - 12) : '');
-      L.rectangle(b.box, { color: '#ffa86a', weight: 1, fillOpacity: .1 }).addTo(layer).bindPopup(pop, { maxHeight: 220 });
+      var b = boxes[k], pop = b.pops.slice(0, 12).join('<hr>') + (b.pops.length > 12 ? '<hr>+' + (b.pops.length - 12) : '') +
+        // Only the area is known: said once under the names, so nobody reads
+        // the marker as the spot.
+        '<small>Approximate: somewhere within ' + b.range + ' of here</small>';
       L.marker(b.ll, { icon: L.divIcon({ className: 'cnt', html: String(b.pops.length), iconSize: [26, 26] }) }).addTo(layer).bindPopup(pop, { maxHeight: 220 });
       bounds.extend(b.box);
     });
