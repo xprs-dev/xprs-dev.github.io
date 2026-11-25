@@ -18,6 +18,7 @@ header{display:flex;align-items:center;gap:16px;padding:0 12px;min-height:40px;m
 h1{font-family:'Wartext',sans-serif;font-weight:normal;font-size:38px;letter-spacing:5px;color:var(--accent);margin:-12px 0 0;transform:scaleY(.72);line-height:1}
 #count{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 #count.bad{color:var(--bad)}
+#count i{font-style:normal;opacity:.75}#count i:before{content:' \00b7  '}
 nav{display:flex;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:2px;flex:none}
 nav a{color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:4px}
 nav a.on{background:var(--line);color:var(--text)}
@@ -52,7 +53,7 @@ body.listing #map,body.listing #side{display:none}
 .leaflet-control-zoom a:hover{background:var(--line)}
 .leaflet-control-attribution{background:rgba(20,19,18,.8)!important;color:var(--muted)}
 .leaflet-control-attribution a{color:#7fb0e0}
-@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:0 12px 4px}h1{font-size:32px;letter-spacing:4px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}header{flex-wrap:wrap;row-gap:4px}#count{order:9;flex-basis:100%;font-size:12px}.leaflet-control-attribution{font-size:10px}}
+@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:10px;padding:0 12px 4px}h1{font-size:32px;letter-spacing:4px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}header{flex-wrap:wrap;row-gap:4px}#count{order:9;flex-basis:100%;font-size:12px;white-space:normal}#count i{display:block}#count i:before{content:none}.leaflet-control-attribution{font-size:10px}}
 </style>
 </head>
 <body>
@@ -69,7 +70,11 @@ body.listing #map,body.listing #side{display:none}
   'use strict';
   var RECENT = 86400;
   var countEl = document.getElementById('count');
-  function say(t, bad) { countEl.textContent = t; countEl.className = bad ? 'bad' : ''; }
+  function say(t, bad, note) {
+    countEl.textContent = t;
+    if (note) { var i = document.createElement('i'); i.textContent = note; countEl.appendChild(i); }
+    countEl.className = bad ? 'bad' : '';
+  }
   var stations = [], shown = 50;
   function view() {
     var listing = location.hash === '#list';
@@ -219,7 +224,26 @@ body.listing #map,body.listing #side{display:none}
     return s < 120 ? 'just now' : s < 7200 ? Math.round(s / 60) + ' min ago' : s < 172800 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago';
   }
 
-  function render(rows) {
+  // The last answer the network gave, kept in this browser: shown at once on
+  // the next visit while Reticulum connects, then replaced by the fresh one.
+  var CACHE = 'xprs.in.map';
+  function cacheRead() {
+    try {
+      var c = JSON.parse(localStorage.getItem(CACHE) || 'null');
+      return c && c.at && c.rows && c.rows.length ? c : null;
+    } catch (e) { return null; }
+  }
+  function cacheWrite(rows) {
+    try { localStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), rows: rows })); } catch (e) {}
+  }
+  function when(ms) {
+    var d = new Date(ms);
+    function two(n) { return (n < 10 ? '0' : '') + n; }
+    return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + ' ' + two(d.getHours()) + ':' + two(d.getMinutes());
+  }
+  var fitted = false, cachedAt = 0, summary = '';
+
+  function render(rows, fromCache) {
     var st = {}, now = Date.now() / 1000;
     rows.forEach(function (r) {
       var w = r.wire || '', c = base(field(w, 'f'));
@@ -275,8 +299,11 @@ body.listing #map,body.listing #side{display:none}
       L.marker(b.ll, { icon: L.divIcon({ className: 'cnt', html: String(b.pops.length), iconSize: [26, 26] }) }).addTo(layer).bindPopup(pop, { maxHeight: 220 });
       bounds.extend(b.box);
     });
-    if (bounds.isValid()) map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 });
-    say(all.length + ' stations \u00b7 ' + recent + ' today \u00b7 ' + placed.length + ' mapped');
+    // Framed once: fresh data arriving after the cached view does not move
+    // the map from under someone already looking at it.
+    if (!fitted && bounds.isValid()) { map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 }); fitted = true; }
+    summary = all.length + ' stations \u00b7 ' + recent + ' today \u00b7 ' + placed.length + ' mapped';
+    say(summary, false, fromCache ? 'Cached data from ' + when(fromCache) : '');
   }
 
   function history(kind) {
@@ -311,6 +338,8 @@ body.listing #map,body.listing #side{display:none}
     });
   }
 
+  var cached = cacheRead();
+  if (cached) { cachedAt = cached.at; render(cached.rows, cached.at); }
   load('/in/rns.js').then(function () {
     return fetch('/in/gateways.json', { cache: 'no-cache' }).then(function (r) { return r.json(); });
   }).then(function (j) {
@@ -319,9 +348,19 @@ body.listing #map,body.listing #side{display:none}
     // A station is placed from its identity (6.3.2 `pos:`), which is what a
     // gateway serves a visitor; its beacons it keeps to itself.
     return history('identity,service').then(function (a) {
-      return history('').then(function (b) { render(a.concat(b)); });
+      return history('').then(function (b) {
+        var rows = a.concat(b);
+        // An answer with nothing in it keeps what is on screen.
+        if (!rows.length && cachedAt) return;
+        render(rows);
+        cacheWrite(rows);
+        cachedAt = 0;
+      });
     });
-  }).catch(function () { say('Can\u2019t reach the network right now', true); });
+  }).catch(function () {
+    if (cachedAt) say(summary, false, 'Cached data from ' + when(cachedAt) + ', network unreachable');
+    else say('Can\u2019t reach the network right now', true);
+  });
   view();
 })();
 </script>
