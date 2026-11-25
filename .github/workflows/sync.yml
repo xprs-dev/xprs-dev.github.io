@@ -155,6 +155,7 @@ jobs:
             for f in "$GITHUB_WORKSPACE"/dl/*; do
               if ! curl -fsI "$DOWNLOADS/$tag/$(basename "$f")" > /dev/null; then
                 echo "::notice::$tag is not on $DOWNLOADS yet; skipping it this run"
+                SKIPPED=1
                 return 0
               fi
             done
@@ -167,8 +168,20 @@ jobs:
                 --date "$date" \
                 "$GITHUB_WORKSPACE"/dl/* )
           }
+          # A stable tag writes beta.json too; when the newest (a pre-release)
+          # is not served yet, the beta channel keeps what it had instead of
+          # stepping back to stable (beta.5, 2026-11-25: beta phones were
+          # offered 1.14.0 over beta.4).
+          cp updates/beta.json "$GITHUB_WORKSPACE/beta.prev" 2>/dev/null || true
+          SKIPPED=0
           publish "${{ steps.tags.outputs.stable }}"
+          SKIPPED=0
           publish "${{ steps.tags.outputs.newest }}"
+          if [ "$SKIPPED" = 1 ] && [ "${{ steps.tags.outputs.newest }}" != "${{ steps.tags.outputs.stable }}" ] \
+             && [ -f "$GITHUB_WORKSPACE/beta.prev" ]; then
+            cp "$GITHUB_WORKSPACE/beta.prev" updates/beta.json
+          fi
+          rm -f "$GITHUB_WORKSPACE/beta.prev"
           rm -rf "$GITHUB_WORKSPACE/dl" "$GITHUB_WORKSPACE/notes.md"
           # Pages would otherwise run Jekyll over the tree.
           touch .nojekyll
