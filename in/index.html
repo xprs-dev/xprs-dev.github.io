@@ -2,666 +2,106 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
-<title>XPRS stations</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>XPRS</title>
 <link rel="icon" href="/favicon.svg">
 <!-- The portal's logo font (portal/page/logo-font.css, copied by tool/sync_in.sh). -->
 <link rel="stylesheet" href="/in/logo-font.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <style>
-/* The portal's palette (portal/page/chat_page.html), so the map, the looking
-   page (404.html) and a station's portal read as one site. */
-:root{--bg:#0a0a0b;--panel:#141312;--border:rgba(255,168,106,.2);--text:#f2f0ee;--muted:#8f8a86;--accent:#ffa86a;--bad:#ff6b6b;--field:#1a1918;--line:#232120}
-html,body{margin:0;height:100%;background:var(--bg);color:var(--text);font:14px/1.45 system-ui,-apple-system,Segoe UI,Roboto,sans-serif}
-body{display:flex;flex-direction:column}
-header{display:flex;align-items:center;gap:16px;padding:0 12px;min-height:40px;margin-top:5px;border-bottom:1px solid var(--border)}
-h1{font-family:'Wartext',sans-serif;font-weight:normal;font-size:38px;letter-spacing:5px;color:var(--accent);margin:-12px 0 0;transform:scaleY(.72);line-height:1}
-#count{color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
-#count.bad{color:var(--bad)}
-#count i{font-style:normal;opacity:.75}#count i:before{content:' \00b7  '}
-nav{display:flex;gap:2px;background:var(--panel);border:1px solid var(--border);border-radius:6px;padding:2px;flex:none}
-nav a{color:var(--muted);text-decoration:none;padding:4px 10px;border-radius:4px}
-nav a.on{background:var(--line);color:var(--text)}
-form{margin-left:auto;flex:none}
-#go{background:var(--panel);border:1px solid var(--border);color:var(--text);border-radius:6px;padding:6px 10px;width:130px;font:inherit;text-transform:uppercase}
-#go::placeholder{text-transform:none;color:var(--muted)}
-main{flex:1;display:flex;min-height:0}
-#map{flex:1;background:#1f1f1f}
-#side{width:260px;overflow:auto;border-left:1px solid var(--border)}
-#side:empty{display:none}
-#list{flex:1;overflow:auto;display:none;scrollbar-gutter:stable}
-body.listing #list{display:block}
-body.listing #map,body.listing #side{display:none}
-#list .st{max-width:720px;margin:0 auto;align-items:center}
-#list .st div{min-width:0;display:flex;gap:10px;align-items:baseline}
-#list .st em{font-style:normal;color:#43A047;font-size:12px}
-#list p{color:var(--muted);text-align:center;padding:16px}
-#list>button{display:block;margin:12px auto 24px;background:var(--panel);color:var(--text);border:1px solid var(--border);border-radius:6px;padding:6px 14px;font:inherit;cursor:pointer}
-.st{display:flex;align-items:center;border-bottom:1px solid var(--line)}
-.st>a{flex:1;min-width:0;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 14px;color:var(--text);text-decoration:none}
-.st:hover{background:var(--panel)}
-.st .msg{margin:0 10px 0 -4px}
-.st b{color:var(--accent);font-weight:600}
-.st span{color:var(--muted);font-size:13px;white-space:nowrap}
-.st i{font-style:normal;color:var(--muted);font-size:13px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.leaflet-container{background:#1f1f1f;font:inherit}
-.cnt{background:var(--accent);color:#140c06;border-radius:50%;font-weight:700;font-size:12px;line-height:26px;text-align:center;box-shadow:0 0 0 2px rgba(10,10,11,.6)}
-.leaflet-popup-content small{display:block;margin-top:3px;color:var(--muted);font-size:11px}
-.leaflet-popup-content hr{border:0;border-top:1px solid var(--line);margin:6px 0}
-.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--panel);color:var(--text);border:1px solid var(--border);box-shadow:none}
-.leaflet-popup-content a{color:var(--accent);font-weight:600}
-.leaflet-container a.leaflet-popup-close-button{color:var(--muted)}
-.leaflet-control-zoom a{background:var(--panel);color:var(--text);border-color:var(--border)}
-.leaflet-control-zoom a:hover{background:var(--line)}
-.leaflet-control-attribution{background:rgba(20,19,18,.8)!important;color:var(--muted)}
-.leaflet-control-attribution a{color:#7fb0e0}
-/* Signing in and direct messages: the portal's dialog (#extask) and message
-   box (.input-area), so a visitor going from the map into a station's portal
-   finds the same controls. */
-#me{flex:none;background:var(--panel);border:1px solid var(--border);color:var(--muted);border-radius:6px;padding:6px 10px;font:inherit;cursor:pointer}
-#me.in{color:var(--accent);font-weight:600;letter-spacing:.5px}
-.msg{flex:none;background:transparent;border:1px solid var(--border);color:var(--accent);border-radius:6px;padding:3px 9px;font:inherit;font-size:12px;cursor:pointer}
-.msg:hover{border-color:var(--accent)}
-.leaflet-popup-content .msg{margin-left:8px}
-#sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:2000;display:flex;align-items:center;justify-content:center;padding:16px}
-#sheet[hidden]{display:none}
-#sheet .card{position:relative;background:var(--panel);border:1px solid var(--border);border-radius:8px;width:100%;max-width:380px;padding:16px;line-height:1.4}
-#sheet .title{color:var(--accent);font-weight:bold;margin-bottom:4px;padding-right:28px;overflow-wrap:anywhere}
-#sheet .title span{color:var(--muted);font-weight:normal}
-#sheet .lead{font-size:13px;color:var(--muted)}
-#sheet .btns{display:flex;flex-direction:column;gap:8px;margin-top:14px}
-#sheet button{padding:10px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);font:inherit;cursor:pointer}
-#sheet button.main{background:var(--accent);border-color:var(--accent);color:#140c06;font-weight:600}
-#sheet button.link{border:0;padding:4px;color:var(--muted);font-size:13px;text-decoration:underline}
-#sheet .x{position:absolute;top:6px;right:6px;border:0;padding:4px 10px;color:var(--muted);font-size:20px;line-height:1}
-#sheet .box{display:flex;gap:6px;align-items:center;margin-top:12px}
-#sheet input{flex:1;min-width:0;background:transparent;border:1px solid var(--border);border-radius:8px;padding:8px;color:var(--text);font:inherit;font-size:16px;outline:none}
-#sheet input:focus{border-color:var(--accent)}
-#sheet button.send{flex:none;width:42px;height:38px;padding:0;border:0;border-radius:8px;background:var(--accent);color:#140c06;display:flex;align-items:center;justify-content:center}
-#sheet button.send:disabled{opacity:.4;cursor:default}
-#sheet button.send svg{width:20px;height:20px;display:block}
-#sheet .meta{display:flex;justify-content:space-between;gap:10px;font-size:12px;color:var(--muted);margin-top:6px;min-height:17px}
-#sheet .bad{color:var(--bad)}
-#sheet .ok{color:#7bc67e}
-#sheet a{color:var(--accent)}
-@media (max-width:720px){main{flex-direction:column}#map{min-height:60vh}#side{width:auto;border-left:0;border-top:1px solid var(--border)}header{gap:8px;padding:0 12px 4px}h1{font-size:32px;letter-spacing:4px}#count{font-size:13px}#go{width:80px;padding:6px 8px}nav a{padding:4px 8px}header{flex-wrap:wrap;row-gap:4px}#count{order:9;flex:1 0 60%;font-size:12px;white-space:normal}#me{order:10;padding:3px 8px;font-size:12px}#count i{display:block}#count i:before{content:none}.leaflet-control-attribution{font-size:10px}#sheet{align-items:flex-end}}
+/* The page shown while a station is looked for. It wears the portal's look
+   (portal/page/chat_page.html: the palette on :root, .header, .card, .act),
+   so the portal that replaces it changes the content, not the design. */
+:root{--accent:#ffa86a;--bg:#0a0a0b;--text:#f2f0ee;--border:rgba(255,168,106,.2);--muted:#8f8a86;
+      --panel:#141312;--line:#232120;--dim:#6b6560;--on-accent:#140c06;--accent-soft:rgba(255,168,106,.14);
+      --hover:rgba(255,168,106,.08);--bad:#ff6b6b;--radius:14px;
+      --sat:env(safe-area-inset-top,0px);--sab:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{font-family:-apple-system,BlinkMacSystemFont,sans-serif;background:var(--bg);color:var(--text);
+     font-size:14px;display:flex;flex-direction:column}
+.header{border-bottom:1px solid var(--border);height:40px;padding:0 12px;margin-top:calc(5px + var(--sat));
+        display:flex;align-items:center;gap:12px;flex:none}
+.header .logo{font-family:'Wartext',sans-serif;font-size:38px;color:var(--accent);letter-spacing:5px;
+        margin-top:-12px;transform:scaleY(.72);transform-origin:center;text-decoration:none}
+.header .stcall{color:var(--muted);font-size:13px;letter-spacing:1px;margin-left:-6px;white-space:nowrap}
+main{flex:1;display:flex;align-items:center;justify-content:center;padding:16px 12px calc(16px + var(--sab))}
+.card{background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+      padding:22px 20px 18px;width:100%;max-width:380px;text-align:center}
+#in-call{font-size:24px;font-weight:bold;letter-spacing:2px;color:var(--accent);overflow-wrap:anywhere}
+#in-kind{font-size:12px;color:var(--dim);margin-top:2px;min-height:15px}
+/* Where the way to the station is: one segment per leg, lit as it is done. */
+#in-steps{display:flex;gap:4px;margin:18px 0 6px}
+#in-steps i{flex:1;height:3px;border-radius:2px;background:var(--line);transition:background .3s}
+#in-steps i.done{background:var(--accent)}
+#in-steps i.on{background:var(--accent);animation:look 1.4s ease-in-out infinite}
+#in-steps.bad i.on{background:var(--bad);animation:none}
+#in-legs{display:flex;gap:4px;font-size:10px;color:var(--dim);letter-spacing:.3px}
+#in-legs span{flex:1}
+#in-status{color:var(--muted);font-size:13px;margin-top:16px;min-height:19px;animation:look 1.4s ease-in-out infinite}
+#in-status.bad{color:var(--bad);animation:none}
+#in-status.still{animation:none}
+@keyframes look{50%{opacity:.35}}
+#in-acts{display:none;gap:8px;justify-content:center;margin-top:16px}
+#in-acts.show{display:flex}
+.act{background:transparent;border:1px solid var(--accent);color:var(--accent);padding:8px 14px;border-radius:8px;
+     cursor:pointer;font:inherit;font-size:13px;min-height:36px;white-space:nowrap;line-height:1;
+     text-decoration:none;display:inline-flex;align-items:center}
+.act:hover{background:var(--accent-soft)}
+.act.primary{background:var(--accent);color:var(--on-accent);font-weight:bold}
+.act.quiet{border-color:var(--border);color:var(--muted)}
+.act.quiet:hover{color:var(--text);background:var(--hover)}
+details{margin-top:14px;text-align:left;font-size:11px;color:var(--dim)}
+details:not(.some){display:none}
+summary{cursor:pointer;text-align:center;list-style:none}
+summary::-webkit-details-marker{display:none}
+#in-log{margin-top:8px;border-top:1px solid var(--line);padding-top:8px;max-height:30vh;overflow:auto}
+#in-log div{margin:2px 0;overflow-wrap:anywhere}
+#in-log div.bad{color:var(--bad)}
+a{color:var(--accent)}
 </style>
 </head>
 <body>
-<header><h1>XPRS</h1><nav><a href="#" id="tab-map" class="on">Map</a><a href="#list" id="tab-list">List</a></nav><span id="count">Connecting…</span>
-<form id="goform"><input id="go" placeholder="Callsign" autocomplete="off" spellcheck="false"></form><button id="me" type="button">Sign in</button></header>
-<main><div id="map"></div><div id="side"></div><div id="list"></div></main>
-<div id="sheet" hidden></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
+<div class="header"><a class="logo" href="/in/" title="Stations">XPRS</a><span class="stcall" id="in-head"></span></div>
+<main>
+<div class="card">
+  <div id="in-call"></div>
+  <div id="in-kind"></div>
+  <div id="in-steps"><i></i><i></i><i></i><i></i><i></i></div>
+  <div id="in-legs"><span>Gateway</span><span>Station</span><span>Link</span><span>Proof</span><span>Portal</span></div>
+  <div id="in-status"></div>
+  <div id="in-acts"><button class="act primary" onclick="location.reload()">Try again</button><a class="act quiet" href="/in/">Stations</a></div>
+  <details id="in-more"><summary>Details</summary><div id="in-log"></div></details>
+  <noscript>This page needs JavaScript.</noscript>
+</div>
+</main>
 <script>
-/* xprs.dev/in/: stations on a map. Reached over Reticulum through a gateway
- * (gateways.json), whose station's public history gives the identities it
- * heard; a station is placed by the newest pos:/acc: in them (XPRS.md 6.3.2,
- * 15.1). Only stations heard in the last RECENT seconds are counted. */
-(function () {
-  'use strict';
-  var RECENT = 86400;
-  var countEl = document.getElementById('count');
-  function say(t, bad, note) {
-    countEl.textContent = t;
-    if (note) { var i = document.createElement('i'); i.textContent = note; countEl.appendChild(i); }
-    countEl.className = bad ? 'bad' : '';
+/* xprs.dev/in/<callsign> opens that station's portal over Reticulum
+ * (/in/shell.js), and xprs.dev/in/ the visitor's own, on one of their
+ * archivers (in/index.html is this file, copied by tool/sync_in.sh). Any
+ * other unknown address is a plain "not here". */
+(function(){
+  var home=/^\/in\/?(index\.html)?$/i.test(location.pathname);
+  var m=/^\/in\/([a-z0-9-]+)\/?$/i.exec(location.pathname)||
+        /^\/in\/g\/([a-z0-9][a-z0-9_-]{0,15})\/?$/i.exec(location.pathname);
+  var st=document.getElementById('in-status');
+  if(home){
+    document.getElementById('in-kind').textContent='Archiver';
+    st.textContent='Looking for an archiver\u2026';
+    var h=document.createElement('script');h.src='/in/shell.js';document.body.appendChild(h);
+    return;
   }
-  var stations = [], byCall = {}, shown = 50;
-  var me = { call: '', npub: '', priv: null, ext: '' };
-  function view() {
-    var listing = location.hash === '#list';
-    document.body.classList.toggle('listing', listing);
-    document.getElementById('tab-map').classList.toggle('on', !listing);
-    document.getElementById('tab-list').classList.toggle('on', listing);
-    document.getElementById('go').placeholder = listing ? 'Filter' : 'Callsign';
-    if (listing) drawList(); else map.invalidateSize();
+  if(!m){
+    document.getElementById('in-call').textContent='404';
+    document.getElementById('in-steps').style.display=document.getElementById('in-legs').style.display='none';
+    st.className='still';st.innerHTML='Nothing here. <a href="/">xprs.dev</a>';
+    return;
   }
-  window.addEventListener('hashchange', view);
-  document.getElementById('go').oninput = function () { shown = 50; if (location.hash === '#list') drawList(); };
-  function drawList() {
-    var box = document.getElementById('list'), q = document.getElementById('go').value.trim().toLowerCase();
-    var hits = stations.filter(function (s) {
-      return !q || s.call.toLowerCase().indexOf(q) >= 0 || s.nick.toLowerCase().indexOf(q) >= 0;
-    });
-    box.innerHTML = '';
-    if (!stations.length) { box.innerHTML = '<p>Connecting…</p>'; return; }
-    if (!hits.length) { box.innerHTML = '<p>No station matches.</p>'; return; }
-    hits.slice(0, shown).forEach(function (s) { box.appendChild(row(s, true)); });
-    if (hits.length > shown) {
-      var more = document.createElement('button');
-      more.textContent = 'Show ' + Math.min(50, hits.length - shown) + ' more of ' + (hits.length - shown);
-      more.onclick = function () { shown += 50; drawList(); };
-      box.appendChild(more);
-    }
-  }
-  document.getElementById('goform').onsubmit = function (e) {
-    e.preventDefault();
-    var c = document.getElementById('go').value.trim().toLowerCase();
-    if (/^[a-z0-9]{3,8}(-[0-9]{1,2})?$/.test(c)) location.href = '/in/' + c;
-  };
-  // One station as a row (the list and the map's side column): its portal,
-  // and a direct message when it published a key to seal one to.
-  function row(s, dot) {
-    var d = document.createElement('div'), a = document.createElement('a');
-    d.className = 'st'; a.href = '/in/' + s.call.toLowerCase();
-    a.innerHTML = '<div><b>' + esc(s.call) + '</b>' + (dot ? '<i>' + esc(s.nick) + '</i>' + (s.pos ? '<em title="On the map">●</em>' : '') : '<br><i>' + esc(s.nick) + '</i>') +
-      '</div><span>' + ago(s.last) + '</span>';
-    d.appendChild(a);
-    if (s.key && s.call !== me.call) d.insertAdjacentHTML('beforeend', msgButton(s.call));
-    return d;
-  }
-  function msgButton(call) { return '<button class="msg" type="button" data-msg="' + esc(call) + '">Message</button>'; }
-  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
-  function load(src) { return new Promise(function (ok, no) { var s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = function () { no(new Error('could not load ' + src)); }; document.head.appendChild(s); }); }
-  function nonce() { var a = new Uint8Array(12); crypto.getRandomValues(a); return Array.prototype.map.call(a, function (x) { return ('0' + x.toString(16)).slice(-2); }).join(''); }
-
-  var map = L.map('map', { worldCopyJump: true }).setView([30, 0], 2);
-  var layer = L.layerGroup().addTo(map);
-  map.attributionControl.setPrefix(false);
-
-  // OpenStreetMap tiles repainted in the Protomaps "dark" palette, the same
-  // recolouring as the app's map `tile-style: dark` (app/lib/wapp/geoui/
-  // tile_recolor.dart, which the check-in app uses): near-black land,
-  // blue-grey water, dark green parks, grey roads, light grey labels.
-  var WATER = 0x31353f, PARK = 0x1c2421, SAND = 0x212123, MAJOR = 0x474747, BOUNDARY = 0x5b6374;
-  var RAMP = [[0, 175], [110, 120], [185, 24], [212, 17], [236, 31], [244, 31], [255, 61]];
-  var LUM = new Uint8Array(256);
-  for (var l = 0; l < 256; l++) {
-    var v = RAMP[RAMP.length - 1][1];
-    for (var i = 0; i + 1 < RAMP.length; i++) {
-      var a = RAMP[i], b = RAMP[i + 1];
-      if (l <= b[0]) { v = a[1] + (b[1] - a[1]) * (l - a[0]) / (b[0] - a[0]); break; }
-    }
-    LUM[l] = Math.round(v);
-  }
-  function recolorDark(d) {
-    for (var i = 0; i + 3 < d.length; i += 4) {
-      var r = d[i], g = d[i + 1], b = d[i + 2];
-      var l = ((299 * r + 587 * g + 114 * b) / 1000) | 0, grey = LUM[l];
-      var mx = Math.max(r, g, b), mn = Math.min(r, g, b), chroma = mx - mn;
-      if (chroma < 14) { d[i] = d[i + 1] = d[i + 2] = grey; continue; }
-      var target;
-      if (b >= g - 8 && b > r + 15 && g > r) {
-        if (l < 150) { d[i] = d[i + 1] = d[i + 2] = grey; continue; }
-        target = WATER;
-      } else if (g > r + 6 && g >= b) target = PARK;
-      else if (r > b + 20 && l > 215 && chroma < 56 && r - g < 20) target = SAND;
-      else if (r > b + 20 && (g > b + 10 || r > g + 20)) target = MAJOR;
-      else target = BOUNDARY;
-      var t = chroma >= 44 ? 30 : chroma - 14;
-      d[i] = grey + ((((target >> 16) - grey) * t / 30) | 0);
-      d[i + 1] = grey + (((((target >> 8) & 0xff) - grey) * t / 30) | 0);
-      d[i + 2] = grey + ((((target & 0xff) - grey) * t / 30) | 0);
-    }
-  }
-  var DarkTiles = L.GridLayer.extend({
-    createTile: function (c, done) {
-      var cv = document.createElement('canvas'), sz = this.getTileSize();
-      cv.width = sz.x; cv.height = sz.y;
-      var img = new Image();
-      img.crossOrigin = 'anonymous';
-      img.onload = function () {
-        var g = cv.getContext('2d');
-        g.drawImage(img, 0, 0, sz.x, sz.y);
-        try { var px = g.getImageData(0, 0, sz.x, sz.y); recolorDark(px.data); g.putImageData(px, 0, 0); } catch (e) {}
-        done(null, cv);
-      };
-      img.onerror = function () { done(new Error('tile'), cv); };
-      img.src = 'https://' + 'abc'[(c.x + c.y) % 3] + '.tile.openstreetmap.org/' + c.z + '/' + c.x + '/' + c.y + '.png';
-      return cv;
-    }
-  });
-  new DarkTiles({ maxZoom: 18, attribution: '&copy; OpenStreetMap' }).addTo(map);
-
-  // A wire's field (`m:` is the rest of the line).
-  function field(w, k) {
-    var head = w.indexOf(' m:') >= 0 ? w.slice(0, w.indexOf(' m:')) : w;
-    var parts = head.split(' ');
-    for (var i = 0; i < parts.length; i++) if (parts[i].indexOf(k + ':') === 0) return parts[i].slice(k.length + 1);
-    return null;
-  }
-  function base(c) { return String(c || '').toUpperCase().split('-')[0]; }
-  // pos: as XPRS.md 15.1 has it, precision from the decimals. A value with
-  // redaction bars (6.2.1: `38█████,-9█████`) hides its last digits: the
-  // station is somewhere in the square its readable digits name, so it is
-  // placed in the MIDDLE of that square (38.5,-9.5), with the square itself
-  // as `box`, not on the corner the stripped digits spell.
-  function parsePos(p) {
-    if (!p) return null;
-    var parts = p.split(','), half = 0;
-    if (parts.length !== 2) return null;
-    function mid(raw) {
-      var shown = raw.replace(/█/g, '');
-      if (!/^-?\d+(\.\d*)?$/.test(shown)) return NaN;
-      var n = parseFloat(shown), dot = shown.indexOf('.');
-      var dec = dot < 0 ? 0 : shown.length - dot - 1;
-      if (shown === raw) return { v: n, dec: dec };
-      var unit = Math.pow(10, -dec);
-      if (unit / 2 > half) half = unit / 2;
-      return { v: shown.charAt(0) === '-' ? n - unit / 2 : n + unit / 2, dec: dec };
-    }
-    var la = mid(parts[0]), lo = mid(parts[1]);
-    if (!la || !lo || isNaN(la.v) || isNaN(lo.v)) return null;
-    if (!(la.v >= -90 && la.v <= 90 && lo.v >= -180 && lo.v <= 180)) return null;
-    var dec = Math.min(la.dec, lo.dec);
-    var out = { lat: la.v, lon: lo.v, metres: [111000, 11100, 1110, 111, 11, 1.1][Math.min(dec, 5)] };
-    if (half) {
-      out.box = [[la.v - half, lo.v - half], [la.v + half, lo.v + half]];
-      // How coarse the square is, as a person reads it: 1 degree is 100 km.
-      var m = Math.round(half * 2 * 100000);
-      out.range = m >= 1000 ? Math.round(m / 1000) + ' km' : m + ' m';
-    }
-    return out;
-  }
-  function accMetres(a) {
-    var m = /^(\d+(?:\.\d+)?)(m|km)?$/.exec(a || '');
-    return m ? parseFloat(m[1]) * (m[2] === 'km' ? 1000 : 1) : 0;
-  }
-  function ago(ts) {
-    var s = Math.max(0, Date.now() / 1000 - ts);
-    return s < 120 ? 'just now' : s < 7200 ? Math.round(s / 60) + ' min ago' : s < 172800 ? Math.round(s / 3600) + ' h ago' : Math.round(s / 86400) + ' d ago';
-  }
-
-  // The last answer the network gave, kept in this browser: shown at once on
-  // the next visit while Reticulum connects, then replaced by the fresh one.
-  var CACHE = 'xprs.in.map';
-  function cacheRead() {
-    try {
-      var c = JSON.parse(localStorage.getItem(CACHE) || 'null');
-      return c && c.at && c.rows && c.rows.length ? c : null;
-    } catch (e) { return null; }
-  }
-  function cacheWrite(rows) {
-    try { localStorage.setItem(CACHE, JSON.stringify({ at: Date.now(), rows: rows })); } catch (e) {}
-  }
-  function when(ms) {
-    var d = new Date(ms);
-    function two(n) { return (n < 10 ? '0' : '') + n; }
-    return d.getFullYear() + '-' + two(d.getMonth() + 1) + '-' + two(d.getDate()) + ' ' + two(d.getHours()) + ':' + two(d.getMinutes());
-  }
-  var fitted = false, cachedAt = 0, summary = '';
-
-  var lastRows = null;
-  function render(rows, fromCache) {
-    lastRows = rows;
-    var st = {}, now = Date.now() / 1000;
-    rows.forEach(function (r) {
-      var w = r.wire || '', c = base(field(w, 'f'));
-      // XPRS stations only: other networks' nodes (MT…, MC…) and radio
-      // callsigns are heard here but cannot be opened over Reticulum.
-      if (!/^X[1-5][A-Z0-9]{2,6}$/.test(c)) return;
-      var s = st[c] || (st[c] = { call: c, last: 0, nick: '', pos: null, posTs: 0, key: '', keyTs: 0 });
-      if (r.ts > s.last) s.last = r.ts;
-      var t = field(w, 't');
-      if (t === 'identity') { var n = field(w, 'nick'); if (n && n !== '-' && !s.nick) s.nick = n; }
-      // A key is believed only from an identity the station verified, as the
-      // portal does (fetchKey): anyone can write one for another callsign.
-      var k = t === 'identity' && r.sig === 'verified' ? field(w, 'k') : null;
-      if (k && /^npub1[02-9ac-hj-np-z]{58}$/.test(k) && r.ts >= s.keyTs) { s.key = k; s.keyTs = r.ts; }
-      var pf = (t === 'identity' || t === 'service') ? field(w, 'pos') : null;
-      if (pf !== null && r.ts >= s.posTs) {
-        var p = pf === '-' ? null : parsePos(pf);
-        if (p && !p.box) p.metres = Math.max(p.metres, accMetres(field(w, 'acc')));
-        if (p || pf === '-') { s.pos = p; s.posTs = r.ts; }
-      }
-    });
-    var all = Object.keys(st).map(function (k) { return st[k]; });
-    var recent = all.filter(function (s) { return now - s.last < RECENT; }).length;
-    var placed = all.filter(function (s) { return s.pos; }).sort(function (a, b) { return b.last - a.last; });
-    stations = all.sort(function (a, b) { return b.last - a.last; });
-    byCall = st;
-    if (location.hash === '#list') drawList();
-    var side = document.getElementById('side'), bounds = L.latLngBounds([]);
-    side.innerHTML = '';
-    layer.clearLayers();
-    // Stations that say only which square they are in share one marker in
-    // its middle, with how many they are, not a pile of markers on one point.
-    var boxes = {};
-    placed.forEach(function (s) {
-      var href = '/in/' + s.call.toLowerCase(), ll = [s.pos.lat, s.pos.lon];
-      side.appendChild(row(s, false));
-      var pop = '<a href="' + href + '">' + esc(s.call) + '</a>' + (s.nick ? ' ' + esc(s.nick) : '') +
-        (s.key && s.call !== me.call ? msgButton(s.call) : '') + '<br>' + ago(s.last);
-      if (s.pos.box) {
-        var k = s.pos.box.join(';'), b = boxes[k] || (boxes[k] = { box: s.pos.box, ll: ll, range: s.pos.range, pops: [] });
-        b.pops.push(pop);
-        return;
-      }
-      if (s.pos.metres >= 20000) {
-        var ring = L.circle(ll, { radius: s.pos.metres, color: '#FFC107', weight: 1, fillOpacity: .07 }).addTo(layer).bindPopup(pop);
-        bounds.extend(ring.getBounds());
-      }
-      L.circleMarker(ll, { radius: 7, color: '#A5D6A7', fillColor: '#43A047', fillOpacity: .95, weight: 2 }).addTo(layer).bindPopup(pop);
-      bounds.extend(ll);
-    });
-    Object.keys(boxes).forEach(function (k) {
-      var b = boxes[k], pop = b.pops.slice(0, 12).join('<hr>') + (b.pops.length > 12 ? '<hr>+' + (b.pops.length - 12) : '') +
-        // Only the area is known: said once under the names, so nobody reads
-        // the marker as the spot.
-        '<small>Approximate: somewhere within ' + b.range + ' of here</small>';
-      L.marker(b.ll, { icon: L.divIcon({ className: 'cnt', html: String(b.pops.length), iconSize: [26, 26] }) }).addTo(layer).bindPopup(pop, { maxHeight: 220 });
-      bounds.extend(b.box);
-    });
-    // Framed once: fresh data arriving after the cached view does not move
-    // the map from under someone already looking at it.
-    if (!fitted && bounds.isValid()) { map.fitBounds(bounds, { padding: [40, 40], maxZoom: 10 }); fitted = true; }
-    summary = all.length + ' stations \u00b7 ' + recent + ' today \u00b7 ' + placed.length + ' mapped';
-    say(summary, false, fromCache ? 'Cached data from ' + when(fromCache) : '');
-  }
-
-  // Every call over the link, one at a time (as the portal's shell.js does):
-  // the refresh and a message being sent never interleave on it.
-  var line = Promise.resolve();
-  function rns(method, path, q, body) {
-    var r = line.then(function () { return window.XprsRns.api(method, path, JSON.stringify(q || {}), body); });
-    line = r.catch(function () {});
-    return r;
-  }
-  function history(kind) {
-    var q = { limit: '200' };
-    if (kind) q.kind = kind;
-    return rns('GET', '/api/xprs/history', q, null).then(function (r) {
-      // No status: the link is gone (gateway restarted, uplink dropped).
-      if (!r.status) throw new Error('link gone');
-      if (r.status !== 200) return [];
-      try { return JSON.parse(new TextDecoder().decode(r.body)).rows || []; } catch (e) { return []; }
-    });
-  }
-  function rowsNow() {
-    // A station is placed from its identity (6.3.2 `pos:`), which is what a
-    // gateway serves a visitor; its beacons it keeps to itself.
-    return history('identity,service').then(function (a) {
-      return history('').then(function (b) { return a.concat(b); });
-    });
-  }
-
-  function viaGateway(gws, i) {
-    if (i >= gws.length) return Promise.reject(new Error('no gateway answered'));
-    var g = gws[i], station;
-    return window.XprsRns.connect(g).then(function (hello) {
-      station = (JSON.parse(hello).station || '').toUpperCase();
-      if (!station) throw new Error(g + ' names no station');
-      return window.XprsRns.resolve(station);
-    }).then(function (j) {
-      var r = JSON.parse(j);
-      if (!r.rns) throw new Error(g + ' gave no key for ' + station);
-      return window.XprsRns.open(r.rns);
-    }).then(function (ok) {
-      if (!ok) throw new Error('no link to ' + station);
-      var n = nonce();
-      return window.XprsRns.prove(n).then(function (p) { return JSON.parse(window.XprsRns.verify(p, station, n)); });
-    }).then(function (v) {
-      if (!v.ok) throw new Error('This is not ' + station + ': ' + v.why);
-      return station;
-    }).catch(function (e) {
-      return viaGateway(gws, i + 1);
-    });
-  }
-
-  // A redraw clears the markers, so it waits while someone reads a popup.
-  var reading = false, waiting = null;
-  map.on('popupopen', function () { reading = true; });
-  map.on('popupclose', function () { reading = false; if (waiting) { var w = waiting; waiting = null; show(w); } });
-  function show(rows) {
-    // An answer with nothing in it keeps what is on screen.
-    if (!rows.length && stations.length) return;
-    if (reading) { waiting = rows; return; }
-    render(rows);
-    cacheWrite(rows);
-    cachedAt = 0;
-  }
-
-  var gateways = [], linked = false, linking = null, station = '', busy = false, lastAt = 0, EVERY = 120000;
-  // One reach at a time: a second connect() would drop the link the first made.
-  function linkUp() {
-    if (linked) return Promise.resolve();
-    if (!gateways.length) return Promise.reject(new Error('still connecting, try again in a moment'));
-    if (!linking) linking = viaGateway(gateways, 0).then(function (s) {
-      station = s; linked = true; linking = null;
-    }, function (e) { linking = null; throw e; });
-    return linking;
-  }
-  // One fetch at a time; a dropped link is reached again once per round.
-  function refresh() {
-    if (busy || !gateways.length) return;
-    busy = true; lastAt = Date.now();
-    linkUp().then(rowsNow).catch(function (e) {
-      if (!linked) throw e;
-      linked = false;
-      return linkUp().then(rowsNow);
-    }).then(show).catch(function () {
-      linked = false;
-      if (cachedAt) say(summary, false, 'Cached data from ' + when(cachedAt) + ', network unreachable');
-      else if (!stations.length) say('Can\u2019t reach the network right now', true);
-    }).then(function () { busy = false; });
-  }
-  // New stations fall onto an open map without a reload, only while the
-  // page is in view: a hidden tab asks nothing and catches up on return.
-  setInterval(function () { if (!document.hidden) refresh(); }, EVERY);
-  document.addEventListener('visibilitychange', function () {
-    if (!document.hidden && gateways.length && Date.now() - lastAt >= EVERY) refresh();
-  });
-
-  // ---- signing in ------------------------------------------------------
-  // The portal's identity (portal/page/chat_page.html useKey, useExtension):
-  // the same xprs_nsec and xprs_ext on this origin, so signing in here is
-  // signing in on every station's portal under /in/, and the other way round.
-  // Keys, signatures and seals are the portal's own code (in/xprs.js).
-  function stGet(k) { try { return localStorage.getItem(k); } catch (e) { return null; } }
-  function stSet(k, v) { try { localStorage.setItem(k, v); } catch (e) {} }
-  function hasExt() { return typeof nostrAvailable === 'function' && nostrAvailable(); }
-  function savedKey() {
-    var s = stGet('xprs_nsec'), b = s ? nsecDecode(s) : null;
-    return b && b.length === 32 ? b : null;
-  }
-  function randKey() {
-    var b = new Uint8Array(32);
-    crypto.getRandomValues(b);
-    return (b2n(b) === BigInt(0) || b2n(b) >= N) ? randKey() : b;
-  }
-  var meBtn = document.getElementById('me');
-  function showMe() {
-    meBtn.textContent = me.call || 'Sign in';
-    meBtn.className = me.call ? 'in' : '';
-    meBtn.title = me.call ? (me.ext ? 'Signed in with your NOSTR extension' : 'Signed in with the key in this browser') : '';
-    // Your own station loses its Message button.
-    if (lastRows && !reading) render(lastRows, cachedAt);
-  }
-  function useKey(b) {
-    me = { priv: b, ext: '', npub: npubEncode(pubkeyX(b)), call: '' };
-    me.call = callsignFromNpub(me.npub);
-    stSet('xprs_nsec', nsecEncode(b));
-    showMe();
-  }
-  function useExtension() {
-    return new Promise(function (ok, no) {
-      if (!hasExt()) { no(new Error('No NOSTR extension found')); return; }
-      function fin(h) {
-        if (typeof h !== 'string' || !/^[0-9a-f]{64}$/.test(h)) { no(new Error('The extension gave no usable key')); return; }
-        me = { priv: null, ext: h, npub: npubEncode(unhexBytes(h)), call: '' };
-        me.call = callsignFromNpub(me.npub);
-        stSet('xprs_ext', '1');
-        showMe(); ok();
-      }
-      try { Promise.resolve(window.nostr.getPublicKey()).then(fin, function () { no(new Error('The extension refused')); }); }
-      catch (e) { no(new Error('The extension refused')); }
-    });
-  }
-  // As the portal boots: the extension when it was chosen (it puts
-  // window.nostr there a moment after the page starts), else a saved key.
-  // Nobody is signed in silently with a new key: that waits for a click.
-  function restore() {
-    var key = savedKey(), n = 0;
-    if (stGet('xprs_ext') !== '1') { if (key) useKey(key); return; }
-    (function wait() {
-      if (hasExt()) useExtension().catch(function () { if (key) useKey(key); });
-      else if (++n < 12) setTimeout(wait, 250);
-      else if (key) useKey(key);
-    })();
-  }
-
-  // ---- XPRS wires (chat_page.html tsNow, aux32, signWire, signAny) -------
-  function tsNow() {
-    var d = new Date(), p = function (n) { return (n < 10 ? '0' : '') + n; };
-    return d.getUTCFullYear() + '-' + p(d.getUTCMonth() + 1) + '-' + p(d.getUTCDate()) +
-      '_' + p(d.getUTCHours()) + ':' + p(d.getUTCMinutes()) + ':' + p(d.getUTCSeconds());
-  }
-  function aux32() { var b = new Uint8Array(32); crypto.getRandomValues(b); return b; }
-  function sign(canonical) {
-    return new Promise(function (ok, no) {
-      if (me.ext) { nostrSignWire(canonical, me.ext, function (w, why) { if (w) ok(w); else no(new Error(why || 'not signed')); }); return; }
-      var sig = ' sig:' + b85enc(xprsSign(canonical, b2n(me.priv), aux32())), i = canonical.indexOf(' m:');
-      ok(i >= 0 ? canonical.slice(0, i) + sig + canonical.slice(i) : canonical + sig);
-    });
-  }
-  function seal(npub, text) {
-    return new Promise(function (ok, no) {
-      var d = bech32Decode(npub), k = d && d.hrp === 'npub' ? to8(d.data) : null;
-      if (!k || k.length !== 32) { no(new Error('no usable key for them')); return; }
-      var done = function (x) { if (x) ok(x); else no(new Error('could not seal it')); };
-      if (me.ext) nostrSeal(hex(k), text, done); else done(sealBody(me.priv, k, text));
-    });
-  }
-  function bytes(s) { return new TextEncoder().encode(s).length; }
-  // POST /api/xprs/send, as the portal's postWire. The same wire again after
-  // the link dropped is the same packet (one id), so it is offered once more.
-  function post(wire, again) {
-    return linkUp().then(function () {
-      return rns('POST', '/api/xprs/send', {}, JSON.stringify({ wire: wire }));
-    }).then(function (r) {
-      if (r.status === 200) return;
-      if (!r.status) { linked = false; if (!again) return post(wire, true); throw new Error('the network did not answer, try again'); }
-      var why = ''; try { why = JSON.parse(new TextDecoder().decode(r.body)).error || ''; } catch (e) {}
-      throw new Error(/^refused: use:/.test(why) ? 'this station only carries messages for people its owner listed' : (why || 'HTTP ' + r.status));
-    });
-  }
-  // The identity first (chat_page.html sendIdentity): the station checks the
-  // signatures with it, and the person written to opens the seal with it.
-  var told = '';
-  function announce() {
-    if (told === me.call) return Promise.resolve();
-    return sign('t:identity f:' + me.call + ' ts:' + tsNow() + ' k:' + me.npub).then(function (w) { return post(w); })
-      .then(function () { told = me.call; });
-  }
-  // How much text fits: the station re-airs the packet with its own via:
-  // (chat_page.html finish); ` sig:` is 60 characters from a key here and 80
-  // from an extension (6.1.3's two forms); the seal is base64url of a 16-byte
-  // vector and whole 16-byte blocks of the text.
-  function room(peer) {
-    var head = 't:message f:' + (me.call || 'X1XXXX') + ' ts:' + tsNow() + ' d:' + peer + ' x:';
-    var x = 250 - (5 + (station || 'X3XXXX').length) - bytes(head) - (me.ext ? 85 : 65);
-    return Math.max(0, Math.floor((Math.floor(x * 3 / 4) - 16) / 16) * 16 - 1);
-  }
-  function sendDm(peer, npub, text) {
-    return linkUp().then(announce).then(function () { return seal(npub, text); }).then(function (x) {
-      return sign('t:message f:' + me.call + ' ts:' + tsNow() + ' d:' + peer + ' x:' + x);
-    }).then(function (w) {
-      if (bytes(w) > 250 - (5 + station.length)) throw new Error('too long');
-      return post(w);
-    });
-  }
-
-  // ---- the dialog: signing in, and a message to one person ------------
-  var sheet = document.getElementById('sheet');
-  function openSheet(html) {
-    sheet.innerHTML = '<div class="card" role="dialog" aria-modal="true"><button class="x" type="button" data-close aria-label="Close">×</button>' + html + '</div>';
-    sheet.hidden = false;
-  }
-  function closeSheet() { sheet.hidden = true; sheet.innerHTML = ''; }
-  function sheetSay(t, cls) { var m = document.getElementById('sst'); if (m) { m.textContent = t; m.className = cls || ''; } }
-  // [peer]: the person to write to once signed in.
-  function signInSheet(peer) {
-    var key = savedKey(), keyCall = key ? callsignFromNpub(npubEncode(pubkeyX(key))) : '', b = '';
-    if (hasExt() && !me.ext) b += '<button class="main" type="button" data-use="ext">Use my NOSTR extension</button>';
-    if (key && !(me.call && !me.ext)) b += '<button type="button" class="' + (b ? '' : 'main') + '" data-use="key">' + (me.ext ? 'Use the key in this browser (' + esc(keyCall) + ')' : 'Continue as ' + esc(keyCall)) + '</button>';
-    if (!key) b += '<button type="button" class="' + (b ? '' : 'main') + '" data-use="new">Make a key in this browser</button>';
-    if (!me.ext) b += '<button type="button" class="link" data-use="import">Use a key I have (nsec)</button>';
-    openSheet('<div class="title">' + (me.call ? esc(me.call) : 'Sign in') + '</div>' +
-      '<div class="lead">' + (me.call ? (me.ext ? 'NOSTR extension' : 'Key in this browser') : 'The same identity on every XPRS station') + '</div>' +
-      '<div class="btns" data-peer="' + esc(peer || '') + '">' + b + '</div><div class="meta"><span id="sst"></span></div>');
-  }
-  function dmSheet(call) {
-    var s = byCall[call];
-    if (!s || !s.key || call === me.call) return;
-    if (!me.call) { signInSheet(call); return; }
-    openSheet('<div class="title">' + esc(call) + (s.nick ? ' <span>' + esc(s.nick) + '</span>' : '') + '</div>' +
-      '<div class="lead">Sealed: only ' + esc(call) + ' can read it</div>' +
-      '<form class="box" id="dmform" data-call="' + esc(call) + '"><input id="dmtxt" autocomplete="off" enterkeyhint="send" placeholder="Message" aria-label="Message to ' + esc(call) + '">' +
-      '<button class="send" type="submit" aria-label="Send"><svg viewBox="0 0 24 24"><path d="M3 20.5v-6.2L13 12 3 9.7V3.5L22 12z" fill="currentColor"/></svg></button></form>' +
-      '<div class="meta"><span id="sst"></span><span id="left"></span></div>' +
-      '<div class="meta"><span>From <button class="link" type="button" data-signin style="padding:0;font-size:12px">' + esc(me.call) + '</button></span></div>');
-    count();
-    try { document.getElementById('dmtxt').focus(); } catch (e) {}
-  }
-  function count() {
-    var f = document.getElementById('dmform'); if (!f) return;
-    var t = document.getElementById('dmtxt').value, left = room(f.getAttribute('data-call')) - bytes(t.trim());
-    var l = document.getElementById('left');
-    l.textContent = t ? left + ' left' : ''; l.className = left < 0 ? 'bad' : '';
-    f.querySelector('.send').disabled = !t.trim() || left < 0;
-  }
-  sheet.addEventListener('input', count);
-  sheet.addEventListener('submit', function (e) {
-    e.preventDefault();
-    var f = e.target, call = f.getAttribute('data-call'), s = byCall[call], input = document.getElementById('dmtxt');
-    var text = input.value.replace(/[\x00-\x1f]/g, ' ').trim();
-    if (!text || !s || bytes(text) > room(call)) return;
-    input.disabled = true; f.querySelector('.send').disabled = true;
-    sheetSay('Sending…');
-    sendDm(call, s.key, text).then(function () {
-      if (!document.getElementById('dmform')) return;
-      input.value = ''; input.disabled = false; count();
-      var m = document.getElementById('sst');
-      m.className = 'ok';
-      // The conversation, replies included, is on the station that carries
-      // it (the portal opens it from #dm=, chat_page.html dmFromAddress).
-      m.innerHTML = 'Sent · <a href="/in/' + esc(station.toLowerCase()) + '#dm=' + esc(call) + '">conversation on ' + esc(station) + '</a>';
-      input.focus();
-    }, function (err) {
-      if (!document.getElementById('dmform')) return;
-      input.disabled = false; count();
-      sheetSay('Not sent: ' + err.message, 'bad');
-    });
-  });
-  sheet.addEventListener('click', function (e) {
-    var t = e.target;
-    if (t === sheet || t.closest('[data-close]')) { closeSheet(); return; }
-    if (t.closest('[data-signin]')) { signInSheet(); return; }
-    var u = t.closest('[data-use]'); if (!u) return;
-    var how = u.getAttribute('data-use'), peer = u.parentNode.getAttribute('data-peer');
-    var next = function () { if (peer) dmSheet(peer); else closeSheet(); };
-    if (how === 'ext') { sheetSay('Asking your extension…'); useExtension().then(next, function (err) { sheetSay(err.message, 'bad'); }); return; }
-    if (how === 'import') {
-      var v = prompt('Paste an nsec to sign in as that identity:');
-      var b = v ? nsecDecode(v.trim()) : null;
-      if (v && (!b || b2n(b) === BigInt(0) || b2n(b) >= N)) { sheetSay('That is not a valid nsec', 'bad'); return; }
-      if (!b) return;
-      stSet('xprs_ext', '0'); useKey(b); next(); return;
-    }
-    if (hasExt()) stSet('xprs_ext', '0');
-    useKey(how === 'key' ? savedKey() : randKey()); next();
-  });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !sheet.hidden) closeSheet(); });
-  document.addEventListener('click', function (e) {
-    var b = e.target.closest && e.target.closest('[data-msg]');
-    if (b) { e.preventDefault(); dmSheet(b.getAttribute('data-msg')); }
-  });
-  meBtn.onclick = function () { if (window.npubEncode) signInSheet(); };
-
-  var cached = cacheRead();
-  if (cached) { cachedAt = cached.at; render(cached.rows, cached.at); }
-  load('/in/xprs.js').then(restore, function () { meBtn.hidden = true; });
-  load('/in/rns.js').then(function () {
-    return fetch('/in/gateways.json', { cache: 'no-cache' }).then(function (r) { return r.json(); });
-  }).then(function (j) {
-    gateways = j.gateways || [];
-    refresh();
-  }).catch(function () {
-    if (cachedAt) say(summary, false, 'Cached data from ' + when(cachedAt) + ', network unreachable');
-    else say('Can\u2019t reach the network right now', true);
-  });
-  view();
+  var grp=/^\/in\/g\//i.test(location.pathname)||/^x5/i.test(m[1]),name=m[1].toUpperCase();
+  document.getElementById('in-call').textContent=name;
+  document.getElementById('in-head').textContent=name;
+  document.getElementById('in-kind').textContent=grp?'Group':'Station';
+  st.textContent='Looking for '+name+'…';
+  var s=document.createElement('script');s.src='/in/shell.js';document.body.appendChild(s);
 })();
 </script>
 </body>

@@ -25,6 +25,10 @@
   var mg = /^\/in\/g\/([a-z0-9][a-z0-9_-]{0,15})\/?$/i.exec(location.pathname);
   var GROUP = mg ? mg[1].toUpperCase() : (/^X5/.test(CALL) ? CALL : '');
   if (GROUP) CALL = '';
+  // xprs.dev/in/ itself: the visitor's own portal, on one of THEIR archivers
+  // (the stations keeping their mail, XPRS.md 9.12), found on Reticulum and
+  // never a fixed server. CALL is whichever answered.
+  var HOME = !CALL && !GROUP && /^\/in\/?(index\.html)?$/i.test(location.pathname);
   // What the page shows while it looks (404.html): one line saying what is
   // being done now, the legs of the way lit as they are done (step()), and
   // everything said so far under Details. After the portal took the page's
@@ -113,15 +117,24 @@
   // One call over the link. No status means the link is gone (the station's
   // own uplink dropped, a gateway restarted): reach the station again, its
   // proof checked again, and make the call once more.
+  function rawApi(method, path, query, b) {
+    return HOME ? window.XprsRns.api(method, path, query, b, CALL) : window.XprsRns.api(method, path, query, b);
+  }
   function api(method, path, query, b) {
-    return window.XprsRns.api(method, path, query, b).then(function (r) {
+    return rawApi(method, path, query, b).then(function (r) {
       if (r.status) return r;
       return reach().then(function () {
-        return window.XprsRns.api(method, path, query, b);
+        return rawApi(method, path, query, b);
       }, function () { return r; });
     });
   }
+  // A return visit shows the portal before the archiver is reached (start()):
+  // until it proved itself, every call waits here.
+  var proven = Promise.resolve();
   function call(method, u, body) {
+    return proven.then(function () { return callNow(method, u, body); });
+  }
+  function callNow(method, u, body) {
     var a = apiPath(u);
     if (method !== 'GET') {
       gets = {};
@@ -318,6 +331,7 @@
     });
   }
   function once(i) {
+    if (HOME) return onceHome(i);
     if (GROUP) return onceGroup(i);
     if (i >= gateways.length) return Promise.reject(new Error('no gateway reached ' + CALL));
     var g = gateways[i];
@@ -347,6 +361,179 @@
       return once(i + 1);
     });
   }
+  // ---- home: the visitor's archivers ------------------------------------
+  // What this browser learned, so a return visit goes straight to an
+  // archiver it reached before: the gateway that worked, each station's
+  // Reticulum key, the archivers heard announcing themselves (t:service
+  // serve:archive). The visitor's own list (xprs_hold, kept by the portal for
+  // the account in use) comes first, in random order. Found from scratch only
+  // when nothing remembered answers.
+  var KEEP = 'xprs_reach';
+  function memo() { try { return JSON.parse(localStorage.getItem(KEEP) || '{}') || {}; } catch (e) { return {}; } }
+  function memoSet(f) {
+    var m = memo();
+    for (var k in f) m[k] = f[k];
+    try { localStorage.setItem(KEEP, JSON.stringify(m)); } catch (e) {}
+  }
+  function held() { try { var h = JSON.parse(localStorage.getItem('xprs_hold') || '[]'); return Array.isArray(h) ? h : []; } catch (e) { return []; } }
+  function shuffle(a) {
+    a = a.slice();
+    for (var i = a.length - 1; i > 0; i--) { var j = Math.floor(Math.random() * (i + 1)), t = a[i]; a[i] = a[j]; a[j] = t; }
+    return a;
+  }
+  function uniq(a) { var o = [], s = {}; a.forEach(function (c) { if (c && !s[c]) { s[c] = 1; o.push(c); } }); return o; }
+  // Archivers named in a history answer: {call, at} from `t:service ... serve:archive`.
+  function archiversIn(rows) {
+    var out = {};
+    (rows || []).forEach(function (r) {
+      var w = r.wire || '', f = / f:([A-Z0-9-]+)/.exec(' ' + w), sv = / serve:([^ ]+)/.exec(w);
+      if (!f || !sv || w.indexOf('t:service ') !== 0 || !/(^|,)archive(,|$)/.test(sv[1])) return;
+      var c = f[1].split('-')[0];
+      if (!out[c] || r.ts > out[c]) out[c] = r.ts;
+    });
+    return out;
+  }
+  function learn(found) {
+    var m = memo(), a = m.archivers || {};
+    for (var c in found) if (!a[c] || found[c] > a[c]) a[c] = found[c];
+    // The 40 heard most recently.
+    var keep = Object.keys(a).sort(function (x, y) { return a[y] - a[x]; }).slice(0, 40), o = {};
+    keep.forEach(function (c) { o[c] = a[c]; });
+    memoSet({ archivers: o });
+  }
+  var linked = {};
+  // A named link to station [c] through gateway [g], its proof checked. The
+  // key remembered from an earlier visit first; the gateway asked when that
+  // one fails (the station may have a new one).
+  function linkNamed(c, g) {
+    var keys = memo().keys || {};
+    function via(key) {
+      return window.XprsRns.open(key, c).then(function (ok) {
+        if (!ok) throw new Error('no link to ' + c + ' through ' + g);
+        var n = nonce();
+        return window.XprsRns.prove(n, c).then(function (p) { return JSON.parse(window.XprsRns.verify(p, c, n)); });
+      }).then(function (v) {
+        if (!v.ok) throw new Error('This is not ' + c + ': ' + v.why);
+        var k = memo().keys || {}; k[c] = key; memoSet({ keys: k });
+        linked[c] = 1;
+        return v;
+      });
+    }
+    function fresh() {
+      return window.XprsRns.resolve(c).then(function (j) {
+        var r = JSON.parse(j);
+        if (!r.rns) throw new Error(g + ' has not heard ' + c + ' on Reticulum');
+        return via(r.rns);
+      });
+    }
+    return keys[c] ? via(keys[c]).catch(fresh) : fresh();
+  }
+  // Up to three at once; the first to prove itself is the one. The others
+  // finish in the background and stay linked for the portal's mail.
+  function race(cands, g) {
+    return new Promise(function (ok, no) {
+      var i = 0, live = 0, won = false, last = 'no archiver known';
+      function next() {
+        while (!won && live < 3 && i < cands.length) {
+          (function (c) {
+            live++;
+            say('Trying ' + c + '…', false, true);
+            linkNamed(c, g).then(function (v) {
+              if (!won) { won = true; ok({ call: c, v: v }); }
+            }, function (e) { last = e.message || String(e); say(last, true, true); }).then(function () {
+              live--;
+              if (!won) next();
+            });
+          })(cands[i++]);
+        }
+        if (!won && live === 0 && i >= cands.length) no(new Error(last));
+      }
+      next();
+    });
+  }
+  // From scratch: the gateway's own station says which archivers it heard
+  // announcing themselves; it is itself the last resort.
+  function discover(own, g) {
+    say('Looking for archivers…');
+    return linkNamed(own, g).then(function () {
+      return window.XprsRns.api('GET', '/api/xprs/history', JSON.stringify({ kind: 'service', limit: '200' }), null, own);
+    }).then(function (r) {
+      var rows = [];
+      try { rows = JSON.parse(new TextDecoder().decode(r.body)).rows || []; } catch (e) {}
+      var found = archiversIn(rows);
+      learn(found);
+      return uniq(shuffle(Object.keys(found)).concat([own]));
+    }, function () { return [own]; });
+  }
+  var gwOrder = null;
+  function onceHome(i) {
+    if (!gwOrder) { var last = memo().gw; gwOrder = uniq([last].concat(shuffle(gateways))).filter(function (g) { return gateways.indexOf(g) >= 0; }); }
+    if (i >= gwOrder.length) return Promise.reject(new Error('no archiver answered'));
+    var g = gwOrder[i], own = '', tried = {};
+    step('gateway');
+    say('Gateway ' + g, false, true);
+    say('Looking for an archiver…');
+    return window.XprsRns.connect(g).then(function (hello) {
+      own = (JSON.parse(hello).station || '').toUpperCase();
+      linked = {};
+      step('station');
+      // Again after a drop: the same archiver first, the portal's session is there.
+      // The archiver in use first, alone (its session is there), then the
+      // visitor's list and every archiver remembered, then from scratch.
+      var known = uniq(shuffle(held()).concat(shuffle(Object.keys(memo().archivers || {}))));
+      var cands = CALL ? [CALL] : known;
+      cands.forEach(function (c) { tried[c] = 1; });
+      step('link');
+      return race(cands, g).catch(function () {
+        var rest = known.filter(function (c) { return !tried[c]; });
+        rest.forEach(function (c) { tried[c] = 1; });
+        return race(rest, g);
+      }).catch(function () {
+        return discover(own, g).then(function (list) {
+          return race(list.filter(function (c) { return !tried[c]; }).concat(tried[own] ? [own] : []), g);
+        });
+      });
+    }).then(function (w) {
+      step('proof');
+      CALL = w.call; gw = g; nick = w.v.nick || '';
+      memoSet({ gw: g, home: CALL });
+      if (window.XPRS_REMOTE) { window.XPRS_REMOTE.station = CALL; window.XPRS_REMOTE.gateway = g; }
+    }).catch(function (e) {
+      say(e.message || String(e), true, true);
+      return onceHome(i + 1);
+    });
+  }
+  // Another station through the same gateway, for the portal (XPRS_REMOTE):
+  // one call at a time per station, its link made when first needed and once
+  // more when it dropped. The answer: {status, json, text}.
+  var lines = {};
+  function ask(c, method, path, query, body) {
+    c = String(c || '').toUpperCase();
+    var q = JSON.stringify(query || {});
+    function one() {
+      if (c === CALL) return api(method, path, q, body == null ? null : body);
+      function go() { return window.XprsRns.api(method, path, q, body == null ? null : body, c); }
+      var first = linked[c] ? Promise.resolve() : linkNamed(c, gw);
+      return first.then(go).then(function (r) {
+        if (r.status) return r;
+        linked[c] = 0;
+        return linkNamed(c, gw).then(go);
+      });
+    }
+    var p = proven.then(function () { return lines[c] || null; }).then(one, one);
+    lines[c] = p.then(function () {}, function () {});
+    return p.then(function (r) {
+      var text = '', json = null;
+      try { text = new TextDecoder().decode(r.body); json = JSON.parse(text); } catch (e) {}
+      return { status: r.status, json: json, text: text };
+    });
+  }
+  function knownArchivers() {
+    var a = memo().archivers || {};
+    return Object.keys(a).sort(function (x, y) { return (linked[y] || 0) - (linked[x] || 0) || a[y] - a[x]; })
+      .map(function (c) { return { call: c, at: a[c] }; });
+  }
+
   var reaching = null;
   function reach() {
     if (reaching) return reaching;
@@ -384,9 +571,49 @@
     window.dispatchEvent(new Event('load'));
   }
 
+  // Where no archiver answers after the portal is already shown.
+  function trouble() {
+    var d = document.createElement('div');
+    d.style.cssText = 'position:fixed;left:12px;right:12px;bottom:84px;z-index:99;background:#262220;color:#fff;' +
+      'border:1px solid rgba(255,168,106,.4);border-radius:10px;padding:10px 14px;font:14px system-ui,sans-serif';
+    d.innerHTML = 'Can\u2019t reach an archiver right now \u00b7 <a href="" style="color:#ffa86a">Try again</a>';
+    document.body.appendChild(d);
+  }
+  function install(html) {
+    window.XMLHttpRequest = RnsXHR;
+    window.fetch = rnsFetch;
+    window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP, home: HOME, ask: ask, archivers: knownArchivers };
+    swapIn(html);
+    watch();
+  }
+  // The archivers the home station heard, for the next visit and the portal's list.
+  function learnFromHome() {
+    ask(CALL, 'GET', '/api/xprs/history', { kind: 'service', limit: '200' }).then(function (r) {
+      learn(archiversIn(r.json && r.json.rows));
+    }, function () {});
+  }
+  // A return visit: the portal at once, on the archiver used last time, while
+  // it is reached (the calls wait for its proof); another of the visitor's
+  // archivers takes its place when it does not answer.
+  function startEarly() {
+    CALL = memo().home;
+    load(BASE + 'rns.js').then(function () {
+      return getText(BASE + 'gateways.json');
+    }).then(function (t) {
+      gateways = JSON.parse(t).gateways || [];
+      var r = proven = reach();
+      return getText(BASE + 'portal.html').then(function (html) {
+        install(html);
+        r.then(learnFromHome, trouble);
+      });
+    }).catch(function (e) {
+      failed('Can\u2019t reach an archiver right now', e.message || String(e));
+    });
+  }
   function start() {
-    if (!CALL && !GROUP) { failed('No station has this name'); return; }
-    document.title = (GROUP || CALL) + ' · XPRS';
+    if (!CALL && !GROUP && !HOME) { failed('No station has this name'); return; }
+    document.title = HOME ? 'XPRS' : (GROUP || CALL) + ' · XPRS';
+    if (HOME && memo().home) { startEarly(); return; }
     load(BASE + 'rns.js').then(function () {
       return getText(BASE + 'gateways.json');
     }).then(function (t) {
@@ -395,17 +622,15 @@
     }).then(function () {
       step('portal');
       say(CALL + ' proved itself' + (nick ? ' (' + nick + ')' : ''), false, true);
+      if (HOME) document.title = CALL + ' · XPRS';
       say('Loading the portal…');
       // The page opens on the group the address named (#g=, read by the
       // portal page at start).
       if (GROUP) history.replaceState(null, '', location.pathname + '#g=' + encodeURIComponent(GROUP));
       return getText(BASE + 'portal.html');
     }).then(function (html) {
-      window.XMLHttpRequest = RnsXHR;
-      window.fetch = rnsFetch;
-      window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP };
-      swapIn(html);
-      watch();
+      install(html);
+      if (HOME) learnFromHome();
     }).catch(function (e) {
       failed('Can’t reach ' + (GROUP || CALL) + ' right now', e.message || String(e));
     });

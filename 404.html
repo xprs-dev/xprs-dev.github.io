@@ -76,11 +76,20 @@ a{color:var(--accent)}
 </main>
 <script>
 /* xprs.dev/in/<callsign> opens that station's portal over Reticulum
- * (/in/shell.js). Any other unknown address is a plain "not here". */
+ * (/in/shell.js), and xprs.dev/in/ the visitor's own, on one of their
+ * archivers (in/index.html is this file, copied by tool/sync_in.sh). Any
+ * other unknown address is a plain "not here". */
 (function(){
+  var home=/^\/in\/?(index\.html)?$/i.test(location.pathname);
   var m=/^\/in\/([a-z0-9-]+)\/?$/i.exec(location.pathname)||
         /^\/in\/g\/([a-z0-9][a-z0-9_-]{0,15})\/?$/i.exec(location.pathname);
   var st=document.getElementById('in-status');
+  if(home){
+    document.getElementById('in-kind').textContent='Archiver';
+    st.textContent='Looking for an archiver\u2026';
+    var h=document.createElement('script');h.src='/in/shell.js';document.body.appendChild(h);
+    return;
+  }
   if(!m){
     document.getElementById('in-call').textContent='404';
     document.getElementById('in-steps').style.display=document.getElementById('in-legs').style.display='none';

@@ -15,20 +15,12 @@
   one line for what is being done now, a bar of legs lit as they are done,
   and everything said kept under Details. Any page that reaches something in
   several steps before it can show it can use the same three.
-- `parsePos(p)` (`in/index.html`): a `pos:` as XPRS.md 15.1 reads it, a value
-  with redaction bars placed at the middle of the square its readable digits
-  name, with that square as `box`. The map draws one marker with a count
-  per square (`boxes` in `render()`). Any page that shows positions uses it.
-- `in/xprs.js`: the portal's crypto, seal and NOSTR signer
-  (`portal/page/xprs_crypto.js`, `xprs_seal.js`, `xprs_nostr.js`), joined by
-  `tool/sync_in.sh`. A page of the site that signs, seals or derives a
-  callsign loads it instead of copying the code.
-- Signing in and messaging (`in/index.html`): `useKey` / `useExtension` /
-  `restore` keep the portal's `xprs_nsec` / `xprs_ext`, so one sign-in holds
-  on the map and every `/in/<call>`; `sign(canonical)` and `seal(npub, text)`
-  are promise forms of the portal's `signAny` and seal; `sendDm(peer, npub,
-  text)` is identity, seal, sign, `POST /api/xprs/send`; `room(peer)` is how
-  many bytes of text still fit. Any site page that writes to someone uses them.
-- `rns(method, path, q, body)` (`in/index.html`): every call over the Reticulum
-  link one at a time, and `linkUp()` reaching the gateway once however many
-  ask at the same moment (a second `connect()` drops the first link).
+- The map, its positions and the visitor's accounts and archivers are the
+  portal's (`portal/docs/reusable.md`: `mapPos`, `accList`, `declareHold`).
+  `in/index.html` is `404.html`, copied by `tool/sync_in.sh`.
+- `in/shell.js` home mode: `linkNamed(c, g)` (a named link with its proof
+  checked, the Reticulum key remembered), `race(cands, g)` (three at once,
+  the first proven wins), `discover(own, g)` (archivers from `t:service
+  serve:archive`), `ask(c, method, path, query, body)` (any station through
+  the same gateway, one call at a time each). The portal reaches them as
+  `window.XPRS_REMOTE.ask` / `.archivers()`.
