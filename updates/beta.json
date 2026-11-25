@@ -1,40 +1,40 @@
 {
-  "version": "1.14.0",
-  "tagName": "v1.14.0",
-  "name": "XPRS 1.14.0",
-  "body": "- A public group's pictures are anybody's, like its words (10.7.1)\n- Chat 0.10.23: a button over the chat jumps to words that arrived late\n- Chat 0.10.23: words that arrive late are counted, rung and marked, and the room jumps to them\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.13.0...v1.14.0",
-  "publishedAt": "2026-11-24T06:40:24Z",
-  "prerelease": false,
+  "version": "1.14.1-beta.2",
+  "tagName": "v1.14.1-beta.2",
+  "name": "XPRS 1.14.1-beta.2",
+  "body": "- Chat tests: expect the relayer in via (0.10.17) and Share link first in the member panel (0.10.14)\n- One callsign picker for people, stations and groups; Firmwares and Chat updated\n- Firmwares 0.4.0: one list, one station page, one install panel; Chat 0.10.24\n- Group keys: offer() takes one key minted elsewhere into the pool\n- Location: the code in full on a narrow phone, a new code is confirmed, the first-run notice survives\n- ...and 4 more changes.\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.14.1-beta.1...v1.14.1-beta.2",
+  "publishedAt": "2026-11-24T21:46:36Z",
+  "prerelease": true,
   "assets": [
     {
-      "name": "xprs-1.14.0-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-android-arm64-v8a.apk",
-      "size": 51841576,
-      "sha256": "b07868b6d07b37d57839c2df09df500387c1c1102994fcb38c3e9101f439bba5"
+      "name": "xprs-1.14.1-beta.2-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.2/xprs-1.14.1-beta.2-android-arm64-v8a.apk",
+      "size": 51931688,
+      "sha256": "b99d0116ccfe73c578a42e6a71a908d473560272cd6066550e4bd186211e698c"
     },
     {
-      "name": "xprs-1.14.0-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-android-armeabi-v7a.apk",
-      "size": 45681202,
-      "sha256": "0eb7342f80b3c8be3979cfbab0bac06fb7048146895988715dfcf67a2110179d"
+      "name": "xprs-1.14.1-beta.2-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.2/xprs-1.14.1-beta.2-android-armeabi-v7a.apk",
+      "size": 45722162,
+      "sha256": "aefbbbed497cc3ed13b1e011a81f33fd9dc606c84c3cdb39a64b16d792fa83f4"
     },
     {
-      "name": "xprs-1.14.0-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-android-x86_64.apk",
-      "size": 55286297,
-      "sha256": "03d2264f5f8358b059c4b90aaa6cf51698d43859fe661b4755c44cecb1c1163d"
+      "name": "xprs-1.14.1-beta.2-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.2/xprs-1.14.1-beta.2-android-x86_64.apk",
+      "size": 55306777,
+      "sha256": "bc41369590f3624991c39bcde4014e0c9a82163cbc6b8fa18e4b789746fb0a46"
     },
     {
-      "name": "xprs-1.14.0-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-linux-x64.tar.gz",
-      "size": 34638790,
-      "sha256": "b479900fb232788199bd16a7e1bae86e876c0b647a133139b1fbd967c845b0fe"
+      "name": "xprs-1.14.1-beta.2-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.2/xprs-1.14.1-beta.2-linux-x64.tar.gz",
+      "size": 34675011,
+      "sha256": "2248f8c72b0cfe3396e6afef0a8dcea5f7ae4792aa3d2e7aa42ad3ee07240b2f"
     },
     {
-      "name": "xprs-1.14.0-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.14.0/xprs-1.14.0-windows-x64-setup.exe",
-      "size": 30013844,
-      "sha256": "bbc5cdcce0fa540e1505df747516b81aabe99a0e99ac09433d25c59081ba65c8"
+      "name": "xprs-1.14.1-beta.2-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.14.1-beta.2/xprs-1.14.1-beta.2-windows-x64-setup.exe",
+      "size": 30052958,
+      "sha256": "11f9dd941d6892ef1c06c2d4831ce5c6b70969e25360216aef623d7c0a2597d3"
     }
   ]
 }
