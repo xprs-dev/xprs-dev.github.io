@@ -24,3 +24,8 @@
   serve:archive`), `ask(c, method, path, query, body)` (any station through
   the same gateway, one call at a time each). The portal reaches them as
   `window.XPRS_REMOTE.ask` / `.archivers()`.
+- `in/shell.js` `use(c)` (`XPRS_REMOTE.use`): another archiver as the
+  portal's base. `linkNamed` first through the same gateway, so a station
+  that cannot be reached leaves the page as it is; it resolves with `go()`,
+  which reopens `/in/` on it (memo `home`, so the next visit starts there)
+  or, on `/in/<call>` and group pages, goes to its own address.

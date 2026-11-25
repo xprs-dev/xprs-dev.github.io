@@ -528,6 +528,23 @@
       return { status: r.status, json: json, text: text };
     });
   }
+  // Another archiver as the portal's base (XPRS_REMOTE.use), from the map or
+  // the archivers list: its link made and its proof checked first, through
+  // the same gateway, so one that does not answer leaves the page as it is.
+  // Resolves with what opens the portal on it, for the page to keep its view
+  // first: on xprs.dev/in/ the page again, on it, and the next visit opens
+  // there too (memo home, the visitor's mail archivers when it is gone);
+  // elsewhere its own address. The visitor's mail stays where it is kept.
+  function use(c) {
+    c = String(c || '').toUpperCase().split('-')[0];
+    if (!/^X[1-5][A-Z0-9]{2,6}$/.test(c)) return Promise.reject(new Error('not a callsign'));
+    function go() {
+      if (HOME) { memoSet({ home: c }); location.reload(); }
+      else location.href = BASE + c.toLowerCase() + location.hash;
+    }
+    if (c === CALL) return Promise.resolve(function () {});
+    return proven.then(function () { return linkNamed(c, gw); }).then(function () { return go; });
+  }
   function knownArchivers() {
     var a = memo().archivers || {};
     return Object.keys(a).sort(function (x, y) { return (linked[y] || 0) - (linked[x] || 0) || a[y] - a[x]; })
@@ -582,7 +599,7 @@
   function install(html) {
     window.XMLHttpRequest = RnsXHR;
     window.fetch = rnsFetch;
-    window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP, home: HOME, ask: ask, archivers: knownArchivers };
+    window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP, home: HOME, ask: ask, use: use, archivers: knownArchivers };
     swapIn(html);
     watch();
   }
