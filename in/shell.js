@@ -132,12 +132,14 @@
   // A return visit shows the portal before the archiver is reached (start()):
   // until it proved itself, every call waits here.
   var proven = Promise.resolve();
-  function call(method, u, body, hdr) {
-    return proven.then(function () { return callNow(method, u, body, hdr); });
+  function call(method, u, body, hdr, dropped) {
+    return proven.then(function () { return callNow(method, u, body, hdr, dropped); });
   }
   // [hdr]: the headers the page set ({Range: ...}); a ranged read is its own
   // GET, never shared with a read of another part.
-  function callNow(method, u, body, hdr) {
+  // [dropped]: true once the page gave up on a ranged read (a map tile
+  // scrolled or zoomed away): skipped when its turn comes, not read for nobody.
+  function callNow(method, u, body, hdr, dropped) {
     var a = apiPath(u);
     var h = hdr && Object.keys(hdr).length ? JSON.stringify(hdr) : undefined;
     if (method !== 'GET') {
@@ -148,7 +150,10 @@
     }
     var key = a.path + '?' + a.query + (h || ''), now = Date.now(), g = gets[key];
     if (g && now - g.t < GET_REUSE_MS) return g.p;
-    var p = oneAtATime(function () { return api('GET', a.path, a.query, null, h); });
+    var p = oneAtATime(function () {
+      if (h && dropped && dropped()) return { status: 0 };
+      return api('GET', a.path, a.query, null, h);
+    });
     gets[key] = { t: now, p: p };
     p.then(function (r) { if (!r.status && gets[key] && gets[key].p === p) delete gets[key]; },
            function () { if (gets[key] && gets[key].p === p) delete gets[key]; });
@@ -205,7 +210,7 @@
     var done = false, timer = null;
     function fire(name) { var h = self[name]; if (h) try { h.call(self, { type: name.slice(2), target: self }); } catch (e) { console.error(e); } }
     if (this.timeout > 0) timer = setTimeout(function () { if (done) return; done = true; self.readyState = 4; fire('ontimeout'); fire('onloadend'); }, Math.max(this.timeout, 60000));
-    call(this._m, this._u, body, this._h).then(function (r) {
+    call(this._m, this._u, body, this._h, function () { return self._aborted || done; }).then(function (r) {
       if (done || self._aborted) return; done = true; if (timer) clearTimeout(timer);
       self.status = r.status; self._type = r.type || '';
       try { self._rh = JSON.parse(r.headers || '{}') || {}; } catch (e) { self._rh = {}; }
