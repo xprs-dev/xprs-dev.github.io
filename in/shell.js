@@ -108,10 +108,21 @@
   // PUT, DELETE) clears them: a sent message shows at once.
   var GET_REUSE_MS = 15000;
   var gets = {};
-  var line = Promise.resolve();
+  //
+  // The parts of a file read by range (the map's tiles, from the world map
+  // an archiver shares) wait in a line of their own: a tile behind the
+  // page's polls, each a history answer of tens of kB, is a map that never
+  // draws. So at most two calls are in flight, the second only for a
+  // station that shares such a file (a small board shares none).
+  var line = Promise.resolve(), partsLine = Promise.resolve();
   function oneAtATime(fn) {
     var p = line.then(fn, fn);
     line = p.then(function () {}, function () {});
+    return p;
+  }
+  function onePartAtATime(fn) {
+    var p = partsLine.then(fn, fn);
+    partsLine = p.then(function () {}, function () {});
     return p;
   }
   // One call over the link. No status means the link is gone (the station's
@@ -148,12 +159,20 @@
         return oneAtATime(function () { return api(method, a.path, a.query, b, h); });
       });
     }
-    var key = a.path + '?' + a.query + (h || ''), now = Date.now(), g = gets[key];
+    if (h) {
+      // A part is read once, for the call that asked: never kept (a map
+      // reads thousands, 256 kB each).
+      return onePartAtATime(function () {
+        if (dropped && dropped()) return { status: 0 };
+        return api('GET', a.path, a.query, null, h);
+      });
+    }
+    var key = a.path + '?' + a.query, now = Date.now(), g = gets[key];
     if (g && now - g.t < GET_REUSE_MS) return g.p;
-    var p = oneAtATime(function () {
-      if (h && dropped && dropped()) return { status: 0 };
-      return api('GET', a.path, a.query, null, h);
-    });
+    var p = oneAtATime(function () { return api('GET', a.path, a.query, null, h); });
+    // An answer is of use for GET_REUSE_MS; kept longer it is only memory (a
+    // page left open asks thousands of different things, each tens of kB).
+    for (var k in gets) if (now - gets[k].t >= GET_REUSE_MS) delete gets[k];
     gets[key] = { t: now, p: p };
     p.then(function (r) { if (!r.status && gets[key] && gets[key].p === p) delete gets[key]; },
            function () { if (gets[key] && gets[key].p === p) delete gets[key]; });
