@@ -1,40 +1,40 @@
 {
-  "version": "1.14.1-beta.5",
-  "tagName": "v1.14.1-beta.5",
-  "name": "XPRS 1.14.1-beta.5",
-  "body": "- Web chat: Use my phone's location, where the station can ask (portal)\n- Web chat: the Location card in the app's one system (portal)\n- Location: a server shares its place in the app's one system\n- Map: status pills on a map without chat\n- Check-in: test the map with two identities exactly as the live archive sends them\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.14.1-beta.4...v1.14.1-beta.5",
-  "publishedAt": "2026-11-25T16:44:30Z",
-  "prerelease": true,
+  "version": "1.14.1",
+  "tagName": "v1.14.1",
+  "name": "XPRS 1.14.1",
+  "body": "- Wapp map labels: a crowded label steps aside, pins across a grid line join one bubble, a bubble zooms to split or lists its pins\n- Wapp map drawer: folded, it clears the phone's gesture bar; Mesh 1.6.1\n- Mesh 1.6.1: the stations map is drawn when the wapp starts (a JSON page never sends ready)\n- Wapp maps: a list in a drawer over the map, filter chips, popup buttons, and 1500 pins grouped in one pass\n- ...and 8 more changes.\n\n\n**Full Changelog**: https://github.com/xprs-dev/app/compare/v1.14.0...v1.14.1",
+  "publishedAt": "2026-11-26T07:31:25Z",
+  "prerelease": false,
   "assets": [
     {
-      "name": "xprs-1.14.1-beta.5-android-arm64-v8a.apk",
-      "url": "https://xprs.dev/downloads/v1.14.1-beta.5/xprs-1.14.1-beta.5-android-arm64-v8a.apk",
-      "size": 51956264,
-      "sha256": "130972398147e7d56e00471a302d239308cf72c02be2a1ed98b8ccbee4cee432"
+      "name": "xprs-1.14.1-android-arm64-v8a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1/xprs-1.14.1-android-arm64-v8a.apk",
+      "size": 52054568,
+      "sha256": "ed365e5a0436951c0a2995d443f5e451628eb7f7594013a9257ae803c9eb6234"
     },
     {
-      "name": "xprs-1.14.1-beta.5-android-armeabi-v7a.apk",
-      "url": "https://xprs.dev/downloads/v1.14.1-beta.5/xprs-1.14.1-beta.5-android-armeabi-v7a.apk",
-      "size": 45795890,
-      "sha256": "317d069ebcb8e25dda64160cb86954f4d02e91b895cd4d4a355167803666c2d1"
+      "name": "xprs-1.14.1-android-armeabi-v7a.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1/xprs-1.14.1-android-armeabi-v7a.apk",
+      "size": 45910578,
+      "sha256": "fe69a1cc8891b1b4460c563b60952e717596b84d2c12d48f97464ed7e9661249"
     },
     {
-      "name": "xprs-1.14.1-beta.5-android-x86_64.apk",
-      "url": "https://xprs.dev/downloads/v1.14.1-beta.5/xprs-1.14.1-beta.5-android-x86_64.apk",
-      "size": 55396889,
-      "sha256": "6aca9c38c5f4cdd0062d922c9beea2e686f9abd01359e8d4945e9e659a960b34"
+      "name": "xprs-1.14.1-android-x86_64.apk",
+      "url": "https://xprs.dev/downloads/v1.14.1/xprs-1.14.1-android-x86_64.apk",
+      "size": 55429657,
+      "sha256": "2cd072789acaefa840a5175483c58c17189c022c102fff1ea0b809203361face"
     },
     {
-      "name": "xprs-1.14.1-beta.5-linux-x64.tar.gz",
-      "url": "https://xprs.dev/downloads/v1.14.1-beta.5/xprs-1.14.1-beta.5-linux-x64.tar.gz",
-      "size": 34735616,
-      "sha256": "ab39c7c917b0f0860e48d056de11ab20355bd55caeeebc4908ac274bfbd1675c"
+      "name": "xprs-1.14.1-linux-x64.tar.gz",
+      "url": "https://xprs.dev/downloads/v1.14.1/xprs-1.14.1-linux-x64.tar.gz",
+      "size": 34826121,
+      "sha256": "6652f325c8419c77027f24e0e0f4032d9d60eeaacf87ca3f3ee4610b049b3457"
     },
     {
-      "name": "xprs-1.14.1-beta.5-windows-x64-setup.exe",
-      "url": "https://xprs.dev/downloads/v1.14.1-beta.5/xprs-1.14.1-beta.5-windows-x64-setup.exe",
-      "size": 30096841,
-      "sha256": "7736b82acc8b30ca48210c265bcedad964df7e8165c5eed03d0a5d278f4d1103"
+      "name": "xprs-1.14.1-windows-x64-setup.exe",
+      "url": "https://xprs.dev/downloads/v1.14.1/xprs-1.14.1-windows-x64-setup.exe",
+      "size": 30150009,
+      "sha256": "9f80f941897e033f064ae57f929f25fff8c7e947a007445d202ae0cac51488ab"
     }
   ]
 }
