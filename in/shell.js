@@ -117,34 +117,38 @@
   // One call over the link. No status means the link is gone (the station's
   // own uplink dropped, a gateway restarted): reach the station again, its
   // proof checked again, and make the call once more.
-  function rawApi(method, path, query, b) {
-    return HOME ? window.XprsRns.api(method, path, query, b, CALL) : window.XprsRns.api(method, path, query, b);
+  // [h]: request headers as JSON, or undefined (a Range on a file).
+  function rawApi(method, path, query, b, h) {
+    return HOME ? window.XprsRns.api(method, path, query, b, CALL, h) : window.XprsRns.api(method, path, query, b, undefined, h);
   }
-  function api(method, path, query, b) {
-    return rawApi(method, path, query, b).then(function (r) {
+  function api(method, path, query, b, h) {
+    return rawApi(method, path, query, b, h).then(function (r) {
       if (r.status) return r;
       return reach().then(function () {
-        return rawApi(method, path, query, b);
+        return rawApi(method, path, query, b, h);
       }, function () { return r; });
     });
   }
   // A return visit shows the portal before the archiver is reached (start()):
   // until it proved itself, every call waits here.
   var proven = Promise.resolve();
-  function call(method, u, body) {
-    return proven.then(function () { return callNow(method, u, body); });
+  function call(method, u, body, hdr) {
+    return proven.then(function () { return callNow(method, u, body, hdr); });
   }
-  function callNow(method, u, body) {
+  // [hdr]: the headers the page set ({Range: ...}); a ranged read is its own
+  // GET, never shared with a read of another part.
+  function callNow(method, u, body, hdr) {
     var a = apiPath(u);
+    var h = hdr && Object.keys(hdr).length ? JSON.stringify(hdr) : undefined;
     if (method !== 'GET') {
       gets = {};
       return bodyBytes(body).then(function (b) {
-        return oneAtATime(function () { return api(method, a.path, a.query, b); });
+        return oneAtATime(function () { return api(method, a.path, a.query, b, h); });
       });
     }
-    var key = a.path + '?' + a.query, now = Date.now(), g = gets[key];
+    var key = a.path + '?' + a.query + (h || ''), now = Date.now(), g = gets[key];
     if (g && now - g.t < GET_REUSE_MS) return g.p;
-    var p = oneAtATime(function () { return api('GET', a.path, a.query, null); });
+    var p = oneAtATime(function () { return api('GET', a.path, a.query, null, h); });
     gets[key] = { t: now, p: p };
     p.then(function (r) { if (!r.status && gets[key] && gets[key].p === p) delete gets[key]; },
            function () { if (gets[key] && gets[key].p === p) delete gets[key]; });
@@ -156,7 +160,7 @@
     this.response = ''; this.responseType = ''; this.timeout = 0; this.withCredentials = false;
     this.upload = { onprogress: null, onload: null };
     this.onload = this.onerror = this.ontimeout = this.onreadystatechange = this.onloadend = this.onabort = null;
-    this._real = null; this._type = ''; this._sent = false;
+    this._real = null; this._type = ''; this._sent = false; this._h = {}; this._rh = {};
   }
   RnsXHR.prototype.open = function (method, url, async) {
     this._m = String(method || 'GET').toUpperCase(); this._u = url;
@@ -175,10 +179,18 @@
     }
     this.readyState = 1;
   };
-  RnsXHR.prototype.setRequestHeader = function (k, v) { if (this._real) this._real.setRequestHeader(k, v); };
+  // Over the link only Range travels (a file read in parts); the rest is the
+  // browser's business.
+  RnsXHR.prototype.setRequestHeader = function (k, v) {
+    if (this._real) return this._real.setRequestHeader(k, v);
+    if (String(k).toLowerCase() === 'range') this._h.Range = String(v);
+  };
   RnsXHR.prototype.getResponseHeader = function (k) {
     if (this._real) return this._real.getResponseHeader(k);
-    return String(k).toLowerCase() === 'content-type' ? this._type : null;
+    k = String(k).toLowerCase();
+    if (k === 'content-type') return this._type;
+    for (var n in this._rh) if (n.toLowerCase() === k) return String(this._rh[n]);
+    return null;
   };
   RnsXHR.prototype.getAllResponseHeaders = function () { return this._real ? this._real.getAllResponseHeaders() : 'content-type: ' + this._type + '\r\n'; };
   RnsXHR.prototype.abort = function () { if (this._real) this._real.abort(); this._aborted = true; };
@@ -193,9 +205,10 @@
     var done = false, timer = null;
     function fire(name) { var h = self[name]; if (h) try { h.call(self, { type: name.slice(2), target: self }); } catch (e) { console.error(e); } }
     if (this.timeout > 0) timer = setTimeout(function () { if (done) return; done = true; self.readyState = 4; fire('ontimeout'); fire('onloadend'); }, Math.max(this.timeout, 60000));
-    call(this._m, this._u, body).then(function (r) {
+    call(this._m, this._u, body, this._h).then(function (r) {
       if (done || self._aborted) return; done = true; if (timer) clearTimeout(timer);
       self.status = r.status; self._type = r.type || '';
+      try { self._rh = JSON.parse(r.headers || '{}') || {}; } catch (e) { self._rh = {}; }
       if (!r.status) { self.readyState = 4; fire('onerror'); fire('onloadend'); return; }
       var text = '';
       try { text = new TextDecoder().decode(r.body); } catch (e) {}
