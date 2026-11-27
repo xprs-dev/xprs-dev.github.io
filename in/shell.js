@@ -12,6 +12,11 @@
  *    document with its transport switched: XMLHttpRequest and fetch to /api/
  *    become requests over the link, and /api/xprs/file/ media become blobs
  *    fetched over it. The page itself is not changed.
+ * 4. Kept on the device (portal/docs/plan-installable-app.md): sw.js keeps
+ *    the app's own files, so a start asks xprs.dev for nothing; a file read
+ *    from a station is kept under its reference (a reference names its
+ *    bytes: never stale, never asked for twice); every gateway that was ever
+ *    listed is remembered, the one that worked last tried first.
  */
 (function () {
   'use strict';
@@ -60,6 +65,8 @@
     if (bar) bar.className = 'bad';
     if (acts) acts.className = 'show';
   }
+  var realFetch = window.fetch.bind(window);
+  var RealXHR = window.XMLHttpRequest;
   function load(src) {
     return new Promise(function (ok, no) {
       var s = document.createElement('script');
@@ -67,8 +74,10 @@
       document.head.appendChild(s);
     });
   }
+  // The app's own files. Installed (sw.js), they come from the device and
+  // the network is not asked; an update is asked for once a day (appShell).
   function getText(url) {
-    return fetch(url, { cache: 'no-cache' }).then(function (r) {
+    return realFetch(url).then(function (r) {
       if (!r.ok) throw new Error(url + ': HTTP ' + r.status);
       return r.text();
     });
@@ -79,8 +88,6 @@
   }
 
   // ---- the transport: /api/ over the link ----------------------------------
-  var realFetch = window.fetch.bind(window);
-  var RealXHR = window.XMLHttpRequest;
   function apiPath(u) {
     try {
       var x = new URL(String(u), location.href);
@@ -125,6 +132,63 @@
     partsLine = p.then(function () {}, function () {});
     return p;
   }
+  // ---- files, kept ----------------------------------------------------------
+  // A file is named by the hash of its bytes (XPRS.md 7.7), so one that was
+  // read is never stale: it is kept (Cache Storage, by its reference) and the
+  // station is not asked for it again, in this visit or the next. Only what
+  // anybody may read is kept: a file the station marks private (a private
+  // room's, Cache-Control: private) stays in memory for the visit. Past
+  // FILES_MAX the files unused longest go; one larger than FILE_KEEP_MAX is
+  // not kept at all. Parts read by range (the map) are kept by the page.
+  var FILES = 'xprs-files-v1', FILES_MAX = 200 * 1048576, FILE_KEEP_MAX = 32 * 1048576;
+  var FILE_PRE = '/api/xprs/file/', FILES_IDX = 'xprs_files';
+  function fileRef(path) {
+    return path.indexOf(FILE_PRE) === 0 && path.length > FILE_PRE.length ? path.slice(FILE_PRE.length) : '';
+  }
+  function fileIdx() { try { return JSON.parse(localStorage.getItem(FILES_IDX) || '{}') || {}; } catch (e) { return {}; } }
+  function fileIdxSet(m) { try { localStorage.setItem(FILES_IDX, JSON.stringify(m)); } catch (e) {} }
+  function fileUsed(ref, size) {
+    var m = fileIdx(), day = Math.floor(Date.now() / 86400000);
+    if (m[ref] && m[ref][1] === day && size == null) return;
+    m[ref] = [size == null ? (m[ref] ? m[ref][0] : 0) : size, day];
+    var total = 0, k;
+    for (k in m) total += m[k][0];
+    if (total > FILES_MAX) {
+      var old = Object.keys(m).sort(function (a, b) { return m[a][1] - m[b][1]; });
+      caches.open(FILES).then(function (c) {
+        while (total > FILES_MAX * 0.8 && old.length) {
+          var x = old.shift();
+          if (x === ref) continue;
+          total -= m[x][0]; delete m[x]; c.delete('/in/_file/' + x);
+        }
+        fileIdxSet(m);
+      }, function () {});
+      return;
+    }
+    fileIdxSet(m);
+  }
+  function fileGet(ref) {
+    if (!ref || !window.caches) return Promise.resolve(null);
+    return caches.open(FILES).then(function (c) { return c.match('/in/_file/' + ref); }).then(function (r) {
+      if (!r) return null;
+      var type = r.headers.get('content-type') || '';
+      return r.arrayBuffer().then(function (b) {
+        fileUsed(ref);
+        return { status: 200, type: type, body: new Uint8Array(b), headers: '{}', kept: true };
+      });
+    }).catch(function () { return null; });
+  }
+  function filePut(ref, r, withSession) {
+    if (!ref || !window.caches || r.status !== 200 || !r.body || r.body.length > FILE_KEEP_MAX) return;
+    var cc = '';
+    try { var h = JSON.parse(r.headers || '{}') || {}; for (var k in h) if (k.toLowerCase() === 'cache-control') cc = String(h[k]); } catch (e) {}
+    // Said to be private, or not said at all while a session opened it.
+    if (/private|no-store/i.test(cc) || (!cc && withSession)) return;
+    caches.open(FILES).then(function (c) {
+      return c.put('/in/_file/' + ref, new Response(r.body, { headers: { 'content-type': r.type || 'application/octet-stream' } }));
+    }).then(function () { fileUsed(ref, r.body.length); }, function () {});
+  }
+
   // One call over the link. No status means the link is gone (the station's
   // own uplink dropped, a gateway restarted): reach the station again, its
   // proof checked again, and make the call once more.
@@ -144,7 +208,12 @@
   // until it proved itself, every call waits here.
   var proven = Promise.resolve();
   function call(method, u, body, hdr, dropped) {
-    return proven.then(function () { return callNow(method, u, body, hdr, dropped); });
+    var a = method === 'GET' && !(hdr && hdr.Range) ? apiPath(u) : null, ref = a ? fileRef(a.path) : '';
+    var first = ref ? fileGet(ref) : Promise.resolve(null);
+    return first.then(function (kept) {
+      // A kept file needs no station: it does not wait for its proof.
+      return kept || proven.then(function () { return callNow(method, u, body, hdr, dropped); });
+    });
   }
   // [hdr]: the headers the page set ({Range: ...}); a ranged read is its own
   // GET, never shared with a read of another part.
@@ -169,7 +238,14 @@
     }
     var key = a.path + '?' + a.query, now = Date.now(), g = gets[key];
     if (g && now - g.t < GET_REUSE_MS) return g.p;
-    var p = oneAtATime(function () { return api('GET', a.path, a.query, null, h); });
+    var ref = fileRef(a.path);
+    var p = fileGet(ref).then(function (kept) {
+      if (kept) return kept;
+      return oneAtATime(function () { return api('GET', a.path, a.query, null, h); }).then(function (r) {
+        if (ref) filePut(ref, r, /"session"/.test(a.query));
+        return r;
+      });
+    });
     // An answer is of use for GET_REUSE_MS; kept longer it is only memory (a
     // page left open asks thousands of different things, each tens of kB).
     for (var k in gets) if (now - gets[k].t >= GET_REUSE_MS) delete gets[k];
@@ -300,6 +376,43 @@
   // on a busy WiFi drops its own uplink now and then, and the link being
   // opened at that moment is lost; the next try usually gets through.
   var TRIES = 3, gateways = [], gw = '', nick = '';
+  // The gateways to try: the one that worked last, the listed ones in a
+  // random order (nobody's first choice is everybody's), then the ones this
+  // browser was told of before and the list no longer names. Kept, so the
+  // app has its ways in when xprs.dev does not answer.
+  function gatewaysFrom(text) {
+    var listed = [];
+    try { listed = JSON.parse(text).gateways || []; } catch (e) {}
+    listed = listed.filter(function (g) { return /^wss?:\/\//.test(g); });
+    var m = memo(), kept = (m.gws || []).filter(function (g) { return listed.indexOf(g) < 0; });
+    memoSet({ gws: uniq(listed.concat(kept)).slice(0, 32) });
+    gateways = uniq([m.gw].concat(shuffle(listed), kept)).filter(function (g) {
+      return listed.indexOf(g) >= 0 || kept.indexOf(g) >= 0;
+    });
+    return gateways;
+  }
+  function gatewayList() {
+    return getText(BASE + 'gateways.json').then(gatewaysFrom, function () { return gatewaysFrom('{}'); }).then(function (g) {
+      if (!g.length) throw new Error('no gateway is known');
+      return g;
+    });
+  }
+  // Nothing answered: the list as xprs.dev has it now, past what is kept
+  // (an ask with a query goes to the network, sw.js), once.
+  var listAsked = false;
+  function gatewaysAgain() {
+    if (listAsked) return Promise.reject(new Error('asked before'));
+    listAsked = true;
+    return realFetch(BASE + 'gateways.json?t=' + Date.now(), { cache: 'no-store' }).then(function (r) {
+      if (!r.ok) throw new Error('HTTP ' + r.status);
+      return r.text();
+    }).then(function (t) {
+      var had = gateways.slice();
+      gatewaysFrom(t);
+      if (!gateways.some(function (g) { return had.indexOf(g) < 0; })) throw new Error('no gateway is new');
+      gwOrder = null;
+    });
+  }
   function sleep(ms) { return new Promise(function (ok) { setTimeout(ok, ms); }); }
   // A link to station [c] through the gateway already connected, its proof
   // checked: its callsign derives from its key and it named this link.
@@ -356,6 +469,7 @@
         var leg = hs[k] === own && k === 0 ? Promise.resolve({ nick: '' }) : linkTo(hs[k], g);
         return leg.then(function (v) {
           CALL = hs[k]; gw = g; nick = v.nick || '';
+          memoSet({ gw: g });
         }, function (e) {
           say(e.message || String(e), true, true);
           return next(k + 1);
@@ -393,6 +507,7 @@
     }).then(function (v) {
       if (!v.ok) throw new Error('This is not ' + CALL + ': ' + v.why);
       gw = g; nick = v.nick || '';
+      memoSet({ gw: g });
     }).catch(function (e) {
       say(e.message || String(e), true, true);
       return once(i + 1);
@@ -504,7 +619,7 @@
   }
   var gwOrder = null;
   function onceHome(i) {
-    if (!gwOrder) { var last = memo().gw; gwOrder = uniq([last].concat(shuffle(gateways))).filter(function (g) { return gateways.indexOf(g) >= 0; }); }
+    if (!gwOrder) gwOrder = gateways.slice();
     if (i >= gwOrder.length) return Promise.reject(new Error('no archiver answered'));
     var g = gwOrder[i], own = '', tried = {};
     step('gateway');
@@ -594,7 +709,9 @@
     var t = 0;
     function attempt() {
       return once(0).catch(function (e) {
-        if (++t >= TRIES) throw e;
+        if (++t >= TRIES) {
+          return gatewaysAgain().then(function () { t = 0; return attempt(); }, function () { throw e; });
+        }
         say('Trying again…');
         return sleep(3000).then(attempt);
       });
@@ -633,11 +750,78 @@
     d.innerHTML = 'Can\u2019t reach an archiver right now \u00b7 <a href="" style="color:#ffa86a">Try again</a>';
     document.body.appendChild(d);
   }
+  // ---- the app on the device -------------------------------------------
+  // sw.js keeps the app's files; an update is asked for at most once a day,
+  // and only after the last one was answered (a day without a network asks
+  // again at the next start). Storage is asked to stay (not cleared under
+  // pressure) once the page is installed.
+  var CHECKED = 'xprs_app_checked', DAY = 86400000;
+  function standalone() {
+    return (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches) || navigator.standalone === true;
+  }
+  function persist() {
+    try { if (navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(function () {}); } catch (e) {}
+  }
+  function appShell() {
+    if (standalone()) persist();
+    if (!('serviceWorker' in navigator)) return;
+    navigator.serviceWorker.addEventListener('message', function (e) {
+      if (e.data && e.data.op === 'checked' && e.data.ok) try { localStorage.setItem(CHECKED, String(Date.now())); } catch (x) {}
+    });
+    navigator.serviceWorker.register(BASE + 'sw.js', { scope: BASE }).then(function () {
+      var last = 0;
+      try { last = +(localStorage.getItem(CHECKED) || 0); } catch (e) {}
+      if (!last) { try { localStorage.setItem(CHECKED, String(Date.now())); } catch (e) {} return; }
+      if (navigator.onLine === false || Date.now() - last < DAY) return;
+      return navigator.serviceWorker.ready.then(function (r) { if (r.active) r.active.postMessage({ op: 'check' }); });
+    }).catch(function () {});
+  }
+  // The browser's offer to install, held for the portal's menu entry
+  // (XPRS_REMOTE.install): 'ask' where the browser has one, 'ios' where only
+  // the Share sheet installs, 'menu' where the browser's own menu does, 'no'
+  // when installed already or the browser cannot.
+  var offer = null;
+  function installChanged() { try { window.dispatchEvent(new Event('xprs-install')); } catch (e) {} }
+  window.addEventListener('beforeinstallprompt', function (e) { e.preventDefault(); offer = e; installChanged(); });
+  window.addEventListener('appinstalled', function () { offer = null; persist(); installChanged(); });
+  var installer = {
+    state: function () {
+      if (standalone()) return 'no';
+      if (offer) return 'ask';
+      var ua = navigator.userAgent || '';
+      if (/iPhone|iPad|iPod/.test(ua) || (/Macintosh/.test(ua) && navigator.maxTouchPoints > 1)) return 'ios';
+      return /Android/.test(ua) ? 'menu' : 'no';
+    },
+    ask: function () {
+      if (!offer) return;
+      var o = offer; offer = null;
+      o.prompt();
+      if (o.userChoice) o.userChoice.then(installChanged, installChanged);
+    }
+  };
+  // What makes the page an app, on the portal's own head: the page that
+  // carried them (404.html) is gone once the portal took its place.
+  function appHead() {
+    var tags = [['link', { rel: 'manifest', href: BASE + 'manifest.webmanifest' }],
+      ['link', { rel: 'apple-touch-icon', href: BASE + 'icons/icon-180.png' }],
+      ['meta', { name: 'theme-color', content: '#0a0a0b' }],
+      ['meta', { name: 'mobile-web-app-capable', content: 'yes' }],
+      ['meta', { name: 'apple-mobile-web-app-capable', content: 'yes' }],
+      ['meta', { name: 'apple-mobile-web-app-status-bar-style', content: 'black-translucent' }],
+      ['meta', { name: 'apple-mobile-web-app-title', content: 'XPRS' }]];
+    tags.forEach(function (t) {
+      var e = document.createElement(t[0]);
+      for (var k in t[1]) e.setAttribute(k, t[1][k]);
+      document.head.appendChild(e);
+    });
+  }
   function install(html) {
     window.XMLHttpRequest = RnsXHR;
     window.fetch = rnsFetch;
-    window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP, home: HOME, ask: ask, use: use, archivers: knownArchivers };
+    window.XPRS_REMOTE = { station: CALL, gateway: gw, group: GROUP, home: HOME, ask: ask, use: use, archivers: knownArchivers,
+      lib: BASE + 'lib/', install: installer };
     swapIn(html);
+    appHead();
     watch();
   }
   // The archivers the home station heard, for the next visit and the portal's list.
@@ -651,10 +835,7 @@
   // archivers takes its place when it does not answer.
   function startEarly() {
     CALL = memo().home;
-    load(BASE + 'rns.js').then(function () {
-      return getText(BASE + 'gateways.json');
-    }).then(function (t) {
-      gateways = JSON.parse(t).gateways || [];
+    load(BASE + 'rns.js').then(gatewayList).then(function () {
       var r = proven = reach();
       return getText(BASE + 'portal.html').then(function (html) {
         install(html);
@@ -668,10 +849,7 @@
     if (!CALL && !GROUP && !HOME) { failed('No station has this name'); return; }
     document.title = HOME ? 'XPRS' : (GROUP || CALL) + ' · XPRS';
     if (HOME && memo().home) { startEarly(); return; }
-    load(BASE + 'rns.js').then(function () {
-      return getText(BASE + 'gateways.json');
-    }).then(function (t) {
-      gateways = JSON.parse(t).gateways || [];
+    load(BASE + 'rns.js').then(gatewayList).then(function () {
       return reach();
     }).then(function () {
       step('portal');
@@ -689,5 +867,6 @@
       failed('Can’t reach ' + (GROUP || CALL) + ' right now', e.message || String(e));
     });
   }
+  appShell();
   start();
 })();

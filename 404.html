@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>XPRS</title>
 <link rel="icon" href="/favicon.svg">
+<!-- xprs.dev/in/ installs as an app (in/manifest.webmanifest, in/sw.js): these
+     are read when it is added to a home screen. in/shell.js puts them on the
+     portal's head too, once the portal took this page's place. -->
+<link rel="manifest" href="/in/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/in/icons/icon-180.png">
+<meta name="theme-color" content="#0a0a0b">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="XPRS">
 <!-- The portal's logo font (portal/page/logo-font.css, copied by tool/sync_in.sh). -->
 <link rel="stylesheet" href="/in/logo-font.css">
 <style>

@@ -29,3 +29,30 @@
   that cannot be reached leaves the page as it is; it resolves with `go()`,
   which reopens `/in/` on it (memo `home`, so the next visit starts there)
   or, on `/in/<call>` and group pages, goes to its own address.
+- **The app kept on the device** (`in/sw.js`, `in/version.json`,
+  `in/manifest.webmanifest`): the worker keeps the files `version.json`
+  lists (a SHA-256 each, written by `tool/sync_in.sh`) and answers every
+  `/in/...` address from them; `{op:'check'}` from the page (at most once a
+  day, `appShell()` in `in/shell.js`) fetches only a file whose hash changed
+  and puts nothing unless every fetched file matches its hash. A new file of
+  the app is added to the list in `tool/sync_in.sh`, never fetched from a
+  CDN (`in/lib/` holds pinned copies of the map's libraries;
+  `XPRS_REMOTE.lib` tells the portal where). An ask with a query goes to
+  the network past the worker.
+- **`fileGet(ref)` / `filePut(ref, r, withSession)`** (`in/shell.js`): a file
+  read over the link, kept in Cache Storage under its reference (a
+  reference names its bytes), 200 MB with the longest unused out first;
+  never one the station marked private. Whatever reads
+  `/api/xprs/file/<ref>` whole goes through `call()`, which looks there
+  first.
+- **`gatewaysFrom(text)` / `gatewayList()` / `gatewaysAgain()`**: the order
+  gateways are tried in (the last that worked, the listed ones shuffled,
+  then remembered ones the list dropped), all of them kept in `xprs_reach`
+  so a start needs no list from xprs.dev.
+- **`installer`** (`XPRS_REMOTE.install`: `state()`, `ask()`) holds the
+  browser's install offer for the portal's menu; `appHead()` puts the
+  manifest and the Apple tags on the portal's head after `swapIn`.
+- **`tool/serve.py`**: the site on 127.0.0.1 as GitHub Pages serves it
+  (`404.html` for unknown addresses), a secure context, for trying the
+  worker and the install offer.
+
