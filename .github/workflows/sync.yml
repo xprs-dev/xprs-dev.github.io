@@ -87,9 +87,11 @@ jobs:
       - run: flutter pub get
         working-directory: app
 
-      # Newest release overall (may be a pre-release) and newest stable. A tag
-      # with a '-' is a pre-release and lands in beta.json only; a stable tag
-      # writes BOTH files, so the beta channel always tracks the newest build.
+      # Newest release overall (may be a beta) and newest stable. The app's
+      # versions are numbers only: X.Y.0 is stable, X.Y.Z with Z above 0 is a
+      # beta, marked as a pre-release on GitHub by the app's release.yml
+      # (app/releases.md section 4). A beta lands in beta.json only; a stable
+      # tag writes BOTH files, so the beta channel always tracks the newest.
       - name: Resolve the tags to publish
         id: tags
         env:
